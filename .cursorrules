@@ -123,3 +123,30 @@ Each pathway NEEDS (see docs/pathway-specs.md):
 - Green focus state on inputs follows recessed lighting rules (ghost + shadow, not solid)
 - Success state replaces form with confirmation message
 - No external form services (Formspree, Typeform, etc.) — all native
+
+## Database Architecture (Supabase + PostgreSQL)
+- Schema lives in database/schema.sql
+- Tables: leads, team_members, lead_activity, consultations, properties, lead_property_interest
+- PII (name, email, phone, message) is ALWAYS encrypted with AES-256-GCM before insert
+- Email and phone are hashed (HMAC-SHA256) for dedup lookups without decrypting
+- Row Level Security (RLS) enabled on every table
+- Database triggers auto-log status changes and lead creation
+- All timestamps are TIMESTAMPTZ (timezone-aware)
+- Soft delete via archived boolean — never hard delete leads
+
+## Security Stack
+- api/lib/crypto.js — AES-256-GCM encryption + HMAC-SHA256 hashing
+- api/lib/rateLimit.js — per-IP rate limiting (5 submissions per 15 min)
+- api/lib/sanitize.js — input validation, XSS stripping, type enforcement
+- CORS locked to ALLOWED_ORIGINS array in api/submit.js
+- Duplicate detection via email_hash + pathway + 24hr window
+- Security headers on all responses (nosniff, DENY framing, strict referrer)
+- Environment variables for ALL secrets — zero hardcoded credentials
+- .env.example documents required variables
+
+## Environment Variables (set in Vercel dashboard)
+- SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_ANON_KEY
+- ENCRYPTION_KEY (32-byte hex string)
+- RESEND_API_KEY, NOTIFICATION_EMAIL
+- SITE_URL (production domain)
+- INTERNAL_API_TOKEN (for internal API-to-API calls)
