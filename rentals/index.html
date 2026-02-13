@@ -10,10 +10,9 @@
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/nav.css">
+  <link rel="stylesheet" href="../assets/css/hero.css">
   <link rel="stylesheet" href="../assets/css/sections.css">
   <link rel="stylesheet" href="../assets/css/responsive.css">
-  <!-- TODO: pathway-specific stylesheet -->
-  <!-- <link rel="stylesheet" href="../assets/css/rentals.css"> -->
 </head>
 <body>
 
@@ -34,7 +33,7 @@
     </button>
   </nav>
 
-  <!-- PATHWAY HERO -->
+  <!-- HERO -->
   <section class="hero hero-pathway">
     <div class="hero-bg">
       <div class="breath-circle"></div>
@@ -45,14 +44,43 @@
       <h1>Not every chapter starts<br>with <em>ownership.</em></h1>
       <p class="hero-sub">Rental inquiries are managed through our property management partners. Let us connect you with the right fit.</p>
       <div class="hero-actions">
-        <a href="../#connect" class="btn-primary">Request Consultation</a>
-        <a href="../" class="btn-ghost">Back to Pathways <span class="arrow">→</span></a>
+        <a href="#contact" class="btn-primary">Rental Inquiry</a>
+        <a href="../#pathways" class="btn-ghost">Back to Pathways <span class="arrow">→</span></a>
       </div>
     </div>
   </section>
 
-  <!-- TODO: Pathway-specific content sections -->
-  <!-- See docs/pathway-specs.md for detailed section requirements -->
+  <!-- RENTAL PHILOSOPHY -->
+  <section class="quote-section" id="rental-philosophy">
+    <div class="reveal">
+      <blockquote>"Even if you're renting, you deserve <em>intentional</em> living. Silver Key partners with property managers who share our standards — because where you live shapes how you live, regardless of the contract."</blockquote>
+      <div class="quote-attr">The Silver Key Standard</div>
+    </div>
+  </section>
+
+  <!-- PATHWAY REDIRECT -->
+  <section class="philosophy" id="redirect">
+    <div class="philosophy-left reveal">
+      <div class="philosophy-line"></div>
+      <h2>When you're ready to invest in a permanent <em>chapter.</em></h2>
+    </div>
+    <div class="philosophy-right reveal">
+      <p>Many of our strongest client relationships began as rental inquiries. When the timing shifts and you're ready to put down roots, the Silver Key approach is waiting.</p>
+      <p><strong><a href="../buyer/" style="color: var(--charcoal); border-bottom: 1px solid var(--skr-green-line);">Explore the Buyer Experience →</a></strong></p>
+      <p>If you're thinking about real estate from an investment perspective, our three-dimensional framework offers a different lens on building long-term wealth.</p>
+      <p><strong><a href="../investor/" style="color: var(--charcoal); border-bottom: 1px solid var(--skr-green-line);">Explore the Investor Experience →</a></strong></p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="cta" id="contact">
+    <div class="cta-line"></div>
+    <div class="reveal">
+      <h2>Let us connect you<br>with the right <em>fit.</em></h2>
+      <p>Tell us what you're looking for and we'll introduce you to a property management partner who meets the Silver Key standard.</p>
+      <a href="../#connect" class="btn-primary">Rental Inquiry</a>
+    </div>
+  </section>
 
   <!-- FOOTER -->
   <footer>
@@ -68,5 +96,6 @@
 
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/reveal.js"></script>
+  <script src="../assets/js/forms.js"></script>
 </body>
 </html>

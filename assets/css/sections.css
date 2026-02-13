@@ -537,3 +537,116 @@ footer::before {
   font-weight: 200;
   color: var(--silver);
 }
+
+/* ── FORMS ── */
+.skr-form {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+  margin-bottom: var(--space-xs);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  font-family: var(--sans);
+  font-weight: 200;
+  font-size: 15px;
+  color: var(--charcoal);
+  background: var(--cream);
+  border: 1px solid rgba(201, 185, 154, 0.12);
+  padding: 14px 18px;
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--skr-green-line);
+  box-shadow: 0 0 0 3px var(--skr-green-ghost), 0 2px 8px var(--skr-green-shadow);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--silver);
+  font-weight: 200;
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-submit {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--charcoal);
+  padding: 16px 36px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+  position: relative;
+  width: 100%;
+  margin-top: var(--space-sm);
+}
+
+.form-submit::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: var(--skr-green);
+  opacity: 0;
+  transition: opacity 0.4s;
+  filter: blur(1px);
+}
+
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(10, 10, 10, 0.12), 0 4px 12px var(--skr-green-shadow);
+}
+
+.form-submit:hover::after {
+  opacity: 0.6;
+}
+
+.form-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.form-feedback {
+  font-family: var(--sans);
+  font-weight: 200;
+  font-size: 13px;
+  color: #c0392b;
+  margin-top: var(--space-xs);
+  min-height: 20px;
+}
+
+.form-success {
+  text-align: center;
+  padding: var(--space-lg) 0;
+}

@@ -109,3 +109,17 @@ Each pathway NEEDS (see docs/pathway-specs.md):
 - Don't create pop-ups, modals, or interstitials
 - Don't add stock photography — use typographic/geometric placeholders
 - Don't break the atmospheric quality with generic UI patterns
+
+## Backend Architecture
+- API lives in /api/ directory (Vercel serverless functions)
+- api/submit.js — primary lead intake endpoint
+- api/notify.js — email notification via Resend
+- Environment variables needed in Vercel dashboard:
+  - RESEND_API_KEY (from resend.com)
+  - NOTIFICATION_EMAIL (where lead notifications go)
+- Forms use class="skr-form" with data-pathway attribute
+- forms.js handles all submission logic (assets/js/forms.js)
+- Form inputs use .form-input, .form-textarea, .form-label, .form-submit classes
+- Green focus state on inputs follows recessed lighting rules (ghost + shadow, not solid)
+- Success state replaces form with confirmation message
+- No external form services (Formspree, Typeform, etc.) — all native
