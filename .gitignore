@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts (future)
+node_modules/
+dist/
+.next/
+.cache/
+
+# Environment
+.env
+.env.local
+
+# Legacy single-file builds (reference only, don't deploy)
+silver-key-realty-v3.html

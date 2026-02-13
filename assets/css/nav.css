@@ -1,0 +1,164 @@
+/* ============================================================
+   SILVER KEY REALTY — NAVIGATION
+   Fixed nav, frosted glass on scroll, mobile toggle
+   ============================================================ */
+
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: var(--z-nav);
+  padding: 20px var(--padding-desktop);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all var(--duration-slow) var(--ease-out);
+}
+
+nav.scrolled {
+  background: rgba(253, 252, 250, 0.94);
+  backdrop-filter: blur(var(--blur-nav));
+  -webkit-backdrop-filter: blur(var(--blur-nav));
+  padding: 14px var(--padding-desktop);
+  border-bottom: 1px solid rgba(201, 185, 154, 0.12);
+  box-shadow: 0 4px 40px var(--skr-green-ghost);
+}
+
+/* ── LOGO ── */
+.nav-logo {
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo img {
+  height: 90px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px var(--skr-green-ghost));
+  transition: all 0.4s;
+}
+
+nav.scrolled .nav-logo img {
+  height: 60px;
+}
+
+.nav-logo:hover img {
+  filter: drop-shadow(0 0 20px rgba(46, 125, 82, 0.12));
+}
+
+/* ── LINKS ── */
+.nav-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-links a {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  transition: color 0.4s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--skr-green);
+  opacity: 0.5;
+  transition: width 0.4s var(--ease-out);
+}
+
+.nav-links a:hover {
+  color: var(--charcoal);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* ── CTA BUTTON ── */
+.nav-cta {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--charcoal);
+  padding: 12px 28px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+  position: relative;
+}
+
+.nav-cta::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: var(--skr-green);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(10, 10, 10, 0.12), 0 4px 12px var(--skr-green-shadow);
+}
+
+.nav-cta:hover::after {
+  opacity: 0.6;
+}
+
+/* ── MOBILE TOGGLE ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+  z-index: var(--z-toggle);
+  background: none;
+  border: none;
+}
+
+.nav-toggle span {
+  width: 24px;
+  height: 1.5px;
+  background: var(--charcoal);
+  transition: all 0.3s;
+  display: block;
+}
+
+/* ── MOBILE MENU OVERLAY ── */
+.nav-links.open {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(253, 252, 250, 0.98);
+  backdrop-filter: blur(var(--blur-nav));
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  z-index: var(--z-mobile-menu);
+}
+
+.nav-links.open a {
+  font-size: 16px;
+  letter-spacing: 3px;
+}

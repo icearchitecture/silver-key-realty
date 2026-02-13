@@ -1,0 +1,85 @@
+/* ============================================================
+   SILVER KEY REALTY — DESIGN TOKENS
+   Version 3.0
+   
+   NON-NEGOTIABLE: Always use these variables.
+   Never hardcode hex values anywhere in the project.
+   ============================================================ */
+
+:root {
+  /* ── NEUTRALS ── */
+  --black: #0A0A0A;
+  --charcoal: #1A1A1A;
+  --dark: #2A2A2A;
+  --warm-gray: #8A8178;
+  --silver: #B8B0A8;
+  --light-warm: #F0EBE3;
+  --cream: #F7F4F0;
+  --white: #FDFCFA;
+
+  /* ── ACCENT: CHAMPAGNE GOLD ── */
+  --champagne: #C9B99A;
+  --gold: #D4B896;
+
+  /* ── GREEN RECESSED LIGHTING SYSTEM ──
+     CRITICAL: Green is NEVER used as solid paint.
+     It functions as ambient light — glow, edge, shadow.
+     Maximum opacity by context:
+       - Ambient glow:     3-8%   (--skr-green-ghost, --skr-green-glow)
+       - Edge lines:       18%    (--skr-green-line)
+       - Shadow/depth:     12%    (--skr-green-shadow)
+       - Hover effects:    ≤50%   (--skr-green at reduced opacity)
+       - Text labels:      ≤70%   (--skr-green-light)
+     Never use --skr-green at full opacity on surfaces.
+  */
+  --skr-green: #2E7D52;
+  --skr-green-light: #3A9464;
+  --skr-green-glow: rgba(46, 125, 82, 0.08);
+  --skr-green-ghost: rgba(46, 125, 82, 0.03);
+  --skr-green-shadow: rgba(46, 125, 82, 0.12);
+  --skr-green-line: rgba(46, 125, 82, 0.18);
+
+  /* ── TYPOGRAPHY ── */
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Outfit', sans-serif;
+
+  /* ── SPACING (8px base unit) ── */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 60px;
+  --space-2xl: 80px;
+  --space-3xl: 120px;
+  --space-4xl: 160px;
+
+  /* ── LAYOUT ── */
+  --max-width: 1400px;
+  --content-width: 1200px;
+  --padding-mobile: 24px;
+  --padding-desktop: 60px;
+  --pathway-hero-height: 80vh;
+  --pathway-hero-bg-opacity: 0.15;
+
+  /* ── ANIMATION ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.3s;
+  --duration-normal: 0.5s;
+  --duration-slow: 0.6s;
+  --duration-reveal: 1s;
+  --stagger-delay: 80ms;
+  --reveal-threshold: 0.12;
+
+  /* ── EFFECTS ── */
+  --blur-nav: 24px;
+  --grain-opacity: 0.015;
+  --nav-scroll-trigger: 60px;
+  --breath-duration: 8s;
+
+  /* ── Z-INDEX ── */
+  --z-grain: 9999;
+  --z-ambient: 9998;
+  --z-nav: 100;
+  --z-mobile-menu: 105;
+  --z-toggle: 110;
+}

@@ -1,0 +1,69 @@
+/* ============================================================
+   SILVER KEY REALTY — RESPONSIVE
+   Mobile-first overrides. Primary breakpoint: 900px.
+   ============================================================ */
+
+@media (max-width: 900px) {
+  /* Nav */
+  nav { padding: 16px var(--padding-mobile); }
+  nav.scrolled { padding: 12px var(--padding-mobile); }
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-logo img { height: 50px; }
+  nav.scrolled .nav-logo img { height: 40px; }
+
+  /* Hero */
+  .hero { padding: 0 var(--padding-mobile); }
+  .hero-bg { width: 100%; opacity: 0.25; }
+  .hero-content { max-width: 100%; padding-top: 140px; }
+  .hero h1 { font-size: 42px; }
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  /* Pathways */
+  .pathways { padding: var(--space-2xl) var(--padding-mobile) var(--space-xl); }
+  .pathways-grid { grid-template-columns: 1fr; gap: 20px; }
+  .pathway-card { min-height: auto; padding: 36px 28px 40px; }
+
+  /* Philosophy */
+  .philosophy {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    padding: var(--space-2xl) var(--padding-mobile);
+  }
+
+  /* Pillars */
+  .pillars { padding: var(--space-2xl) var(--padding-mobile); }
+  .pillars-grid { grid-template-columns: 1fr; gap: 20px; }
+
+  /* Feature */
+  .feature { padding: var(--space-2xl) var(--padding-mobile); }
+  .feature-wrapper { grid-template-columns: 1fr; gap: var(--space-lg); }
+
+  /* Quote */
+  .quote-section { padding: var(--space-2xl) var(--padding-mobile); }
+
+  /* Lifestyle */
+  .lifestyle { padding: var(--space-2xl) var(--padding-mobile); }
+  .lifestyle-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* CTA */
+  .cta { padding: var(--space-2xl) var(--padding-mobile); }
+
+  /* Footer */
+  footer {
+    padding: 30px var(--padding-mobile);
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 34px; }
+  .pathway-number { font-size: 48px; }
+  .pathway-title { font-size: 24px; }
+  .feature-stats { flex-direction: column; gap: 24px; }
+}

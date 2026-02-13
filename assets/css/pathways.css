@@ -1,0 +1,227 @@
+/* ============================================================
+   SILVER KEY REALTY — PATHWAY SELECTOR
+   V3 core: Buyer / Seller / Investor cards + Renter tertiary
+   ============================================================ */
+
+.pathways {
+  padding: var(--space-3xl) var(--padding-desktop) 100px;
+  position: relative;
+}
+
+.pathways::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--skr-green-line), transparent);
+}
+
+/* ── HEADER ── */
+.pathways-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.pathways-tag {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--skr-green-light);
+  opacity: 0.7;
+  margin-bottom: var(--space-sm);
+}
+
+.pathways-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 3.5vw, 46px);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--charcoal);
+}
+
+/* ── CARD GRID ── */
+.pathways-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+/* ── PATHWAY CARD ── */
+.pathway-card {
+  position: relative;
+  background: var(--cream);
+  padding: 48px 40px 56px;
+  border: 1px solid rgba(201, 185, 154, 0.08);
+  color: var(--charcoal);
+  transition: all var(--duration-slow) var(--ease-out);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
+}
+
+/* Green recessed bottom glow */
+.pathway-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: var(--skr-green);
+  filter: blur(3px);
+  opacity: 0;
+  transition: opacity var(--duration-slow);
+}
+
+/* Green ambient gradient wash */
+.pathway-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(to top, var(--skr-green-ghost), transparent);
+  opacity: 0;
+  transition: opacity var(--duration-slow);
+}
+
+.pathway-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: var(--skr-green-line);
+  box-shadow: 0 20px 60px rgba(10, 10, 10, 0.06), 0 8px 24px var(--skr-green-shadow);
+}
+
+.pathway-card:hover::before {
+  opacity: 0.5;
+}
+
+.pathway-card:hover::after {
+  opacity: 1;
+}
+
+/* ── CARD CONTENT ── */
+.pathway-number {
+  font-family: var(--serif);
+  font-size: 64px;
+  font-weight: 300;
+  color: var(--champagne);
+  opacity: 0.12;
+  line-height: 1;
+  margin-bottom: 20px;
+  transition: all var(--duration-slow);
+}
+
+.pathway-card:hover .pathway-number {
+  opacity: 0.25;
+  color: var(--skr-green);
+}
+
+.pathway-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--skr-green-light);
+  opacity: 0.6;
+  margin-bottom: 12px;
+}
+
+.pathway-title {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: var(--space-sm);
+  color: var(--charcoal);
+}
+
+.pathway-desc {
+  font-family: var(--sans);
+  font-weight: 200;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--warm-gray);
+  flex-grow: 1;
+}
+
+.pathway-enter {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  transition: all 0.4s;
+}
+
+.pathway-enter .arrow {
+  transition: all 0.4s;
+}
+
+.pathway-card:hover .pathway-enter {
+  color: var(--charcoal);
+}
+
+.pathway-card:hover .pathway-enter .arrow {
+  transform: translateX(6px);
+  color: var(--skr-green);
+}
+
+/* ── RENTER TERTIARY LINK ── */
+.pathways-renter {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 32px;
+  position: relative;
+}
+
+.pathways-renter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: var(--skr-green-line);
+}
+
+.pathways-renter a {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 200;
+  color: var(--warm-gray);
+  transition: color 0.4s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pathways-renter a:hover {
+  color: var(--charcoal);
+}
+
+.pathways-renter a .arrow {
+  transition: all 0.4s;
+  color: var(--silver);
+}
+
+.pathways-renter a:hover .arrow {
+  transform: translateX(4px);
+  color: var(--skr-green);
+}
