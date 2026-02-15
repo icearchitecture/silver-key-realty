@@ -88,13 +88,89 @@
     </div>
   </section>
 
-  <!-- CONSULTATION CTA -->
-  <section class="cta" id="consultation">
-    <div class="cta-line"></div>
-    <div class="reveal">
-      <h2>Let's discuss what your property <em>deserves.</em></h2>
-      <p>No obligation. No pressure. We listen, we assess, and we tell you honestly whether our approach is the right fit. From there, the path is clear.</p>
-      <a href="../#connect" class="btn-primary">Request Consultation</a>
+  <!-- CONSULTATION SCHEDULER -->
+  <section class="consultation-scheduler" id="consultation">
+    <div class="consultation-header reveal">
+      <div class="consultation-tag">Consultation</div>
+      <h2>Schedule a private <em>consultation.</em></h2>
+      <p>We review your property goals, timing, and positioning. Every request is confirmed within 48 hours.</p>
+    </div>
+    <div class="consultation-grid">
+      <div class="consultation-card reveal">
+        <div class="consultation-card-tag">What happens next</div>
+        <h3>Clarity before decisions.</h3>
+        <div class="consultation-steps">
+          <div class="consultation-step">
+            <div class="consultation-step-number">01</div>
+            <div class="consultation-step-body">
+              <div class="consultation-step-title">We review your property</div>
+              <div class="consultation-step-desc">We align on goals, timeline, and the narrative you want to lead with.</div>
+            </div>
+          </div>
+          <div class="consultation-step">
+            <div class="consultation-step-number">02</div>
+            <div class="consultation-step-body">
+              <div class="consultation-step-title">We confirm a time</div>
+              <div class="consultation-step-desc">You will receive a confirmation with the final meeting details.</div>
+            </div>
+          </div>
+          <div class="consultation-step">
+            <div class="consultation-step-number">03</div>
+            <div class="consultation-step-body">
+              <div class="consultation-step-title">We prepare a positioning outline</div>
+              <div class="consultation-step-desc">The conversation begins with a clear framework for your next steps.</div>
+            </div>
+          </div>
+        </div>
+        <div class="consultation-note">All consultations are private and by appointment only.</div>
+      </div>
+      <form class="skr-form consultation-form reveal" data-pathway="seller">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="seller-name">Full Name</label>
+            <input class="form-input" type="text" id="seller-name" name="name" placeholder="Your full name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="seller-email">Email</label>
+            <input class="form-input" type="email" id="seller-email" name="email" placeholder="your@email.com" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="seller-phone">Phone (optional)</label>
+            <input class="form-input" type="tel" id="seller-phone" name="phone" placeholder="(555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="seller-meeting">Meeting Type</label>
+            <select class="form-input" id="seller-meeting" name="meeting_type" required>
+              <option value="" disabled selected>Choose a format</option>
+              <option value="video">Video</option>
+              <option value="phone">Phone</option>
+              <option value="in_person">In person</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="seller-date">Preferred Date</label>
+            <input class="form-input" type="date" id="seller-date" name="preferred_date" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="seller-time">Preferred Time</label>
+            <input class="form-input" type="time" id="seller-time" name="preferred_time" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="seller-timezone">Timezone</label>
+          <input class="form-input" type="text" id="seller-timezone" name="timezone" placeholder="Auto-detected">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="seller-message">Tell us about your property</label>
+          <textarea class="form-textarea" id="seller-message" name="message" placeholder="Location, timeline, and anything we should know."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Request Consultation</button>
+        <div class="form-feedback"></div>
+      </form>
     </div>
   </section>
 

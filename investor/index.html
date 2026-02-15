@@ -88,13 +88,89 @@
     </div>
   </section>
 
-  <!-- PARTNERSHIP INQUIRY -->
-  <section class="cta" id="inquiry">
-    <div class="cta-line"></div>
-    <div class="reveal">
-      <h2>This isn't an open door.<br>It's <em>a curated one.</em></h2>
-      <p>For qualified investors exploring development-level opportunities. We review fit, capital profile, and alignment with the framework before any conversation. If that describes you, the next step is below.</p>
-      <a href="../#connect" class="btn-primary">Submit Inquiry</a>
+  <!-- CONSULTATION SCHEDULER -->
+  <section class="consultation-scheduler" id="inquiry">
+    <div class="consultation-header reveal">
+      <div class="consultation-tag">Consultation</div>
+      <h2>Schedule a private <em>conversation.</em></h2>
+      <p>We review capital profile, timeline, and alignment with the framework. Every request is confirmed within 48 hours.</p>
+    </div>
+    <div class="consultation-grid">
+      <div class="consultation-card reveal">
+        <div class="consultation-card-tag">What happens next</div>
+        <h3>Alignment before access.</h3>
+        <div class="consultation-steps">
+          <div class="consultation-step">
+            <div class="consultation-step-number">01</div>
+            <div class="consultation-step-body">
+              <div class="consultation-step-title">We review your objectives</div>
+              <div class="consultation-step-desc">Capital profile, horizon, and the outcomes you are targeting.</div>
+            </div>
+          </div>
+          <div class="consultation-step">
+            <div class="consultation-step-number">02</div>
+            <div class="consultation-step-body">
+              <div class="consultation-step-title">We confirm a time</div>
+              <div class="consultation-step-desc">You will receive a confirmation with the final meeting details.</div>
+            </div>
+          </div>
+          <div class="consultation-step">
+            <div class="consultation-step-number">03</div>
+            <div class="consultation-step-body">
+              <div class="consultation-step-title">We prepare a fit assessment</div>
+              <div class="consultation-step-desc">The conversation begins with a clear view of mutual alignment.</div>
+            </div>
+          </div>
+        </div>
+        <div class="consultation-note">All consultations are private and by appointment only.</div>
+      </div>
+      <form class="skr-form consultation-form reveal" data-pathway="investor">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="investor-name">Full Name</label>
+            <input class="form-input" type="text" id="investor-name" name="name" placeholder="Your full name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="investor-email">Email</label>
+            <input class="form-input" type="email" id="investor-email" name="email" placeholder="your@email.com" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="investor-phone">Phone (optional)</label>
+            <input class="form-input" type="tel" id="investor-phone" name="phone" placeholder="(555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="investor-meeting">Meeting Type</label>
+            <select class="form-input" id="investor-meeting" name="meeting_type" required>
+              <option value="" disabled selected>Choose a format</option>
+              <option value="video">Video</option>
+              <option value="phone">Phone</option>
+              <option value="in_person">In person</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="investor-date">Preferred Date</label>
+            <input class="form-input" type="date" id="investor-date" name="preferred_date" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="investor-time">Preferred Time</label>
+            <input class="form-input" type="time" id="investor-time" name="preferred_time" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="investor-timezone">Timezone</label>
+          <input class="form-input" type="text" id="investor-timezone" name="timezone" placeholder="Auto-detected">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="investor-message">Tell us about your objectives</label>
+          <textarea class="form-textarea" id="investor-message" name="message" placeholder="Capital profile, timing, and asset class interests."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Request Consultation</button>
+        <div class="form-feedback"></div>
+      </form>
     </div>
   </section>
 

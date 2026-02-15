@@ -7,10 +7,49 @@
 (function() {
   var API_ENDPOINT = '/api/submit';
 
+  function getField(form, name) {
+    return form.querySelector('[name="' + name + '"]');
+  }
+
+  function getValue(form, name) {
+    var field = getField(form, name);
+    if (!field) return '';
+    return field.value ? field.value.trim() : '';
+  }
+
+  function buildScheduleSummary(form) {
+    var meetingType = getValue(form, 'meeting_type');
+    var date = getValue(form, 'preferred_date');
+    var time = getValue(form, 'preferred_time');
+    var timezone = getValue(form, 'timezone');
+    var parts = [];
+
+    if (meetingType) parts.push('Meeting type: ' + meetingType);
+    if (date) parts.push('Preferred date: ' + date);
+    if (time) parts.push('Preferred time: ' + time);
+    if (timezone) parts.push('Timezone: ' + timezone);
+
+    if (!parts.length) return '';
+    return 'Consultation preferences:\n' + parts.join('\n');
+  }
+
+  function setTimezone(form) {
+    var field = getField(form, 'timezone');
+    if (!field || field.value) return;
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz) field.value = tz;
+    } catch (e) {
+      // Silent fail; timezone remains optional.
+    }
+  }
+
   var forms = document.querySelectorAll('.skr-form');
   if (!forms.length) return;
 
   forms.forEach(function(form) {
+    setTimezone(form);
+
     form.addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -24,12 +63,21 @@
       if (feedback) feedback.textContent = '';
 
       // Collect data
+      var messageField = getField(form, 'message');
+      var messageText = messageField ? messageField.value : '';
+      var scheduleSummary = buildScheduleSummary(form);
+      var composedMessage = messageText;
+
+      if (scheduleSummary) {
+        composedMessage = (messageText ? messageText + '\n\n' : '') + scheduleSummary;
+      }
+
       var data = {
-        name: form.querySelector('[name="name"]').value,
-        email: form.querySelector('[name="email"]').value,
-        phone: form.querySelector('[name="phone"]') ? form.querySelector('[name="phone"]').value : null,
+        name: getField(form, 'name').value,
+        email: getField(form, 'email').value,
+        phone: getField(form, 'phone') ? getField(form, 'phone').value : null,
         pathway: form.getAttribute('data-pathway') || 'general',
-        message: form.querySelector('[name="message"]') ? form.querySelector('[name="message"]').value : null,
+        message: composedMessage ? composedMessage : null,
         source: window.location.pathname,
         timestamp: new Date().toISOString()
       };
