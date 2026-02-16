@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Set New Password</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .pw-requirements {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .pw-req {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      line-height: 2;
+      transition: color 0.3s;
+    }
+    .pw-req.met {
+      color: var(--skr-green-light);
+    }
+    .pw-req::before {
+      content: '○';
+      margin-right: 8px;
+      font-size: 10px;
+    }
+    .pw-req.met::before {
+      content: '●';
+    }
+    .pw-strength {
+      height: 2px;
+      background: rgba(255,255,255,0.04);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .pw-strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s, background 0.4s;
+    }
+    .pw-strength-bar.weak { width: 25%; background: #c0392b; }
+    .pw-strength-bar.fair { width: 50%; background: #d4a017; }
+    .pw-strength-bar.good { width: 75%; background: var(--skr-green); }
+    .pw-strength-bar.strong { width: 100%; background: var(--skr-green-light); }
+  </style>
+</head>
+<body class="admin-dark">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="../../">
+      <span class="nav-logo-text">Silver <em>Key</em> Realty</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="../">← Back to Sign In</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <section class="admin-login">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">Silver <span>Key</span> Realty</div>
+        <div class="login-badge">New Password</div>
+      </div>
+
+      <!-- FORM -->
+      <div id="updateForm">
+        <form class="login-form" id="passwordForm">
+          <div class="form-group">
+            <label class="form-label" for="newPassword">New Password</label>
+            <input class="form-input" type="password" id="newPassword" name="new-password" placeholder="••••••••••••" autocomplete="new-password" required>
+            <div class="pw-strength"><div class="pw-strength-bar" id="strengthBar"></div></div>
+            <div class="pw-requirements">
+              <div class="pw-req" id="reqLength">At least 8 characters</div>
+              <div class="pw-req" id="reqUpper">One uppercase letter</div>
+              <div class="pw-req" id="reqLower">One lowercase letter</div>
+              <div class="pw-req" id="reqNumber">One number</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmPassword">Confirm Password</label>
+            <input class="form-input" type="password" id="confirmPassword" name="confirm-password" placeholder="••••••••••••" autocomplete="new-password" required>
+          </div>
+          <button type="submit" class="login-submit" id="updateSubmit" disabled>
+            <span class="login-text">Update Password</span>
+            <span class="login-spinner"></span>
+          </button>
+        </form>
+        <div class="login-feedback" id="updateFeedback"></div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div id="updateSuccess" style="display:none;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;opacity:.6;">✅</div>
+        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">
+          Password updated.
+        </p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">
+          You can now sign in with your new password.
+        </p>
+        <a href="../" style="display:inline-block;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:14px 32px;text-decoration:none;transition:all .4s;">Sign In</a>
+      </div>
+
+      <!-- EXPIRED / INVALID -->
+      <div id="updateExpired" style="display:none;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;opacity:.4;">⏳</div>
+        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">
+          This link has expired.
+        </p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">
+          Password reset links are valid for 1 hour. Please request a new one.
+        </p>
+        <a href="../reset/" style="display:inline-block;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:14px 32px;text-decoration:none;transition:all .4s;">Request New Link</a>
+      </div>
+
+      <div class="login-footer">
+        <a href="../">← Back to Sign In</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Config: auto-generated at build time from Vercel env vars -->
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+  (function () {
+    var url = window.SKR_CONFIG.SUPABASE_URL;
+    var key = window.SKR_CONFIG.SUPABASE_ANON_KEY;
+    if (!url || !key || url.indexOf('%%') > -1) return;
+    var sb = window.supabase.createClient(url, key);
+
+    var formDiv = document.getElementById('updateForm');
+    var successDiv = document.getElementById('updateSuccess');
+    var expiredDiv = document.getElementById('updateExpired');
+    var form = document.getElementById('passwordForm');
+    var pw = document.getElementById('newPassword');
+    var confirm = document.getElementById('confirmPassword');
+    var submitBtn = document.getElementById('updateSubmit');
+    var feedback = document.getElementById('updateFeedback');
+    var strengthBar = document.getElementById('strengthBar');
+
+    // Requirement elements
+    var reqLength = document.getElementById('reqLength');
+    var reqUpper = document.getElementById('reqUpper');
+    var reqLower = document.getElementById('reqLower');
+    var reqNumber = document.getElementById('reqNumber');
+
+    // Check if we have a valid session from the reset link
+    (async function () {
+      var { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        // No session — link may be expired or invalid
+        formDiv.style.display = 'none';
+        expiredDiv.style.display = 'block';
+      }
+    })();
+
+    // Password validation
+    function validate() {
+      var val = pw.value;
+      var score = 0;
+
+      var hasLength = val.length >= 8;
+      var hasUpper = /[A-Z]/.test(val);
+      var hasLower = /[a-z]/.test(val);
+      var hasNumber = /[0-9]/.test(val);
+
+      reqLength.className = 'pw-req' + (hasLength ? ' met' : '');
+      reqUpper.className = 'pw-req' + (hasUpper ? ' met' : '');
+      reqLower.className = 'pw-req' + (hasLower ? ' met' : '');
+      reqNumber.className = 'pw-req' + (hasNumber ? ' met' : '');
+
+      if (hasLength) score++;
+      if (hasUpper) score++;
+      if (hasLower) score++;
+      if (hasNumber) score++;
+
+      var levels = ['', 'weak', 'fair', 'good', 'strong'];
+      strengthBar.className = 'pw-strength-bar ' + (levels[score] || '');
+
+      var matching = val.length > 0 && val === confirm.value;
+      var allMet = hasLength && hasUpper && hasLower && hasNumber && matching;
+
+      submitBtn.disabled = !allMet;
+      return allMet;
+    }
+
+    pw.addEventListener('input', validate);
+    confirm.addEventListener('input', validate);
+
+    // Submit
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!validate()) return;
+
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+      feedback.textContent = '';
+      feedback.className = 'login-feedback';
+
+      try {
+        var { error } = await sb.auth.updateUser({
+          password: pw.value,
+        });
+
+        if (error) {
+          feedback.textContent = error.message || 'Could not update password. Please try again.';
+          feedback.className = 'login-feedback error';
+          submitBtn.classList.remove('loading');
+          submitBtn.disabled = false;
+          return;
+        }
+
+        // Sign out so they log in fresh with new password
+        await sb.auth.signOut();
+
+        formDiv.style.display = 'none';
+        successDiv.style.display = 'block';
+
+      } catch (err) {
+        feedback.textContent = 'Something went wrong. Please try again.';
+        feedback.className = 'login-feedback error';
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

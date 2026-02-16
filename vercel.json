@@ -1,6 +1,6 @@
 {
   "name": "silver-key-realty",
-  "buildCommand": "",
+  "buildCommand": "node scripts/inject-admin-config.js",
   "outputDirectory": ".",
   "framework": null,
   "cleanUrls": true,

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Command Center</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .dash{display:none;padding:80px 40px 60px;max-width:1500px;margin:0 auto}
+
+    .dash-hero{padding:32px 0 40px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .dash-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,44px);font-weight:300;color:var(--cream);line-height:1.15}
+    .dash-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+    .dash-hero-right{text-align:right}
+    .dash-date{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .dash-status{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--skr-green-light);margin-top:4px}
+    .dash-status::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--skr-green-light);margin-right:8px;animation:pulse 2s ease-in-out infinite}
+
+    .nav-right-dash{display:flex;align-items:center;gap:20px}
+    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
+    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+    .stat{padding:24px 20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .5s cubic-bezier(.22,1,.36,1)}
+    .stat:hover{border-color:rgba(46,125,82,.12);background:rgba(46,125,82,.03)}
+    .stat-val{font-family:var(--serif);font-size:32px;font-weight:300;color:var(--cream);margin-bottom:2px}
+    .stat-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver)}
+
+    .sec-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--skr-green-light);opacity:.6;margin-bottom:16px;padding-top:16px}
+
+    .cols{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:32px}
+
+    .feed,.activity-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);max-height:520px;overflow-y:auto}
+    .feed-header,.activity-header-bar{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(26,26,26,.98);z-index:2}
+    .feed-title,.activity-title-text{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream)}
+    .feed-count{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:rgba(255,255,255,.04);padding:4px 10px}
+
+    .feed-item{padding:18px 24px;border-bottom:1px solid rgba(255,255,255,.02);display:flex;justify-content:space-between;align-items:center;transition:background .3s;cursor:pointer}
+    .feed-item:hover{background:rgba(46,125,82,.03)}
+    .feed-item:last-child{border-bottom:none}
+    .fi-left{flex:1}.fi-right{text-align:right}
+    .fi-name{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--cream);margin-bottom:2px}
+    .fi-detail{font-family:var(--sans);font-weight:200;font-size:12px;color:#8A8178}
+    .fi-pathway{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;margin-bottom:4px;display:inline-block}
+    .fi-pathway.buyer{background:rgba(46,125,82,.12);color:var(--skr-green-light)}
+    .fi-pathway.seller{background:rgba(201,185,154,.12);color:var(--champagne)}
+    .fi-pathway.investor{background:rgba(240,235,227,.08);color:var(--silver)}
+    .fi-pathway.rental{background:rgba(212,160,23,.1);color:#d4a017}
+    .fi-pathway.general{background:rgba(255,255,255,.04);color:var(--silver)}
+    .fi-time{font-family:var(--sans);font-size:11px;font-weight:200;color:#8A8178}
+
+    .act-item{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.02)}
+    .act-item:last-child{border-bottom:none}
+    .act-icon{font-size:14px;margin-right:8px}
+    .act-text{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.6}
+    .act-text strong{font-weight:400;color:var(--cream)}
+    .act-time{font-family:var(--sans);font-size:11px;font-weight:200;color:#8A8178;margin-top:4px}
+
+    .empty{padding:48px 24px;text-align:center}
+    .empty-icon{font-size:32px;margin-bottom:12px;opacity:.4}
+    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
+
+    .mgmt{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+    .mgmt-card{padding:32px 28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .5s cubic-bezier(.22,1,.36,1);cursor:pointer;position:relative}
+    .mgmt-card::after{content:'';position:absolute;bottom:0;left:15%;width:70%;height:1px;background:var(--skr-green);filter:blur(4px);opacity:0;transition:opacity .5s}
+    .mgmt-card:hover{background:rgba(46,125,82,.04);border-color:rgba(46,125,82,.12);transform:translateY(-2px)}.mgmt-card:hover::after{opacity:.5}
+    .mgmt-icon{font-size:24px;margin-bottom:14px}
+    .mgmt-card h3{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:6px}
+    .mgmt-card p{font-family:var(--sans);font-weight:300;font-size:12px;line-height:1.7;color:var(--silver)}
+    .mgmt-arrow{font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:#8A8178;margin-top:16px;transition:all .4s;display:flex;align-items:center;gap:6px}
+    .mgmt-card:hover .mgmt-arrow{color:var(--cream)}.mgmt-card:hover .mgmt-arrow .arrow{transform:translateX(4px);color:var(--skr-green-light)}
+    .arrow{transition:transform .4s}
+
+    .team-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .team-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
+    .team-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream)}
+    .team-add{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:8px 18px;border:none;cursor:pointer;transition:all .4s}
+    .team-add:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+    .team-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.02);align-items:center;transition:background .3s}
+    .team-row:hover{background:rgba(46,125,82,.02)}
+    .team-row:last-child{border-bottom:none}
+    .team-row.header{border-bottom:1px solid rgba(255,255,255,.04)}
+    .team-row.header span{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#8A8178}
+    .t-name{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--cream)}
+    .t-email{font-family:var(--sans);font-weight:200;font-size:12px;color:#8A8178;margin-top:1px}
+    .t-role{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px;display:inline-block}
+    .t-role.admin{background:rgba(46,125,82,.15);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
+    .t-role.broker{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
+    .t-role.agent{background:rgba(240,235,227,.08);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
+    .t-role.assistant{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
+    .t-status{font-family:var(--sans);font-size:11px;font-weight:300}
+    .t-status.active{color:var(--skr-green-light)}.t-status.active::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--skr-green-light);margin-right:6px}
+    .t-status.inactive{color:#8A8178}.t-status.inactive::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#8A8178;margin-right:6px}
+    .t-leads{font-family:var(--sans);font-size:13px;color:var(--silver)}
+    .t-action{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:#8A8178;cursor:pointer;transition:color .3s;padding:6px 12px;border:1px solid rgba(255,255,255,.04);background:none}
+    .t-action:hover{color:var(--cream);border-color:rgba(255,255,255,.1)}
+
+    .dash-footer{padding:32px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.04);position:relative}
+    .dash-footer::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:120px;height:1px;background:var(--skr-green-line)}
+    .ft-logo{font-family:var(--serif);font-size:16px;font-weight:300;color:var(--cream);opacity:.3}.ft-logo em{color:var(--champagne)}
+    .ft-copy{font-family:var(--sans);font-size:10px;font-weight:200;color:rgba(255,255,255,.2)}
+
+    @media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.mgmt{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){
+      .dash{padding:72px 20px 40px}.stats{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.mgmt{grid-template-columns:1fr}
+      .team-row{grid-template-columns:1fr 1fr;gap:8px;padding:14px 20px}.team-row.header{display:none}
+      .dash-hero{flex-direction:column;align-items:flex-start;gap:16px}
+      .dash-footer{flex-direction:column;gap:8px;padding:24px 20px}
+      .nav-right-dash{display:none}
+    }
+    @media(max-width:480px){.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body class="admin-dark">
+
+  <nav id="nav">
+    <a class="nav-logo" href="../../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
+    <div class="nav-links nav-right-dash" id="navLinks">
+      <span class="role-badge admin" id="navBadge"></span>
+      <span class="nav-user-name" id="navUser"></span>
+      <button class="nav-signout-btn" id="signOut">Sign Out</button>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="dash-loading" id="dashLoading"><div class="dash-spinner"></div></div>
+
+  <div class="dash" id="dashContainer">
+    <div class="dash-hero">
+      <div><h1>Command <em>Center.</em></h1><p>Silver Key Realty — Administration Dashboard</p></div>
+      <div class="dash-hero-right"><div class="dash-date" id="dashDate"></div><div class="dash-status">All Systems Operational</div></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="sLeads">—</div><div class="stat-label">New Leads</div></div>
+      <div class="stat"><div class="stat-val" id="sConsult">—</div><div class="stat-label">Scheduled</div></div>
+      <div class="stat"><div class="stat-val" id="sDeals">—</div><div class="stat-label">Active Deals</div></div>
+      <div class="stat"><div class="stat-val" id="sProps">—</div><div class="stat-label">Listings</div></div>
+      <div class="stat"><div class="stat-val" id="sTeam">—</div><div class="stat-label">Team</div></div>
+    </div>
+
+    <div class="sec-label">Live Pipeline</div>
+    <div class="cols">
+      <div class="feed">
+        <div class="feed-header"><span class="feed-title">Incoming Leads</span><span class="feed-count" id="feedCount">0 New</span></div>
+        <div id="feedList"><div class="empty"><div class="empty-icon">📥</div><div class="empty-msg">No leads yet.<br>They'll appear here in real time as inquiries come in.</div></div></div>
+      </div>
+      <div class="activity-box">
+        <div class="activity-header-bar"><span class="activity-title-text">Activity</span></div>
+        <div id="activityList"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No activity yet.<br>Actions will be logged here automatically.</div></div></div>
+      </div>
+    </div>
+
+    <div class="sec-label">Management</div>
+    <div class="mgmt">
+      <div class="mgmt-card"><div class="mgmt-icon">📥</div><h3>Lead Pipeline</h3><p>View, assign, and manage all incoming inquiries. Filter by pathway, status, score, and agent.</p><div class="mgmt-arrow">Open Pipeline <span class="arrow">→</span></div></div>
+      <div class="mgmt-card"><div class="mgmt-icon">📅</div><h3>Consultations</h3><p>Scheduled meetings, video links, follow-ups. Calendar view with pathway color coding.</p><div class="mgmt-arrow">View Schedule <span class="arrow">→</span></div></div>
+      <div class="mgmt-card"><div class="mgmt-icon">🏠</div><h3>Properties</h3><p>Active listings, three-pillar assessments, staging coordination, and buyer matching status.</p><div class="mgmt-arrow">Manage Listings <span class="arrow">→</span></div></div>
+      <div class="mgmt-card"><div class="mgmt-icon">💰</div><h3>Deals</h3><p>Active transactions from offer to close. Contract status, escrow tracking, milestone alerts.</p><div class="mgmt-arrow">Track Deals <span class="arrow">→</span></div></div>
+      <div class="mgmt-card"><div class="mgmt-icon">📋</div><h3>Documents</h3><p>Encrypted vault. Contracts, disclosures, inspection reports. Version-controlled and audit-logged.</p><div class="mgmt-arrow">Open Vault <span class="arrow">→</span></div></div>
+      <div class="mgmt-card"><div class="mgmt-icon">🔒</div><h3>Audit Log</h3><p>Immutable forensic trail. Every action timestamped, IP-hashed, and tamper-proof. Exportable.</p><div class="mgmt-arrow">View Log <span class="arrow">→</span></div></div>
+    </div>
+
+    <div class="sec-label">Team Management</div>
+    <div class="team-section">
+      <div class="team-header"><span class="team-title">Employees</span><button class="team-add" id="addEmployee">+ Add Employee</button></div>
+      <div class="team-row header"><span>Name</span><span>Role</span><span>Status</span><span>Assigned Leads</span><span></span></div>
+      <div id="teamList"><div class="empty"><div class="empty-icon">👤</div><div class="empty-msg">No team members yet.<br>Click "+ Add Employee" to get started.</div></div></div>
+    </div>
+  </div>
+
+  <footer class="dash-footer">
+    <div class="ft-logo">Silver <em>Key</em> Realty</div>
+    <div class="ft-copy">© 2026 Silver Key Realty LLC — Command Center v1.0</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Config: auto-generated at build time from Vercel env vars -->
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script>
+  (async function () {
+    var loading = document.getElementById('dashLoading');
+    var container = document.getElementById('dashContainer');
+    document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
+    var member = await window.SKR_AUTH.getCurrentMember();
+    if (!member) { window.location.href = '/admin/'; return; }
+
+    document.getElementById('navBadge').textContent = member.role.toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + member.role;
+    document.getElementById('navUser').textContent = member.display_name;
+
+    loading.style.display = 'none';
+    container.style.display = 'block';
+
+    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
+
+    var sb = window.SKR_AUTH.supabase;
+
+    function timeAgo(dateStr) {
+      var diff = Date.now() - new Date(dateStr).getTime();
+      var min = Math.floor(diff / 60000);
+      if (min < 1) return 'Just now';
+      if (min < 60) return min + ' min ago';
+      var hrs = Math.floor(min / 60);
+      if (hrs < 24) return hrs + ' hr' + (hrs > 1 ? 's' : '') + ' ago';
+      var days = Math.floor(hrs / 24);
+      return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+    }
+
+    // Stats
+    try {
+      var r;
+      r = await sb.from('skr_leads').select('*',{count:'exact',head:true}).eq('status','new');
+      document.getElementById('sLeads').textContent = r.count || '0';
+      r = await sb.from('skr_consultations').select('*',{count:'exact',head:true}).in('status',['scheduled','confirmed']);
+      document.getElementById('sConsult').textContent = r.count || '0';
+      r = await sb.from('skr_deals').select('*',{count:'exact',head:true}).in('status',['active','under_contract','pending']);
+      document.getElementById('sDeals').textContent = r.count || '0';
+      r = await sb.from('skr_properties').select('*',{count:'exact',head:true}).eq('status','active');
+      document.getElementById('sProps').textContent = r.count || '0';
+      r = await sb.from('skr_team_members').select('*',{count:'exact',head:true}).eq('is_active',true);
+      document.getElementById('sTeam').textContent = r.count || '0';
+    } catch(e){ console.warn('[SKR] Stats:',e); }
+
+    // Leads
+    try {
+      var { data: leads } = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').eq('archived',false).order('created_at',{ascending:false}).limit(20);
+      if (leads && leads.length > 0) {
+        document.getElementById('feedCount').textContent = leads.length + ' Lead' + (leads.length !== 1 ? 's' : '');
+        var h = '';
+        leads.forEach(function(l){
+          var pw = l.pathway || 'general';
+          h += '<div class="feed-item"><div class="fi-left"><div class="fi-name">Lead #' + l.id.substring(0,8) + '</div><div class="fi-detail">' + pw.charAt(0).toUpperCase()+pw.slice(1) + ' inquiry — Score: ' + (l.lead_score||0) + '</div></div><div class="fi-right"><span class="fi-pathway ' + pw + '">' + pw.toUpperCase() + '</span><div class="fi-time">' + timeAgo(l.created_at) + '</div></div></div>';
+        });
+        document.getElementById('feedList').innerHTML = h;
+      }
+    } catch(e){ console.warn('[SKR] Leads:',e); }
+
+    // Activity
+    try {
+      var { data: acts } = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
+      if (acts && acts.length > 0) {
+        var icons = {data_modify:'📝',data_access:'👁',auth:'🔑',security:'🔒',export:'📋',notification:'⚡'};
+        var h = '';
+        acts.forEach(function(a){
+          var ic = icons[a.event_type]||'📋';
+          h += '<div class="act-item"><div class="act-text"><span class="act-icon">'+ic+'</span> <strong>'+a.entity_type.replace(/_/g,' ')+'</strong> — '+a.action.replace(/_/g,' ')+'</div><div class="act-time">'+timeAgo(a.created_at)+'</div></div>';
+        });
+        document.getElementById('activityList').innerHTML = h;
+      }
+    } catch(e){ console.warn('[SKR] Activity:',e); }
+
+    // Team
+    try {
+      var { data: team } = await sb.from('skr_team_members').select('id, display_name, email, role, is_active').order('role',{ascending:true});
+      if (team && team.length > 0) {
+        var h = '';
+        team.forEach(function(m){
+          var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
+          h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+m.role+'">'+m.role+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
+        });
+        document.getElementById('teamList').innerHTML = h;
+      }
+    } catch(e){ console.warn('[SKR] Team:',e); }
+
+    document.getElementById('addEmployee').addEventListener('click', function(){ alert('Add Employee — next build.'); });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/nav.css">
+  <link rel="stylesheet" href="../assets/css/responsive.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-dark">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="../">
+      <img src="../assets/images/logo-transparent.png" alt="Silver Key Realty">
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="../">← Back to Site</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- LOGIN -->
+  <section class="admin-login">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">Silver <span>Key</span> Realty</div>
+        <div class="login-badge">Employee Portal</div>
+      </div>
+
+      <form class="login-form" id="loginForm" autocomplete="on">
+        <div class="form-group">
+          <label class="form-label" for="authEmail">Email</label>
+          <input class="form-input" type="email" id="authEmail" name="email" placeholder="agent@silverkey.com" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="authPassword">Password</label>
+          <input class="form-input" type="password" id="authPassword" name="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="login-submit" id="loginSubmit">
+          <span class="login-text">Sign In</span>
+          <span class="login-spinner"></span>
+        </button>
+      </form>
+
+      <div class="login-divider"><span>or</span></div>
+
+      <button class="login-magic" id="magicLinkBtn">
+        Send Magic Link
+      </button>
+
+      <div class="login-feedback" id="loginFeedback"></div>
+
+      <div class="login-footer">
+        <a href="reset/" style="display:block;margin-bottom:12px;">Forgot your password?</a>
+        <a href="../">← Return to Silver Key Realty</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supabase JS (client library) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- Config — Cursor/Vercel will inject real values -->
+  <!-- Config: auto-generated at build time from Vercel env vars -->
+  <script src="../assets/js/admin-config.js"></script>
+
+  <script src="../assets/js/nav.js"></script>
+  <script src="../assets/js/admin-auth.js"></script>
+</body>
+</html>

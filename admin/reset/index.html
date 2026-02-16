@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Reset Password</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-dark">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="../../">
+      <span class="nav-logo-text">Silver <em>Key</em> Realty</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="../">← Back to Sign In</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- RESET REQUEST -->
+  <section class="admin-login">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">Silver <span>Key</span> Realty</div>
+        <div class="login-badge">Password Reset</div>
+      </div>
+
+      <!-- STEP 1: Enter email -->
+      <div id="resetRequest">
+        <p style="font-family:var(--sans);font-weight:300;font-size:14px;color:var(--silver);line-height:1.7;text-align:center;margin-bottom:28px;">
+          Enter your email address and we'll send you a link to reset your password.
+        </p>
+        <form class="login-form" id="resetForm">
+          <div class="form-group">
+            <label class="form-label" for="resetEmail">Email</label>
+            <input class="form-input" type="email" id="resetEmail" name="email" placeholder="you@company.com" autocomplete="email" required>
+          </div>
+          <button type="submit" class="login-submit" id="resetSubmit">
+            <span class="login-text">Send Reset Link</span>
+            <span class="login-spinner"></span>
+          </button>
+        </form>
+        <div class="login-feedback" id="resetFeedback"></div>
+      </div>
+
+      <!-- STEP 2: Confirmation (hidden until sent) -->
+      <div id="resetSent" style="display:none;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;opacity:.6;">✉️</div>
+        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">
+          Check your inbox.
+        </p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">
+          If an account exists for that email, we've sent a password reset link. It expires in 1 hour.
+        </p>
+        <p style="font-family:var(--sans);font-weight:200;font-size:12px;color:rgba(255,255,255,.25);line-height:1.7;">
+          Didn't get it? Check spam, or <a href="#" id="resendLink" style="color:var(--skr-green-light);text-decoration:none;">send again</a>.
+        </p>
+      </div>
+
+      <div class="login-footer">
+        <a href="../">← Back to Sign In</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Config: auto-generated at build time from Vercel env vars -->
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+  (function () {
+    var url = window.SKR_CONFIG.SUPABASE_URL;
+    var key = window.SKR_CONFIG.SUPABASE_ANON_KEY;
+    if (!url || !key || url.indexOf('%%') > -1) return;
+    var sb = window.supabase.createClient(url, key);
+
+    var form = document.getElementById('resetForm');
+    var emailInput = document.getElementById('resetEmail');
+    var submitBtn = document.getElementById('resetSubmit');
+    var feedback = document.getElementById('resetFeedback');
+    var requestDiv = document.getElementById('resetRequest');
+    var sentDiv = document.getElementById('resetSent');
+    var resendLink = document.getElementById('resendLink');
+
+    var lastEmail = '';
+
+    async function sendReset(email) {
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+      feedback.textContent = '';
+      feedback.className = 'login-feedback';
+
+      try {
+        var { error } = await sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/admin/update-password/',
+        });
+
+        if (error) {
+          feedback.textContent = 'Something went wrong. Please try again.';
+          feedback.className = 'login-feedback error';
+          submitBtn.classList.remove('loading');
+          submitBtn.disabled = false;
+          return;
+        }
+
+        // Always show success (don't reveal if email exists or not)
+        lastEmail = email;
+        requestDiv.style.display = 'none';
+        sentDiv.style.display = 'block';
+
+      } catch (e) {
+        feedback.textContent = 'Something went wrong. Please try again.';
+        feedback.className = 'login-feedback error';
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = emailInput.value.trim();
+      if (!email) {
+        feedback.textContent = 'Please enter your email address.';
+        feedback.className = 'login-feedback error';
+        return;
+      }
+      sendReset(email);
+    });
+
+    resendLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (lastEmail) {
+        sentDiv.style.display = 'none';
+        requestDiv.style.display = 'block';
+        emailInput.value = lastEmail;
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

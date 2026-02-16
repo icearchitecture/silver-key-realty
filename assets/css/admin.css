@@ -1,0 +1,340 @@
+/* ============================================================
+   SILVER KEY REALTY — ADMIN AUTH
+   Login, session, and dashboard styles.
+   Requires: tokens.css (loaded first)
+   ============================================================ */
+
+/* ── BODY ── */
+body.admin-dark {
+  background: var(--charcoal);
+  color: var(--light-warm);
+  min-height: 100vh;
+}
+
+body.admin-dark::before {
+  background:
+    radial-gradient(ellipse at 0% 50%, var(--skr-green-ghost), transparent 40%),
+    radial-gradient(ellipse at 100% 50%, var(--skr-green-ghost), transparent 40%);
+}
+
+/* ── NAV OVERRIDES ── */
+body.admin-dark #nav {
+  background: rgba(26, 26, 26, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+body.admin-dark .nav-logo-text {
+  color: var(--light-warm);
+}
+
+body.admin-dark .nav-links a {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+body.admin-dark .nav-links a:hover {
+  color: var(--light-warm);
+}
+
+body.admin-dark .nav-cta {
+  background: var(--light-warm) !important;
+  color: var(--charcoal) !important;
+}
+
+body.admin-dark .nav-toggle span {
+  background: var(--light-warm);
+}
+
+body.admin-dark .hero-bg {
+  background: transparent;
+}
+
+/* ── LOGIN LAYOUT ── */
+.admin-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 40px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 56px 48px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  position: relative;
+}
+
+.login-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: var(--skr-green);
+  filter: blur(4px);
+  opacity: 0.3;
+}
+
+/* ── LOGIN HEADER ── */
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-logo {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--light-warm);
+  margin-bottom: 8px;
+}
+
+.login-logo span {
+  color: var(--champagne);
+  font-style: italic;
+}
+
+.login-badge {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--skr-green-light);
+  opacity: 0.6;
+}
+
+/* ── FORM FIELDS ── */
+.login-form .form-group {
+  margin-bottom: 20px;
+}
+
+.login-form .form-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+  margin-bottom: 8px;
+}
+
+.login-form .form-input {
+  width: 100%;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--light-warm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 18px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form .form-input:focus {
+  border-color: var(--skr-green-line);
+  box-shadow: 0 0 0 3px var(--skr-green-glow), 0 2px 8px var(--skr-green-shadow);
+}
+
+.login-form .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+  font-weight: 200;
+}
+
+/* ── SUBMIT BUTTON ── */
+.login-submit {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--charcoal);
+  background: var(--light-warm);
+  padding: 16px 36px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  margin-top: 8px;
+  position: relative;
+}
+
+.login-submit::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: var(--skr-green);
+  opacity: 0;
+  filter: blur(1px);
+  transition: opacity 0.4s;
+}
+
+.login-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 4px 12px var(--skr-green-shadow);
+}
+
+.login-submit:hover::after {
+  opacity: 0.6;
+}
+
+.login-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── DIVIDER ── */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.login-divider span {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── MAGIC LINK BUTTON ── */
+.login-magic {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.login-magic:hover {
+  color: var(--light-warm);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ── FEEDBACK ── */
+.login-feedback {
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 13px;
+  min-height: 20px;
+  text-align: center;
+  margin-top: 16px;
+  transition: all 0.3s;
+}
+
+.login-feedback.success {
+  color: var(--skr-green-light);
+}
+
+.login-feedback.error {
+  color: #c0392b;
+}
+
+/* ── FOOTER LINK ── */
+.login-footer {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.login-footer a {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  transition: color 0.4s;
+}
+
+.login-footer a:hover {
+  color: var(--light-warm);
+}
+
+/* ── LOADING SPINNER ── */
+.login-spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(26, 26, 26, 0.3);
+  border-top-color: var(--charcoal);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin: 0 auto;
+}
+
+.login-submit.loading .login-spinner {
+  display: inline-block;
+}
+
+.login-submit.loading .login-text {
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── ROLE INDICATOR (post-login) ── */
+.role-badge {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 2px;
+}
+
+.role-badge.admin {
+  background: rgba(46, 125, 82, 0.15);
+  color: var(--skr-green-light);
+  border: 1px solid rgba(46, 125, 82, 0.25);
+}
+
+.role-badge.broker {
+  background: rgba(201, 185, 154, 0.12);
+  color: var(--champagne);
+  border: 1px solid rgba(201, 185, 154, 0.2);
+}
+
+.role-badge.agent {
+  background: rgba(240, 235, 227, 0.08);
+  color: var(--silver);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 40px 28px;
+  }
+}

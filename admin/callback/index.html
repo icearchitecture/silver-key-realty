@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Signing In</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .callback-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .callback-card {
+      max-width: 360px;
+      padding: 48px;
+    }
+    .callback-card h2 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--light-warm);
+      margin-bottom: 12px;
+    }
+    .callback-card p {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 14px;
+      color: var(--silver);
+      line-height: 1.8;
+    }
+    .callback-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(46, 125, 82, 0.2);
+      border-top-color: var(--skr-green-light);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="admin-dark">
+
+  <section class="callback-screen">
+    <div class="callback-card">
+      <div class="callback-spinner"></div>
+      <h2>Verifying<em>...</em></h2>
+      <p id="callbackMsg">Confirming your identity.</p>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Config: auto-generated at build time from Vercel env vars -->
+  <script src="../../assets/js/admin-config.js"></script>
+  <script>
+    (async function () {
+      var msg = document.getElementById('callbackMsg');
+      var url = window.SKR_CONFIG.SUPABASE_URL;
+      var key = window.SKR_CONFIG.SUPABASE_ANON_KEY;
+
+      if (!url || !key || url.indexOf('%%') > -1) {
+        msg.textContent = 'Configuration error. Contact your administrator.';
+        return;
+      }
+
+      var sb = window.supabase.createClient(url, key);
+
+      // Supabase will pick up the token from the URL hash automatically
+      var { data, error } = await sb.auth.getSession();
+
+      if (error || !data.session) {
+        msg.textContent = 'Session could not be verified. Please try signing in again.';
+        setTimeout(function () { window.location.href = '/admin/'; }, 2500);
+        return;
+      }
+
+      // Verify team membership
+      var user = data.session.user;
+      var { data: member, error: memberErr } = await sb
+        .from('skr_team_members')
+        .select('id, display_name, role, is_active')
+        .eq('email', user.email)
+        .single();
+
+      if (memberErr || !member || !member.is_active) {
+        await sb.auth.signOut();
+        msg.textContent = 'This account is not authorized for admin access.';
+        setTimeout(function () { window.location.href = '/admin/'; }, 2500);
+        return;
+      }
+
+      // Store and redirect
+      sessionStorage.setItem('skr_member', JSON.stringify(member));
+      msg.textContent = 'Welcome back, ' + member.display_name + '.';
+      setTimeout(function () { window.location.href = '/admin/dashboard/'; }, 800);
+    })();
+  </script>
+</body>
+</html>

@@ -19,3 +19,9 @@ dist/
 
 # Legacy single-file builds (reference only, don't deploy)
 silver-key-realty-v3.html
+
+# Generated at build time (contains Supabase keys from Vercel env vars)
+assets/js/admin-config.js
+
+# Admin seed SQL (local only, never deploy)
+admin/seed-admin.sql
