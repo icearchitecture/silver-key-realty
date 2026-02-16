@@ -45,6 +45,14 @@ body.pathway-dark .nav-toggle span {
 }
 
 /* ── DARK HERO ── */
+body.pathway-dark .hero-bg {
+  background: transparent;
+}
+
+body.pathway-dark .hero-bg .hero-logo-watermark {
+  display: none;
+}
+
 body.pathway-dark .hero-pathway {
   min-height: auto;
   padding: 180px 60px 80px;

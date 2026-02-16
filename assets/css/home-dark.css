@@ -43,11 +43,33 @@ body.home-dark .nav-cta {
   color: var(--charcoal) !important;
 }
 
+body.home-dark .nav-admin {
+  color: rgba(255, 255, 255, 0.25) !important;
+  font-size: 10px !important;
+  letter-spacing: 2px !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  padding: 8px 18px !important;
+  transition: all 0.4s !important;
+}
+
+body.home-dark .nav-admin:hover {
+  color: var(--light-warm) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
 body.home-dark .nav-toggle span {
   background: var(--light-warm);
 }
 
-/* ── HERO (CENTERED) ── */
+/* ── DARK HERO ── */
+body.home-dark .hero-bg {
+  background: transparent;
+}
+
+body.home-dark .hero-bg .hero-logo-watermark {
+  display: none;
+}
+
 body.home-dark .hero {
   min-height: 92vh;
   display: flex;
@@ -60,6 +82,11 @@ body.home-dark .hero h1 {
   color: var(--cream);
   font-size: clamp(28px, 4.8vw, 68px);
   white-space: nowrap;
+}
+
+body.home-dark .hero-content {
+  max-width: none;
+  padding-top: 0;
 }
 
 body.home-dark .hero .hero-sub {
@@ -90,6 +117,11 @@ body.home-dark .btn-ghost:hover {
 /* ── PATHWAY CARDS ── */
 .home-pathways {
   padding: 0 60px 100px;
+}
+
+.home-pathways .pathways-header {
+  text-align: center;
+  margin-bottom: 60px;
 }
 
 .home-pathways .pathways-header h2 {
