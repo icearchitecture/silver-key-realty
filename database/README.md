@@ -48,6 +48,17 @@ Run `test-schema.sql` for a full audit:
 --   - Data quality issues
 ```
 
+## Employee Portal (Admin) Schema
+
+The Employee Portal uses a newer `skr_*` table set (for example: `skr_team_members`, `skr_leads`, `skr_consultations`).
+
+- **Canonical schema file**: `admin/skr_complete_schema.sql`
+- **Run it in Supabase SQL Editor** if you are setting up (or migrating to) the Employee Portal database model.
+
+Notes:
+- `admin/seed-admin.sql` is **local-only** bootstrapping helper and should **not** be deployed.
+- If your database only has the legacy tables (`team_members`, `leads`, `consultations`, etc.), the portal authorization check will not pass until you create/populate `skr_team_members`.
+
 ## What to Look For
 
 ### ✓ Healthy Database
