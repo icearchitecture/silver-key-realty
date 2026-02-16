@@ -1,0 +1,206 @@
+/* ============================================================
+   SILVER KEY REALTY — PATHWAY DARK THEME
+   Dark variant for buyer/seller/investor/renter experience pages.
+   Requires: tokens.css (loaded first)
+   ============================================================ */
+
+/* ── DARK BODY ── */
+body.pathway-dark {
+  background: var(--charcoal);
+  color: var(--light-warm);
+}
+
+/* Override base ambient lighting for dark bg */
+body.pathway-dark::before {
+  background:
+    radial-gradient(ellipse at 0% 50%, var(--skr-green-ghost), transparent 40%),
+    radial-gradient(ellipse at 100% 50%, var(--skr-green-ghost), transparent 40%);
+}
+
+/* ── DARK NAV ── */
+body.pathway-dark #nav {
+  background: rgba(26, 26, 26, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+body.pathway-dark .nav-logo-text {
+  color: var(--light-warm);
+}
+
+body.pathway-dark .nav-links a {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+body.pathway-dark .nav-links a:hover {
+  color: var(--light-warm);
+}
+
+body.pathway-dark .nav-cta {
+  background: var(--light-warm) !important;
+  color: var(--charcoal) !important;
+}
+
+body.pathway-dark .nav-toggle span {
+  background: var(--light-warm);
+}
+
+/* ── DARK HERO ── */
+body.pathway-dark .hero-pathway {
+  min-height: auto;
+  padding: 180px 60px 80px;
+}
+
+body.pathway-dark .hero-pathway .hero-content {
+  max-width: 800px;
+}
+
+body.pathway-dark .hero-tag {
+  color: var(--skr-green-light);
+  opacity: 0.7;
+}
+
+body.pathway-dark .hero-pathway h1 {
+  color: var(--cream);
+  font-size: clamp(36px, 4.5vw, 56px);
+}
+
+body.pathway-dark .hero-pathway .hero-sub {
+  color: var(--silver);
+  max-width: 480px;
+}
+
+/* ── DARK CARDS ── */
+.dark-cards {
+  padding: 0 60px 120px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 1300px;
+}
+
+.dark-card {
+  padding: 48px 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all var(--duration-slow) var(--ease-out);
+  position: relative;
+}
+
+.dark-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: var(--skr-green);
+  filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--duration-normal);
+}
+
+.dark-card:hover {
+  background: rgba(46, 125, 82, 0.04);
+  border-color: rgba(46, 125, 82, 0.12);
+}
+
+.dark-card:hover::after {
+  opacity: 0.5;
+}
+
+.dark-card-icon {
+  font-size: 32px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.dark-card h3 {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--light-warm);
+  margin-bottom: 14px;
+}
+
+.dark-card > p {
+  font-family: var(--sans);
+  font-weight: 200;
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--silver);
+}
+
+/* ── CHECKLIST ── */
+.dark-card-checks {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dark-chk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+}
+
+.dark-chk-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(46, 125, 82, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--skr-green-light);
+  flex-shrink: 0;
+}
+
+.dark-chk span {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 200;
+  color: var(--silver);
+}
+
+/* ── DARK FOOTER ── */
+body.pathway-dark footer {
+  border-top-color: rgba(255, 255, 255, 0.04);
+}
+
+body.pathway-dark .footer-logo img {
+  opacity: 0.3;
+}
+
+body.pathway-dark .footer-tagline {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+body.pathway-dark .footer-right {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+body.pathway-dark .footer-divider {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.pathway-dark footer::before {
+  background: var(--skr-green-line);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  body.pathway-dark .hero-pathway {
+    padding: 140px 24px 60px;
+  }
+
+  .dark-cards {
+    grid-template-columns: 1fr;
+    padding: 0 24px 80px;
+  }
+
+  .dark-card {
+    padding: 36px 28px;
+  }
+}
