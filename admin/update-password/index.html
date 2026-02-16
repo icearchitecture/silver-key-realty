@@ -14,61 +14,35 @@
   <link rel="stylesheet" href="../../assets/css/responsive.css">
   <link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    .pw-requirements {
-      margin-top: 12px;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .pw-req {
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 12px;
-      color: rgba(255,255,255,0.25);
-      line-height: 2;
-      transition: color 0.3s;
-    }
-    .pw-req.met {
-      color: var(--skr-green-light);
-    }
-    .pw-req::before {
-      content: '○';
-      margin-right: 8px;
-      font-size: 10px;
-    }
-    .pw-req.met::before {
-      content: '●';
-    }
-    .pw-strength {
-      height: 2px;
-      background: rgba(255,255,255,0.04);
-      margin-top: 8px;
-      overflow: hidden;
-    }
-    .pw-strength-bar {
-      height: 100%;
-      width: 0%;
-      transition: width 0.4s, background 0.4s;
-    }
-    .pw-strength-bar.weak { width: 25%; background: #c0392b; }
-    .pw-strength-bar.fair { width: 50%; background: #d4a017; }
-    .pw-strength-bar.good { width: 75%; background: var(--skr-green); }
-    .pw-strength-bar.strong { width: 100%; background: var(--skr-green-light); }
+    .pw-wrap{position:relative}
+    .pw-wrap .form-input{padding-right:48px}
+    .pw-toggle{position:absolute;right:1px;top:1px;bottom:1px;width:44px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:16px;transition:color .3s}
+    .pw-toggle:hover{color:var(--cream)}
+    .pw-requirements{margin-top:12px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+    .pw-req{font-family:var(--sans);font-weight:300;font-size:12px;color:rgba(255,255,255,.25);line-height:2;transition:color .3s}
+    .pw-req.met{color:var(--skr-green-light)}
+    .pw-req::before{content:'○';margin-right:8px;font-size:10px}
+    .pw-req.met::before{content:'●'}
+    .pw-strength{height:2px;background:rgba(255,255,255,.04);margin-top:8px;overflow:hidden}
+    .pw-strength-bar{height:100%;width:0%;transition:width .4s,background .4s}
+    .pw-strength-bar.weak{width:25%;background:#c0392b}
+    .pw-strength-bar.fair{width:50%;background:#d4a017}
+    .pw-strength-bar.good{width:75%;background:var(--skr-green)}
+    .pw-strength-bar.strong{width:100%;background:var(--skr-green-light)}
+    .pw-match{font-family:var(--sans);font-size:11px;font-weight:300;margin-top:6px;height:16px;transition:color .3s}
+    .pw-match.no{color:#c0392b}.pw-match.yes{color:var(--skr-green-light)}
+    .loading-state{text-align:center;padding:40px 24px}
+    .loading-state .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 16px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-state p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver)}
   </style>
 </head>
 <body class="admin-dark">
 
-  <!-- NAV -->
   <nav id="nav">
-    <a class="nav-logo" href="../../">
-      <span class="nav-logo-text">Silver <em>Key</em> Realty</span>
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="../">← Back to Sign In</a>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+    <a class="nav-logo" href="../../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
+    <div class="nav-links" id="navLinks"><a href="../">← Back to Sign In</a></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </nav>
 
   <section class="admin-login">
@@ -78,12 +52,21 @@
         <div class="login-badge">New Password</div>
       </div>
 
+      <!-- LOADING -->
+      <div id="updateLoading" class="loading-state">
+        <div class="dash-spinner"></div>
+        <p>Verifying your reset link...</p>
+      </div>
+
       <!-- FORM -->
-      <div id="updateForm">
+      <div id="updateForm" style="display:none;">
         <form class="login-form" id="passwordForm">
           <div class="form-group">
             <label class="form-label" for="newPassword">New Password</label>
-            <input class="form-input" type="password" id="newPassword" name="new-password" placeholder="••••••••••••" autocomplete="new-password" required>
+            <div class="pw-wrap">
+              <input class="form-input" type="password" id="newPassword" name="new-password" placeholder="••••••••••••" autocomplete="new-password" required>
+              <button type="button" class="pw-toggle" id="togglePw1" aria-label="Show password">👁</button>
+            </div>
             <div class="pw-strength"><div class="pw-strength-bar" id="strengthBar"></div></div>
             <div class="pw-requirements">
               <div class="pw-req" id="reqLength">At least 8 characters</div>
@@ -94,7 +77,11 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="confirmPassword">Confirm Password</label>
-            <input class="form-input" type="password" id="confirmPassword" name="confirm-password" placeholder="••••••••••••" autocomplete="new-password" required>
+            <div class="pw-wrap">
+              <input class="form-input" type="password" id="confirmPassword" name="confirm-password" placeholder="••••••••••••" autocomplete="new-password" required>
+              <button type="button" class="pw-toggle" id="togglePw2" aria-label="Show password">👁</button>
+            </div>
+            <div class="pw-match" id="matchMsg"></div>
           </div>
           <button type="submit" class="login-submit" id="updateSubmit" disabled>
             <span class="login-text">Update Password</span>
@@ -107,24 +94,16 @@
       <!-- SUCCESS -->
       <div id="updateSuccess" style="display:none;text-align:center;">
         <div style="font-size:48px;margin-bottom:16px;opacity:.6;">✅</div>
-        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">
-          Password updated.
-        </p>
-        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">
-          You can now sign in with your new password.
-        </p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">Password updated.</p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">You can now sign in with your new password.</p>
         <a href="../" style="display:inline-block;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:14px 32px;text-decoration:none;transition:all .4s;">Sign In</a>
       </div>
 
-      <!-- EXPIRED / INVALID -->
+      <!-- EXPIRED -->
       <div id="updateExpired" style="display:none;text-align:center;">
         <div style="font-size:48px;margin-bottom:16px;opacity:.4;">⏳</div>
-        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">
-          This link has expired.
-        </p>
-        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">
-          Password reset links are valid for 1 hour. Please request a new one.
-        </p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">This link has expired.</p>
+        <p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.7;margin-bottom:24px;">Password reset links are valid for 1 hour. Please request a new one.</p>
         <a href="../reset/" style="display:inline-block;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:14px 32px;text-decoration:none;transition:all .4s;">Request New Link</a>
       </div>
 
@@ -135,43 +114,82 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <!-- Config: auto-generated at build time from Vercel env vars -->
   <script src="../../assets/js/admin-config.js"></script>
   <script src="../../assets/js/nav.js"></script>
   <script>
   (function () {
-    var url = window.SKR_CONFIG.SUPABASE_URL;
-    var key = window.SKR_CONFIG.SUPABASE_ANON_KEY;
-    if (!url || !key || url.indexOf('%%') > -1) return;
-    var sb = window.supabase.createClient(url, key);
-
+    var loadingDiv = document.getElementById('updateLoading');
     var formDiv = document.getElementById('updateForm');
     var successDiv = document.getElementById('updateSuccess');
     var expiredDiv = document.getElementById('updateExpired');
-    var form = document.getElementById('passwordForm');
+
+    // Config check
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL || !window.SKR_CONFIG.SUPABASE_ANON_KEY) {
+      loadingDiv.innerHTML = '<p style="font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver)">Password reset is being configured. Please try again shortly.</p>';
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+
+    // ── TOKEN HANDLING ──
+    // Supabase sends reset tokens via URL hash OR query params depending on version
+    // Format: #access_token=...&type=recovery  OR  ?token=...&type=recovery
+    // We need to let Supabase client process the URL automatically
+
+    (async function () {
+      // Supabase v2 auto-detects hash tokens — give it a moment
+      // Listen for auth state change (recovery event)
+      var handled = false;
+
+      sb.auth.onAuthStateChange(function (event, session) {
+        if (handled) return;
+        console.log('[SKR Reset] Auth event:', event);
+
+        if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+          handled = true;
+          loadingDiv.style.display = 'none';
+          formDiv.style.display = 'block';
+        }
+      });
+
+      // Fallback: if no event fires in 3 seconds, check session directly
+      setTimeout(async function () {
+        if (handled) return;
+        var s = await sb.auth.getSession();
+        if (s.data.session) {
+          handled = true;
+          loadingDiv.style.display = 'none';
+          formDiv.style.display = 'block';
+        } else {
+          // No session, no recovery event — link is expired or invalid
+          loadingDiv.style.display = 'none';
+          expiredDiv.style.display = 'block';
+        }
+      }, 3000);
+    })();
+
+    // ── VIEW PASSWORD TOGGLES ──
+    document.getElementById('togglePw1').addEventListener('click', function () {
+      var f = document.getElementById('newPassword');
+      var showing = f.type === 'text';
+      f.type = showing ? 'password' : 'text';
+      this.textContent = showing ? '👁' : '👁‍🗨';
+    });
+    document.getElementById('togglePw2').addEventListener('click', function () {
+      var f = document.getElementById('confirmPassword');
+      var showing = f.type === 'text';
+      f.type = showing ? 'password' : 'text';
+      this.textContent = showing ? '👁' : '👁‍🗨';
+    });
+
+    // ── PASSWORD VALIDATION ──
     var pw = document.getElementById('newPassword');
     var confirm = document.getElementById('confirmPassword');
     var submitBtn = document.getElementById('updateSubmit');
     var feedback = document.getElementById('updateFeedback');
     var strengthBar = document.getElementById('strengthBar');
+    var matchMsg = document.getElementById('matchMsg');
 
-    // Requirement elements
-    var reqLength = document.getElementById('reqLength');
-    var reqUpper = document.getElementById('reqUpper');
-    var reqLower = document.getElementById('reqLower');
-    var reqNumber = document.getElementById('reqNumber');
-
-    // Check if we have a valid session from the reset link
-    (async function () {
-      var { data: { session } } = await sb.auth.getSession();
-      if (!session) {
-        // No session — link may be expired or invalid
-        formDiv.style.display = 'none';
-        expiredDiv.style.display = 'block';
-      }
-    })();
-
-    // Password validation
     function validate() {
       var val = pw.value;
       var score = 0;
@@ -181,10 +199,10 @@
       var hasLower = /[a-z]/.test(val);
       var hasNumber = /[0-9]/.test(val);
 
-      reqLength.className = 'pw-req' + (hasLength ? ' met' : '');
-      reqUpper.className = 'pw-req' + (hasUpper ? ' met' : '');
-      reqLower.className = 'pw-req' + (hasLower ? ' met' : '');
-      reqNumber.className = 'pw-req' + (hasNumber ? ' met' : '');
+      document.getElementById('reqLength').className = 'pw-req' + (hasLength ? ' met' : '');
+      document.getElementById('reqUpper').className = 'pw-req' + (hasUpper ? ' met' : '');
+      document.getElementById('reqLower').className = 'pw-req' + (hasLower ? ' met' : '');
+      document.getElementById('reqNumber').className = 'pw-req' + (hasNumber ? ' met' : '');
 
       if (hasLength) score++;
       if (hasUpper) score++;
@@ -194,9 +212,21 @@
       var levels = ['', 'weak', 'fair', 'good', 'strong'];
       strengthBar.className = 'pw-strength-bar ' + (levels[score] || '');
 
-      var matching = val.length > 0 && val === confirm.value;
-      var allMet = hasLength && hasUpper && hasLower && hasNumber && matching;
+      // Match check
+      if (confirm.value.length > 0) {
+        if (val === confirm.value) {
+          matchMsg.textContent = '✓ Passwords match';
+          matchMsg.className = 'pw-match yes';
+        } else {
+          matchMsg.textContent = '✗ Passwords do not match';
+          matchMsg.className = 'pw-match no';
+        }
+      } else {
+        matchMsg.textContent = '';
+        matchMsg.className = 'pw-match';
+      }
 
+      var allMet = hasLength && hasUpper && hasLower && hasNumber && val === confirm.value && val.length > 0;
       submitBtn.disabled = !allMet;
       return allMet;
     }
@@ -204,8 +234,8 @@
     pw.addEventListener('input', validate);
     confirm.addEventListener('input', validate);
 
-    // Submit
-    form.addEventListener('submit', async function (e) {
+    // ── SUBMIT ──
+    document.getElementById('passwordForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       if (!validate()) return;
 
@@ -215,21 +245,18 @@
       feedback.className = 'login-feedback';
 
       try {
-        var { error } = await sb.auth.updateUser({
-          password: pw.value,
-        });
+        var r = await sb.auth.updateUser({ password: pw.value });
 
-        if (error) {
-          feedback.textContent = error.message || 'Could not update password. Please try again.';
+        if (r.error) {
+          feedback.textContent = r.error.message || 'Could not update password. Please try again.';
           feedback.className = 'login-feedback error';
           submitBtn.classList.remove('loading');
           submitBtn.disabled = false;
           return;
         }
 
-        // Sign out so they log in fresh with new password
+        // Sign out so they log in fresh
         await sb.auth.signOut();
-
         formDiv.style.display = 'none';
         successDiv.style.display = 'block';
 

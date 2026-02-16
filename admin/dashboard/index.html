@@ -225,24 +225,31 @@
       return days + ' day' + (days > 1 ? 's' : '') + ' ago';
     }
 
-    // Stats
-    try {
-      var r;
-      r = await sb.from('skr_leads').select('*',{count:'exact',head:true}).eq('status','new');
-      document.getElementById('sLeads').textContent = r.count || '0';
-      r = await sb.from('skr_consultations').select('*',{count:'exact',head:true}).in('status',['scheduled','confirmed']);
-      document.getElementById('sConsult').textContent = r.count || '0';
-      r = await sb.from('skr_deals').select('*',{count:'exact',head:true}).in('status',['active','under_contract','pending']);
-      document.getElementById('sDeals').textContent = r.count || '0';
-      r = await sb.from('skr_properties').select('*',{count:'exact',head:true}).eq('status','active');
-      document.getElementById('sProps').textContent = r.count || '0';
-      r = await sb.from('skr_team_members').select('*',{count:'exact',head:true}).eq('is_active',true);
-      document.getElementById('sTeam').textContent = r.count || '0';
-    } catch(e){ console.warn('[SKR] Stats:',e); }
+    // Stats (each query fails gracefully if table doesn't exist)
+    async function safeStat(table, filter, el) {
+      try {
+        var q = sb.from(table).select('*',{count:'exact',head:true});
+        if (filter.eq) q = q.eq(filter.eq[0], filter.eq[1]);
+        if (filter.in_) q = q.in(filter.in_[0], filter.in_[1]);
+        var r = await q;
+        document.getElementById(el).textContent = (r.count != null) ? r.count : '0';
+      } catch(e) { document.getElementById(el).textContent = '—'; }
+    }
+    await safeStat('skr_leads', {eq:['status','new']}, 'sLeads');
+    await safeStat('skr_consultations', {in_:['status',['scheduled','confirmed']]}, 'sConsult');
+    await safeStat('skr_deals', {in_:['status',['active','under_contract','pending']]}, 'sDeals');
+    await safeStat('skr_properties', {eq:['status','active']}, 'sProps');
+    await safeStat('skr_team_members', {eq:['is_active',true]}, 'sTeam');
 
-    // Leads
+    // Leads (tries with 'archived' column, falls back without)
     try {
-      var { data: leads } = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').eq('archived',false).order('created_at',{ascending:false}).limit(20);
+      var leadResult = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').eq('archived',false).order('created_at',{ascending:false}).limit(20);
+      var leads = leadResult.data;
+      // If 'archived' column doesn't exist, try without it
+      if (leadResult.error) {
+        var fallback = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').order('created_at',{ascending:false}).limit(20);
+        leads = fallback.data;
+      }
       if (leads && leads.length > 0) {
         document.getElementById('feedCount').textContent = leads.length + ' Lead' + (leads.length !== 1 ? 's' : '');
         var h = '';
@@ -254,28 +261,37 @@
       }
     } catch(e){ console.warn('[SKR] Leads:',e); }
 
-    // Activity
+    // Activity (tries skr_audit_log, falls back to skr_events)
     try {
-      var { data: acts } = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
+      var actResult = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
+      var acts = actResult.data;
+      // If audit_log doesn't exist, try skr_events
+      if (actResult.error) {
+        var evResult = await sb.from('skr_events').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
+        acts = evResult.data;
+      }
       if (acts && acts.length > 0) {
-        var icons = {data_modify:'📝',data_access:'👁',auth:'🔑',security:'🔒',export:'📋',notification:'⚡'};
+        var icons = {data_modify:'📝',data_access:'👁',auth:'🔑',security:'🔒',export:'📋',notification:'⚡',system:'⚙️'};
         var h = '';
         acts.forEach(function(a){
           var ic = icons[a.event_type]||'📋';
-          h += '<div class="act-item"><div class="act-text"><span class="act-icon">'+ic+'</span> <strong>'+a.entity_type.replace(/_/g,' ')+'</strong> — '+a.action.replace(/_/g,' ')+'</div><div class="act-time">'+timeAgo(a.created_at)+'</div></div>';
+          var entity = (a.entity_type||'system').replace(/_/g,' ');
+          var action = (a.action||'').replace(/_/g,' ');
+          h += '<div class="act-item"><div class="act-text"><span class="act-icon">'+ic+'</span> <strong>'+entity+'</strong> — '+action+'</div><div class="act-time">'+timeAgo(a.created_at)+'</div></div>';
         });
         document.getElementById('activityList').innerHTML = h;
       }
     } catch(e){ console.warn('[SKR] Activity:',e); }
 
-    // Team
+    // Team (universal — works with both full + simple schema)
     try {
-      var { data: team } = await sb.from('skr_team_members').select('id, display_name, email, role, is_active').order('role',{ascending:true});
-      if (team && team.length > 0) {
+      var teamMembers = await window.SKR_AUTH.fetchTeamMembers();
+      if (teamMembers && teamMembers.length > 0) {
         var h = '';
-        team.forEach(function(m){
+        teamMembers.forEach(function(m){
           var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
-          h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+m.role+'">'+m.role+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
+          var roleClass = m.role.replace(/[^a-z]/g,'') || 'agent';
+          h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleClass+'">'+m.role+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
         });
         document.getElementById('teamList').innerHTML = h;
       }

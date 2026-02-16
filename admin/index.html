@@ -13,6 +13,12 @@
   <link rel="stylesheet" href="../assets/css/nav.css">
   <link rel="stylesheet" href="../assets/css/responsive.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
+  <style>
+    .pw-wrap{position:relative}
+    .pw-wrap .form-input{padding-right:48px}
+    .pw-toggle{position:absolute;right:1px;top:1px;bottom:1px;width:44px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:16px;transition:color .3s}
+    .pw-toggle:hover{color:var(--cream)}
+  </style>
 </head>
 <body class="admin-dark">
 
@@ -44,7 +50,10 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="authPassword">Password</label>
-          <input class="form-input" type="password" id="authPassword" name="password" placeholder="••••••••" autocomplete="current-password" required>
+          <div class="pw-wrap">
+            <input class="form-input" type="password" id="authPassword" name="password" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" id="togglePw" aria-label="Show password">👁</button>
+          </div>
         </div>
         <button type="submit" class="login-submit" id="loginSubmit">
           <span class="login-text">Sign In</span>
@@ -76,5 +85,32 @@
 
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/admin-auth.js"></script>
+  <script>
+  (function () {
+    // View password toggle
+    var pwField = document.getElementById('authPassword');
+    var toggle = document.getElementById('togglePw');
+    if (toggle && pwField) {
+      toggle.addEventListener('click', function () {
+        var showing = pwField.type === 'text';
+        pwField.type = showing ? 'password' : 'text';
+        this.textContent = showing ? '👁' : '👁‍🗨';
+      });
+    }
+
+    // Config check (friendly UX if build-time injection hasn't run)
+    var feedback = document.getElementById('loginFeedback');
+    var submitBtn = document.getElementById('loginSubmit');
+    var magicBtn = document.getElementById('magicLinkBtn');
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL || !window.SKR_CONFIG.SUPABASE_ANON_KEY) {
+      if (feedback) {
+        feedback.textContent = 'Portal is being configured. Please try again shortly.';
+        feedback.className = 'login-feedback error';
+      }
+      if (submitBtn) submitBtn.disabled = true;
+      if (magicBtn) magicBtn.disabled = true;
+    }
+  })();
+  </script>
 </body>
 </html>

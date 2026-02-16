@@ -16,20 +16,12 @@
 </head>
 <body class="admin-dark">
 
-  <!-- NAV -->
   <nav id="nav">
-    <a class="nav-logo" href="../../">
-      <span class="nav-logo-text">Silver <em>Key</em> Realty</span>
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="../">← Back to Sign In</a>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+    <a class="nav-logo" href="../../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
+    <div class="nav-links" id="navLinks"><a href="../">← Back to Sign In</a></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </nav>
 
-  <!-- RESET REQUEST -->
   <section class="admin-login">
     <div class="login-card">
       <div class="login-header">
@@ -55,7 +47,7 @@
         <div class="login-feedback" id="resetFeedback"></div>
       </div>
 
-      <!-- STEP 2: Confirmation (hidden until sent) -->
+      <!-- STEP 2: Confirmation -->
       <div id="resetSent" style="display:none;text-align:center;">
         <div style="font-size:48px;margin-bottom:16px;opacity:.6;">✉️</div>
         <p style="font-family:var(--sans);font-weight:300;font-size:15px;color:var(--cream);line-height:1.7;margin-bottom:8px;">
@@ -76,24 +68,27 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <!-- Config: auto-generated at build time from Vercel env vars -->
   <script src="../../assets/js/admin-config.js"></script>
   <script src="../../assets/js/nav.js"></script>
   <script>
   (function () {
-    var url = window.SKR_CONFIG.SUPABASE_URL;
-    var key = window.SKR_CONFIG.SUPABASE_ANON_KEY;
-    if (!url || !key || url.indexOf('%%') > -1) return;
-    var sb = window.supabase.createClient(url, key);
+    var feedback = document.getElementById('resetFeedback');
+    var submitBtn = document.getElementById('resetSubmit');
 
+    // Config check
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL || !window.SKR_CONFIG.SUPABASE_ANON_KEY) {
+      feedback.textContent = 'Password reset is being configured. Please try again shortly.';
+      feedback.className = 'login-feedback error';
+      submitBtn.disabled = true;
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
     var form = document.getElementById('resetForm');
     var emailInput = document.getElementById('resetEmail');
-    var submitBtn = document.getElementById('resetSubmit');
-    var feedback = document.getElementById('resetFeedback');
     var requestDiv = document.getElementById('resetRequest');
     var sentDiv = document.getElementById('resetSent');
     var resendLink = document.getElementById('resendLink');
-
     var lastEmail = '';
 
     async function sendReset(email) {
@@ -108,6 +103,7 @@
         });
 
         if (error) {
+          console.error('[SKR Reset]', error);
           feedback.textContent = 'Something went wrong. Please try again.';
           feedback.className = 'login-feedback error';
           submitBtn.classList.remove('loading');
@@ -115,12 +111,13 @@
           return;
         }
 
-        // Always show success (don't reveal if email exists or not)
+        // Always show success — never reveal if email exists
         lastEmail = email;
         requestDiv.style.display = 'none';
         sentDiv.style.display = 'block';
 
       } catch (e) {
+        console.error('[SKR Reset]', e);
         feedback.textContent = 'Something went wrong. Please try again.';
         feedback.className = 'login-feedback error';
         submitBtn.classList.remove('loading');
