@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Permissions</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .page{display:none;padding:80px 40px 60px;max-width:1200px;margin:0 auto}
+    .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
+    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+
+    .nav-right-dash{display:flex;align-items:center;gap:20px}
+    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
+    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.2);text-decoration:none;transition:color .3s}
+    .back-link:hover{color:var(--cream)}
+
+    /* Tabs */
+    .tabs{display:flex;gap:4px;margin-bottom:28px;flex-wrap:wrap}
+    .tab{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.2);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:8px 18px;cursor:pointer;transition:all .3s}
+    .tab.active{color:var(--charcoal);background:var(--cream);border-color:transparent;font-weight:400}
+    .tab:hover:not(.active){color:var(--silver);border-color:rgba(255,255,255,.08)}
+
+    /* Role selector */
+    .role-selector{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+    .role-chip{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1px;text-transform:uppercase;padding:6px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .3s}
+    .role-chip.active{background:rgba(46,125,82,.12);color:var(--skr-green-light);border-color:rgba(46,125,82,.25)}
+    .role-chip:hover:not(.active){border-color:rgba(255,255,255,.1)}
+
+    /* Permissions grid */
+    .perm-category{margin-bottom:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+    .perm-category-header{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.02)}
+    .perm-category-header:hover{background:rgba(255,255,255,.01)}
+    .perm-category-title{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--cream)}
+    .perm-category-count{font-family:var(--sans);font-size:10px;color:var(--silver)}
+    .perm-category-body{display:none}
+    .perm-category-body.open{display:block}
+
+    .perm-row{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.015)}
+    .perm-row:last-child{border-bottom:none}
+    .perm-row:hover{background:rgba(255,255,255,.01)}
+    .perm-key{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .perm-key code{font-size:10px;color:rgba(255,255,255,.15);margin-left:8px}
+    .perm-right{display:flex;align-items:center;gap:12px}
+
+    /* Toggle switch */
+    .toggle{position:relative;width:36px;height:20px;cursor:pointer}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.08);border-radius:10px;transition:background .3s}
+    .toggle-thumb{position:absolute;left:2px;top:2px;width:16px;height:16px;background:var(--silver);border-radius:50%;transition:all .3s}
+    .toggle input:checked+.toggle-track{background:rgba(46,125,82,.5)}
+    .toggle input:checked+.toggle-track+.toggle-thumb{left:18px;background:var(--skr-green-light)}
+
+    /* Override badge */
+    .override-badge{font-family:var(--sans);font-size:8px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+    .override-badge.role{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
+    .override-badge.user{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+    .override-badge.base{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.06)}
+
+    /* Override panel */
+    .override-section{margin-bottom:24px}
+    .override-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:20px;margin-bottom:12px}
+    .override-card-title{font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--champagne);margin-bottom:12px}
+    .override-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.015)}
+    .override-row:last-child{border-bottom:none}
+    .override-key{font-family:var(--sans);font-size:12px;color:var(--silver)}
+    .override-val{font-family:var(--sans);font-size:11px}
+    .override-val.granted{color:var(--skr-green-light)}
+    .override-val.denied{color:#e74c3c}
+    .remove-override{font-family:var(--sans);font-size:9px;color:rgba(255,255,255,.15);background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:12px}
+    .remove-override:hover{color:#e74c3c}
+
+    .empty-sm{padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178}
+
+    @media(max-width:768px){
+      .page{padding:80px 20px 40px}
+      .perm-row{flex-wrap:wrap;gap:8px}
+    }
+  </style>
+</head>
+<body class="admin-dark">
+
+  <nav id="nav">
+    <a class="nav-logo" href="../../"><img src="../../assets/images/logo-transparent.png" alt="Silver Key Realty"></a>
+    <div class="nav-links" id="navLinks">
+      <a href="../dashboard/">Dashboard</a>
+      <a href="../team/">Team</a>
+      <a href="./" class="active">Permissions</a>
+      <a href="../security/">Security</a>
+      <div class="nav-right-dash">
+        <span class="nav-user-name" id="navUser">Loading…</span>
+        <span class="role-badge" id="navBadge"></span>
+        <button class="nav-signout-btn" id="signOut">Sign Out</button>
+      </div>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="dash-loading" id="pageLoading"><div class="dash-spinner"></div></div>
+
+  <div class="page" id="pageContainer">
+    <div class="page-hero">
+      <a href="../dashboard/" class="back-link">← Back to Dashboard</a>
+      <h1>Permission <em style="color:var(--champagne)">Manager</em></h1>
+      <p>View and override permissions per role. Three-layer system: base role → role override → user override (most specific wins).</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="role-perms">Role Permissions</div>
+      <div class="tab" data-tab="overrides">Active Overrides</div>
+    </div>
+
+    <!-- Tab: Role Permissions -->
+    <div id="tab-role-perms">
+      <div class="role-selector" id="roleSelector"></div>
+      <div id="permGrid"></div>
+    </div>
+
+    <!-- Tab: Overrides -->
+    <div id="tab-overrides" style="display:none">
+      <div class="role-selector" id="overrideRoleSelector"></div>
+      <div id="overrideList"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/admin-permissions.js"></script>
+  <script>
+  (async function () {
+    var loading = document.getElementById('pageLoading');
+    var container = document.getElementById('pageContainer');
+
+    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
+    var member = await window.SKR_AUTH.getCurrentMember();
+    if (!member) { window.location.href = '/admin/'; return; }
+
+    // Only broker+ can access
+    if (['admin','broker'].indexOf(member.role) === -1) {
+      loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;text-align:center;padding:100px 20px">Permission management requires Broker or Admin role.<br><a href="../dashboard/" style="color:var(--skr-green-light)">← Back to Dashboard</a></p>';
+      return;
+    }
+
+    document.getElementById('navBadge').textContent = member.role.toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + member.role;
+    document.getElementById('navUser').textContent = member.display_name;
+    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
+
+    loading.style.display = 'none';
+    container.style.display = 'block';
+
+    var SA = window.SKR_AUTH;
+    var roles = await SA.getRoles();
+    var selectedRoleId = null;
+    var selectedRoleSlug = null;
+
+    // Permission categories (maps to the 15 JSONB key prefixes)
+    var CATEGORIES = [
+      { key: 'leads', label: 'Leads', icon: '📋' },
+      { key: 'deals', label: 'Deals', icon: '🤝' },
+      { key: 'properties', label: 'Properties', icon: '🏠' },
+      { key: 'documents', label: 'Documents', icon: '📄' },
+      { key: 'contacts', label: 'Contacts', icon: '👤' },
+      { key: 'team', label: 'Team', icon: '👥' },
+      { key: 'comms', label: 'Communications', icon: '💬' },
+      { key: 'reports', label: 'Reports', icon: '📊' },
+      { key: 'finance', label: 'Finance', icon: '💰' },
+      { key: 'settings', label: 'Settings', icon: '⚙️' },
+      { key: 'security', label: 'Security', icon: '🛡️' },
+      { key: 'intelligence', label: 'Intelligence', icon: '🧠' },
+      { key: 'admin', label: 'Admin', icon: '👑' },
+      { key: 'workspace', label: 'Workspace', icon: '📝' },
+    ];
+
+    // ── TABS ──
+    document.querySelectorAll('.tab').forEach(function (t) {
+      t.addEventListener('click', function () {
+        document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('active'); });
+        this.classList.add('active');
+        var tabId = this.dataset.tab;
+        document.getElementById('tab-role-perms').style.display = tabId === 'role-perms' ? 'block' : 'none';
+        document.getElementById('tab-overrides').style.display = tabId === 'overrides' ? 'block' : 'none';
+        if (tabId === 'overrides' && selectedRoleId) loadOverrides(selectedRoleId);
+      });
+    });
+
+    // ── ROLE SELECTORS ──
+    function renderRoleChips(containerId, cb) {
+      var el = document.getElementById(containerId);
+      el.innerHTML = '';
+      roles.forEach(function (r) {
+        if (r.hierarchy_level <= 0) return;
+        var chip = document.createElement('div');
+        chip.className = 'role-chip' + (r.id === selectedRoleId ? ' active' : '');
+        chip.textContent = r.name;
+        chip.dataset.id = r.id;
+        chip.dataset.slug = r.slug;
+        chip.addEventListener('click', function () {
+          selectedRoleId = this.dataset.id;
+          selectedRoleSlug = this.dataset.slug;
+          document.querySelectorAll('.role-chip').forEach(function (c) { c.classList.remove('active'); });
+          document.querySelectorAll('.role-chip[data-id="' + selectedRoleId + '"]').forEach(function (c) { c.classList.add('active'); });
+          cb(selectedRoleId, selectedRoleSlug);
+        });
+        el.appendChild(chip);
+      });
+    }
+
+    renderRoleChips('roleSelector', loadRolePermissions);
+    renderRoleChips('overrideRoleSelector', loadOverrides);
+
+    // Auto-select first role
+    if (roles.length > 1) {
+      var first = roles.find(function (r) { return r.hierarchy_level > 0; });
+      if (first) {
+        selectedRoleId = first.id;
+        selectedRoleSlug = first.slug;
+        document.querySelectorAll('.role-chip[data-id="' + first.id + '"]').forEach(function (c) { c.classList.add('active'); });
+        loadRolePermissions(first.id, first.slug);
+      }
+    }
+
+    // ── LOAD ROLE PERMISSIONS ──
+    async function loadRolePermissions(roleId, roleSlug) {
+      var grid = document.getElementById('permGrid');
+      grid.innerHTML = '<div class="empty-sm">Loading permissions…</div>';
+
+      var perms = await SA.getRolePermissions(roleSlug);
+      if (!perms || Object.keys(perms).length === 0) {
+        grid.innerHTML = '<div class="empty-sm">No permissions defined for this role yet.</div>';
+        return;
+      }
+
+      var overrides = [];
+      try { overrides = await SA.listRoleOverrides(roleId); } catch (e) {}
+      var overrideMap = {};
+      if (Array.isArray(overrides)) overrides.forEach(function (o) { overrideMap[o.permission_key] = o.override_value; });
+
+      var h = '';
+      CATEGORIES.forEach(function (cat) {
+        var keys = Object.keys(perms).filter(function (k) { return k.indexOf(cat.key + '.') === 0 || k.indexOf(cat.key + '_') === 0; });
+        if (keys.length === 0) return;
+
+        var enabled = keys.filter(function (k) {
+          return overrideMap[k] !== undefined ? overrideMap[k] : perms[k];
+        }).length;
+
+        h += '<div class="perm-category"><div class="perm-category-header" data-cat="' + cat.key + '">' +
+          '<span class="perm-category-title">' + cat.icon + ' ' + cat.label + '</span>' +
+          '<span class="perm-category-count">' + enabled + '/' + keys.length + ' enabled</span></div>' +
+          '<div class="perm-category-body" id="cat-' + cat.key + '">';
+
+        keys.sort().forEach(function (key) {
+          var baseVal = perms[key];
+          var hasOverride = overrideMap[key] !== undefined;
+          var effectiveVal = hasOverride ? overrideMap[key] : baseVal;
+          var shortKey = key.replace(cat.key + '.', '').replace(cat.key + '_', '').replace(/_/g, ' ');
+
+          h += '<div class="perm-row">' +
+            '<div class="perm-key">' + shortKey + '<code>' + key + '</code></div>' +
+            '<div class="perm-right">' +
+              (hasOverride ? '<span class="override-badge role">Override</span>' : '<span class="override-badge base">Base</span>') +
+              '<label class="toggle"><input type="checkbox" data-key="' + key + '" data-role-id="' + roleId + '"' + (effectiveVal ? ' checked' : '') + '><span class="toggle-track"></span><span class="toggle-thumb"></span></label>' +
+            '</div></div>';
+        });
+
+        h += '</div></div>';
+      });
+
+      grid.innerHTML = h;
+
+      // Toggle category bodies
+      grid.querySelectorAll('.perm-category-header').forEach(function (hdr) {
+        hdr.addEventListener('click', function () {
+          var body = document.getElementById('cat-' + this.dataset.cat);
+          body.classList.toggle('open');
+        });
+      });
+
+      // Toggle permission overrides
+      grid.querySelectorAll('.toggle input').forEach(function (inp) {
+        inp.addEventListener('change', async function () {
+          var key = this.dataset.key;
+          var roleId = this.dataset.roleId;
+          var val = this.checked;
+          await SA.setRoleOverride(roleId, key, val);
+        });
+      });
+    }
+
+    // ── LOAD OVERRIDES ──
+    async function loadOverrides(roleId) {
+      var el = document.getElementById('overrideList');
+      el.innerHTML = '<div class="empty-sm">Loading overrides…</div>';
+
+      var overrides = [];
+      try { overrides = await SA.listRoleOverrides(roleId); } catch (e) {}
+
+      if (!overrides || overrides.length === 0) {
+        el.innerHTML = '<div class="empty-sm">No active overrides for this role. Toggle permissions in the Role Permissions tab to create overrides.</div>';
+        return;
+      }
+
+      var h = '<div class="override-card"><div class="override-card-title">Role-Level Overrides (' + overrides.length + ')</div>';
+      overrides.forEach(function (o) {
+        h += '<div class="override-row">' +
+          '<span class="override-key">' + o.permission_key + '</span>' +
+          '<div><span class="override-val ' + (o.override_value ? 'granted' : 'denied') + '">' + (o.override_value ? 'Granted' : 'Denied') + '</span>' +
+          '<button class="remove-override" data-key="' + o.permission_key + '" data-role-id="' + roleId + '">Remove</button></div></div>';
+      });
+      h += '</div>';
+      el.innerHTML = h;
+
+      el.querySelectorAll('.remove-override').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+          await SA.removeRoleOverride(this.dataset.roleId, this.dataset.key);
+          loadOverrides(this.dataset.roleId);
+          loadRolePermissions(selectedRoleId, selectedRoleSlug);
+        });
+      });
+    }
+  })();
+  </script>
+</body>
+</html>

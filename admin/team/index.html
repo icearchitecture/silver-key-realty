@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Team Management</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .page{display:none;padding:80px 40px 60px;max-width:1200px;margin:0 auto}
+    .page-hero{padding:32px 0 40px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
+    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+
+    .nav-right-dash{display:flex;align-items:center;gap:20px}
+    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
+    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-secondary{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s}
+    .btn-secondary:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .btn-danger{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#fff;background:rgba(192,57,43,.8);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-danger:hover{background:rgba(192,57,43,1)}
+
+    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.2);text-decoration:none;transition:color .3s}
+    .back-link:hover{color:var(--cream)}
+
+    /* Stats */
+    .team-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+    .team-stat{padding:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);text-align:center}
+    .team-stat-val{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--cream)}
+    .team-stat-label{font-family:var(--sans);font-size:9px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-top:4px}
+
+    /* Invitations */
+    .invite-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:24px}
+    .invite-header{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
+    .invite-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream)}
+    .invite-row{padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.02);display:flex;justify-content:space-between;align-items:center}
+    .invite-row:last-child{border-bottom:none}
+    .invite-email{font-family:var(--sans);font-size:13px;color:var(--cream)}
+    .invite-meta{font-family:var(--sans);font-size:11px;color:var(--silver)}
+    .invite-status{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px}
+    .invite-status.pending{background:rgba(212,160,23,.1);color:#d4a017;border:1px solid rgba(212,160,23,.2)}
+    .invite-status.accepted{background:rgba(46,125,82,.12);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
+
+    /* Team table */
+    .team-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .team-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
+    .team-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream)}
+    .team-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.02);align-items:center;transition:background .3s}
+    .team-row:hover{background:rgba(46,125,82,.02)}
+    .team-row:last-child{border-bottom:none}
+    .team-row.header{border-bottom:1px solid rgba(255,255,255,.04)}
+    .team-row.header span{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#8A8178}
+    .t-name{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--cream)}
+    .t-email{font-family:var(--sans);font-weight:200;font-size:12px;color:#8A8178;margin-top:1px}
+    .t-title{font-family:var(--sans);font-weight:200;font-size:11px;color:var(--silver);margin-top:1px}
+    .t-role{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px;display:inline-block}
+    .t-role.admin{background:rgba(46,125,82,.15);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
+    .t-role.broker{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
+    .t-role.agent{background:rgba(240,235,227,.08);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
+    .t-role.assistant{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
+    .t-status{font-family:var(--sans);font-size:11px;font-weight:300}
+    .t-status.active{color:var(--skr-green-light)}.t-status.active::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--skr-green-light);margin-right:6px}
+    .t-status.inactive{color:#8A8178}.t-status.inactive::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#8A8178;margin-right:6px}
+    .t-actions{display:flex;gap:8px}
+    .t-action{font-family:var(--sans);font-size:9px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.04);padding:5px 12px;cursor:pointer;transition:all .3s}
+    .t-action:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .t-action.danger:hover{color:#e74c3c;border-color:rgba(231,76,60,.3)}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:24px}
+    .modal-overlay.active{display:flex}
+    .modal{width:100%;max-width:480px;background:var(--charcoal);border:1px solid rgba(255,255,255,.06);padding:40px;position:relative}
+    .modal::after{content:'';position:absolute;bottom:0;left:15%;width:70%;height:1px;background:var(--skr-green);filter:blur(4px);opacity:.3}
+    .modal-title{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--cream);margin-bottom:8px}
+    .modal-desc{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-bottom:28px}
+    .modal .form-group{margin-bottom:18px}
+    .modal .form-label{display:block;font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-bottom:8px}
+    .modal .form-input,.modal .form-select{width:100%;font-family:var(--sans);font-weight:300;font-size:14px;color:var(--light-warm);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:12px 16px;outline:none;transition:border-color .3s}
+    .modal .form-input:focus,.modal .form-select:focus{border-color:var(--skr-green-line)}
+    .modal .form-select{appearance:none;cursor:pointer}
+    .modal .form-select option{background:var(--charcoal);color:var(--cream)}
+    .modal-actions{display:flex;gap:12px;margin-top:28px}
+    .modal-feedback{font-family:var(--sans);font-weight:300;font-size:13px;min-height:20px;margin-top:12px}
+    .modal-feedback.success{color:var(--skr-green-light)}
+    .modal-feedback.error{color:#c0392b}
+
+    .empty{padding:48px 24px;text-align:center}
+    .empty-icon{font-size:32px;margin-bottom:12px;opacity:.4}
+    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
+
+    @media(max-width:768px){
+      .page{padding:80px 20px 40px}
+      .team-stats{grid-template-columns:repeat(2,1fr)}
+      .team-row{grid-template-columns:1fr 1fr auto;gap:8px}
+      .team-row.header span:nth-child(3),.team-row.header span:nth-child(4),.team-row span:nth-child(3),.team-row span:nth-child(4){display:none}
+    }
+  </style>
+</head>
+<body class="admin-dark">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="../../">
+      <img src="../../assets/images/logo-transparent.png" alt="Silver Key Realty">
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="../dashboard/">Dashboard</a>
+      <a href="./" class="active">Team</a>
+      <a href="../permissions/">Permissions</a>
+      <a href="../security/">Security</a>
+      <div class="nav-right-dash">
+        <span class="nav-user-name" id="navUser">Loading…</span>
+        <span class="role-badge" id="navBadge"></span>
+        <button class="nav-signout-btn" id="signOut">Sign Out</button>
+      </div>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Loading -->
+  <div class="dash-loading" id="pageLoading">
+    <div class="dash-spinner"></div>
+  </div>
+
+  <!-- Page -->
+  <div class="page" id="pageContainer">
+    <div class="page-hero">
+      <div>
+        <a href="../dashboard/" class="back-link">← Back to Dashboard</a>
+        <h1>Team <em style="color:var(--champagne)">Management</em></h1>
+        <p>Add, edit, and manage your team members and invitations.</p>
+      </div>
+      <button class="btn-primary" id="addEmployeeBtn">+ Add Employee</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="team-stats">
+      <div class="team-stat"><div class="team-stat-val" id="statTotal">—</div><div class="team-stat-label">Total Members</div></div>
+      <div class="team-stat"><div class="team-stat-val" id="statActive">—</div><div class="team-stat-label">Active</div></div>
+      <div class="team-stat"><div class="team-stat-val" id="statInactive">—</div><div class="team-stat-label">Inactive</div></div>
+      <div class="team-stat"><div class="team-stat-val" id="statPending">—</div><div class="team-stat-label">Pending Invites</div></div>
+    </div>
+
+    <!-- Pending Invitations -->
+    <div class="invite-section" id="inviteSection" style="display:none">
+      <div class="invite-header">
+        <span class="invite-title">Pending Invitations</span>
+      </div>
+      <div id="inviteList"></div>
+    </div>
+
+    <!-- Team Table -->
+    <div class="team-section">
+      <div class="team-header">
+        <span class="team-title">Team Members</span>
+      </div>
+      <div class="team-row header">
+        <span>Name</span>
+        <span>Role</span>
+        <span>Status</span>
+        <span>Title</span>
+        <span>Actions</span>
+      </div>
+      <div id="teamList">
+        <div class="empty"><div class="empty-icon">👥</div><div class="empty-msg">Loading team members…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Employee Modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-title">Add Employee</div>
+      <div class="modal-desc">Send an invitation to join Silver Key Realty. They'll receive an email with next steps.</div>
+      <div class="form-group">
+        <label class="form-label" for="addFirstName">First Name</label>
+        <input class="form-input" type="text" id="addFirstName" placeholder="First name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="addLastName">Last Name</label>
+        <input class="form-input" type="text" id="addLastName" placeholder="Last name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="addEmail">Email</label>
+        <input class="form-input" type="email" id="addEmail" placeholder="agent@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="addRole">Role</label>
+        <select class="form-select" id="addRole"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="addTitle">Title (Optional)</label>
+        <input class="form-input" type="text" id="addTitle" placeholder="e.g. Senior Agent">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="addSubmit">Send Invitation</button>
+        <button class="btn-secondary" id="addCancel">Cancel</button>
+      </div>
+      <div class="modal-feedback" id="addFeedback"></div>
+    </div>
+  </div>
+
+  <!-- Edit Employee Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-title">Edit Employee</div>
+      <div class="modal-desc" id="editDesc">Update role, title, or status.</div>
+      <input type="hidden" id="editMemberId">
+      <div class="form-group">
+        <label class="form-label" for="editRole">Role</label>
+        <select class="form-select" id="editRole"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="editTitle">Title</label>
+        <input class="form-input" type="text" id="editTitle" placeholder="e.g. Senior Agent">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="editSubmit">Save Changes</button>
+        <button class="btn-secondary" id="editCancel">Cancel</button>
+      </div>
+      <div class="modal-feedback" id="editFeedback"></div>
+    </div>
+  </div>
+
+  <!-- Deactivate Confirmation Modal -->
+  <div class="modal-overlay" id="deactivateModal">
+    <div class="modal">
+      <div class="modal-title">Deactivate Employee</div>
+      <div class="modal-desc" id="deactivateDesc">This will prevent them from logging in. You can reactivate them later.</div>
+      <input type="hidden" id="deactivateMemberId">
+      <div class="modal-actions">
+        <button class="btn-danger" id="deactivateSubmit">Deactivate</button>
+        <button class="btn-secondary" id="deactivateCancel">Cancel</button>
+      </div>
+      <div class="modal-feedback" id="deactivateFeedback"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/admin-permissions.js"></script>
+  <script>
+  (async function () {
+    var loading = document.getElementById('pageLoading');
+    var container = document.getElementById('pageContainer');
+
+    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
+    var member = await window.SKR_AUTH.getCurrentMember();
+    if (!member) { window.location.href = '/admin/'; return; }
+
+    document.getElementById('navBadge').textContent = member.role.toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + member.role;
+    document.getElementById('navUser').textContent = member.display_name;
+    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
+
+    loading.style.display = 'none';
+    container.style.display = 'block';
+
+    var SA = window.SKR_AUTH;
+    var roles = [];
+
+    // ── LOAD ROLES FOR DROPDOWNS ──
+    try {
+      roles = await SA.getRoles();
+      var addSel = document.getElementById('addRole');
+      var editSel = document.getElementById('editRole');
+      roles.forEach(function (r) {
+        if (r.hierarchy_level <= 0) return; // skip public
+        var o1 = document.createElement('option'); o1.value = r.slug; o1.textContent = r.name; addSel.appendChild(o1);
+        var o2 = document.createElement('option'); o2.value = r.slug; o2.textContent = r.name; editSel.appendChild(o2);
+      });
+    } catch (e) { console.warn('[SKR] Roles load:', e); }
+
+    // ── LOAD TEAM ──
+    async function loadTeam() {
+      try {
+        var members = await SA.fetchTeamMembers();
+        var active = 0, inactive = 0;
+        if (members && members.length > 0) {
+          var h = '';
+          members.forEach(function (m) {
+            if (m.is_active) active++; else inactive++;
+            var sc = m.is_active ? 'active' : 'inactive', st = m.is_active ? 'Active' : 'Inactive';
+            var roleClass = m.role.replace(/[^a-z]/g, '') || 'agent';
+            h += '<div class="team-row">' +
+              '<div><div class="t-name">' + (m.display_name || 'Unnamed') + '</div><div class="t-email">' + (m.email || '') + '</div>' + (m.title ? '<div class="t-title">' + m.title + '</div>' : '') + '</div>' +
+              '<div><span class="t-role ' + roleClass + '">' + m.role + '</span></div>' +
+              '<div><span class="t-status ' + sc + '">' + st + '</span></div>' +
+              '<div class="t-title-col" style="font-family:var(--sans);font-size:12px;color:var(--silver)">' + (m.title || '—') + '</div>' +
+              '<div class="t-actions">' +
+                '<button class="t-action edit-btn" data-id="' + m.id + '" data-role="' + m.role + '" data-title="' + (m.title || '') + '" data-name="' + (m.display_name || '') + '">Edit</button>' +
+                (m.is_active ? '<button class="t-action danger deactivate-btn" data-id="' + m.id + '" data-name="' + (m.display_name || '') + '">Deactivate</button>'
+                  : '<button class="t-action reactivate-btn" data-id="' + m.id + '">Reactivate</button>') +
+              '</div></div>';
+          });
+          document.getElementById('teamList').innerHTML = h;
+          bindTeamActions();
+        }
+        document.getElementById('statTotal').textContent = members.length;
+        document.getElementById('statActive').textContent = active;
+        document.getElementById('statInactive').textContent = inactive;
+      } catch (e) { console.warn('[SKR] Team load:', e); }
+    }
+
+    // ── LOAD INVITATIONS ──
+    async function loadInvitations() {
+      try {
+        var invites = await SA.listInvitations();
+        var pending = invites.filter(function (i) { return i.status === 'pending'; });
+        document.getElementById('statPending').textContent = pending.length;
+        if (pending.length > 0) {
+          document.getElementById('inviteSection').style.display = 'block';
+          var h = '';
+          pending.forEach(function (inv) {
+            var d = new Date(inv.created_at).toLocaleDateString();
+            h += '<div class="invite-row"><div><div class="invite-email">' + inv.email + '</div><div class="invite-meta">Sent ' + d + ' · Role: ' + (inv.role_slug || 'agent') + '</div></div><span class="invite-status pending">Pending</span></div>';
+          });
+          document.getElementById('inviteList').innerHTML = h;
+        }
+      } catch (e) { document.getElementById('statPending').textContent = '0'; }
+    }
+
+    await loadTeam();
+    await loadInvitations();
+
+    // ── MODAL HELPERS ──
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); clearFeedback(id); }
+    function clearFeedback(modalId) {
+      var fb = document.querySelector('#' + modalId + ' .modal-feedback');
+      if (fb) { fb.textContent = ''; fb.className = 'modal-feedback'; }
+    }
+    function showModalFeedback(modalId, msg, type) {
+      var fb = document.querySelector('#' + modalId + ' .modal-feedback');
+      if (fb) { fb.textContent = msg; fb.className = 'modal-feedback ' + type; }
+    }
+
+    // ── ADD EMPLOYEE ──
+    document.getElementById('addEmployeeBtn').addEventListener('click', function () { openModal('addModal'); });
+    document.getElementById('addCancel').addEventListener('click', function () { closeModal('addModal'); });
+    document.getElementById('addModal').addEventListener('click', function (e) { if (e.target === this) closeModal('addModal'); });
+
+    document.getElementById('addSubmit').addEventListener('click', async function () {
+      var btn = this;
+      var email = document.getElementById('addEmail').value.trim();
+      var firstName = document.getElementById('addFirstName').value.trim();
+      var lastName = document.getElementById('addLastName').value.trim();
+      var roleSlug = document.getElementById('addRole').value;
+      var title = document.getElementById('addTitle').value.trim();
+
+      if (!email) { showModalFeedback('addModal', 'Email is required.', 'error'); return; }
+      if (!firstName) { showModalFeedback('addModal', 'First name is required.', 'error'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      var result = await SA.addEmployee({ email: email, first_name: firstName, last_name: lastName, role_slug: roleSlug, title: title });
+
+      if (result.success) {
+        showModalFeedback('addModal', 'Invitation sent to ' + email, 'success');
+        document.getElementById('addEmail').value = '';
+        document.getElementById('addFirstName').value = '';
+        document.getElementById('addLastName').value = '';
+        document.getElementById('addTitle').value = '';
+        setTimeout(function () { closeModal('addModal'); loadTeam(); loadInvitations(); }, 1200);
+      } else {
+        showModalFeedback('addModal', result.error || 'Failed to add employee.', 'error');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Send Invitation';
+    });
+
+    // ── EDIT EMPLOYEE ──
+    function bindTeamActions() {
+      document.querySelectorAll('.edit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.getElementById('editMemberId').value = this.dataset.id;
+          document.getElementById('editDesc').textContent = 'Editing ' + this.dataset.name;
+          document.getElementById('editRole').value = this.dataset.role;
+          document.getElementById('editTitle').value = this.dataset.title;
+          openModal('editModal');
+        });
+      });
+      document.querySelectorAll('.deactivate-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.getElementById('deactivateMemberId').value = this.dataset.id;
+          document.getElementById('deactivateDesc').textContent = 'Deactivate ' + this.dataset.name + '? This will prevent them from logging in. You can reactivate them later.';
+          openModal('deactivateModal');
+        });
+      });
+      document.querySelectorAll('.reactivate-btn').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+          this.textContent = '…';
+          await SA.reactivateEmployee(this.dataset.id);
+          loadTeam();
+        });
+      });
+    }
+
+    document.getElementById('editCancel').addEventListener('click', function () { closeModal('editModal'); });
+    document.getElementById('editModal').addEventListener('click', function (e) { if (e.target === this) closeModal('editModal'); });
+
+    document.getElementById('editSubmit').addEventListener('click', async function () {
+      var btn = this;
+      var memberId = document.getElementById('editMemberId').value;
+      var roleSlug = document.getElementById('editRole').value;
+      var title = document.getElementById('editTitle').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+
+      var result = await SA.editEmployee({ team_member_id: memberId, role_slug: roleSlug, title: title });
+
+      if (result.success) {
+        showModalFeedback('editModal', 'Changes saved.', 'success');
+        setTimeout(function () { closeModal('editModal'); loadTeam(); }, 800);
+      } else {
+        showModalFeedback('editModal', result.error || 'Failed to update.', 'error');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    });
+
+    // ── DEACTIVATE ──
+    document.getElementById('deactivateCancel').addEventListener('click', function () { closeModal('deactivateModal'); });
+    document.getElementById('deactivateModal').addEventListener('click', function (e) { if (e.target === this) closeModal('deactivateModal'); });
+
+    document.getElementById('deactivateSubmit').addEventListener('click', async function () {
+      var btn = this;
+      var memberId = document.getElementById('deactivateMemberId').value;
+      btn.disabled = true;
+      btn.textContent = 'Deactivating…';
+
+      var result = await SA.deactivateEmployee(memberId);
+      if (result.success) {
+        showModalFeedback('deactivateModal', 'Employee deactivated.', 'success');
+        setTimeout(function () { closeModal('deactivateModal'); loadTeam(); }, 800);
+      } else {
+        showModalFeedback('deactivateModal', result.error || 'Failed to deactivate.', 'error');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Deactivate';
+    });
+  })();
+  </script>
+</body>
+</html>

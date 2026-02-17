@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — SSO Configuration</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .page{display:none;padding:80px 40px 60px;max-width:900px;margin:0 auto}
+    .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
+    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+
+    .nav-right-dash{display:flex;align-items:center;gap:20px}
+    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
+    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.2);text-decoration:none;transition:color .3s}
+    .back-link:hover{color:var(--cream)}
+
+    .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-secondary{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s}
+    .btn-secondary:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    /* SSO Cards */
+    .sso-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+    .sso-card{padding:28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .4s;cursor:pointer;position:relative}
+    .sso-card:hover{border-color:rgba(255,255,255,.08)}
+    .sso-card.active-provider{border-color:rgba(46,125,82,.25);background:rgba(46,125,82,.03)}
+    .sso-card-icon{font-size:32px;margin-bottom:12px}
+    .sso-card h3{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream);margin-bottom:4px}
+    .sso-card p{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--silver);line-height:1.6;margin-bottom:12px}
+    .sso-card-status{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;display:inline-block}
+    .sso-card-status.configured{background:rgba(46,125,82,.12);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
+    .sso-card-status.not-configured{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.06)}
+
+    /* Config form */
+    .sso-form{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:28px;margin-bottom:24px;display:none}
+    .sso-form.open{display:block}
+    .sso-form-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:8px}
+    .sso-form-desc{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--silver);margin-bottom:24px;line-height:1.6}
+    .form-group{margin-bottom:18px}
+    .form-label{display:block;font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-bottom:8px}
+    .form-input,.form-select{width:100%;font-family:var(--sans);font-weight:300;font-size:14px;color:var(--light-warm);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:12px 16px;outline:none;transition:border-color .3s;box-sizing:border-box}
+    .form-input:focus,.form-select:focus{border-color:var(--skr-green-line)}
+    .form-select{appearance:none;cursor:pointer}
+    .form-select option{background:var(--charcoal);color:var(--cream)}
+    .form-hint{font-family:var(--sans);font-size:10px;font-weight:200;color:#8A8178;margin-top:4px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+    .toggle-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .toggle{position:relative;width:36px;height:20px;cursor:pointer;flex-shrink:0}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.08);border-radius:10px;transition:background .3s}
+    .toggle-thumb{position:absolute;left:2px;top:2px;width:16px;height:16px;background:var(--silver);border-radius:50%;transition:all .3s}
+    .toggle input:checked+.toggle-track{background:rgba(46,125,82,.5)}
+    .toggle input:checked+.toggle-track+.toggle-thumb{left:18px;background:var(--skr-green-light)}
+    .toggle-label{font-family:var(--sans);font-size:12px;color:var(--silver)}
+
+    .sso-actions{display:flex;gap:12px;margin-top:24px}
+    .sso-feedback{font-family:var(--sans);font-weight:300;font-size:13px;margin-top:12px;min-height:20px}
+    .sso-feedback.success{color:var(--skr-green-light)}
+    .sso-feedback.error{color:#c0392b}
+
+    @media(max-width:768px){
+      .page{padding:80px 20px 40px}
+      .sso-grid{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body class="admin-dark">
+
+  <nav id="nav">
+    <a class="nav-logo" href="../../"><img src="../../assets/images/logo-transparent.png" alt="Silver Key Realty"></a>
+    <div class="nav-links" id="navLinks">
+      <a href="../dashboard/">Dashboard</a>
+      <a href="../team/">Team</a>
+      <a href="../permissions/">Permissions</a>
+      <a href="../security/">Security</a>
+      <div class="nav-right-dash">
+        <span class="nav-user-name" id="navUser">Loading…</span>
+        <span class="role-badge" id="navBadge"></span>
+        <button class="nav-signout-btn" id="signOut">Sign Out</button>
+      </div>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="dash-loading" id="pageLoading"><div class="dash-spinner"></div></div>
+
+  <div class="page" id="pageContainer">
+    <div class="page-hero">
+      <a href="../security/" class="back-link">← Back to Security</a>
+      <h1>Single Sign-On <em style="color:var(--champagne)">Configuration</em></h1>
+      <p>Connect Microsoft Entra ID or Google Workspace so your team can sign in with their corporate accounts.</p>
+    </div>
+
+    <!-- Provider cards -->
+    <div class="sso-grid">
+      <div class="sso-card" id="entraCard" data-provider="microsoft_entra">
+        <div class="sso-card-icon">🟦</div>
+        <h3>Microsoft Entra ID</h3>
+        <p>Azure Active Directory single sign-on. Agents sign in with their Microsoft work accounts.</p>
+        <span class="sso-card-status not-configured" id="entraStatus">Not Configured</span>
+      </div>
+      <div class="sso-card" id="googleCard" data-provider="google_workspace">
+        <div class="sso-card-icon">🔵</div>
+        <h3>Google Workspace</h3>
+        <p>Google OAuth single sign-on. Agents sign in with their Google work accounts.</p>
+        <span class="sso-card-status not-configured" id="googleStatus">Not Configured</span>
+      </div>
+    </div>
+
+    <!-- Config Form -->
+    <div class="sso-form" id="ssoForm">
+      <div class="sso-form-title" id="ssoFormTitle">Configure Provider</div>
+      <div class="sso-form-desc" id="ssoFormDesc">Enter your identity provider details below.</div>
+
+      <input type="hidden" id="ssoProvider">
+
+      <div class="form-group">
+        <label class="form-label" for="ssoClientId">Client ID / Application ID</label>
+        <input class="form-input" type="text" id="ssoClientId" placeholder="e.g. 12345678-abcd-…">
+        <div class="form-hint" id="clientIdHint">From Azure Portal → App registrations → Application (client) ID</div>
+      </div>
+
+      <div class="form-group" id="tenantIdGroup">
+        <label class="form-label" for="ssoTenantId">Tenant ID (Microsoft only)</label>
+        <input class="form-input" type="text" id="ssoTenantId" placeholder="e.g. 87654321-dcba-…">
+        <div class="form-hint">Azure Portal → Azure Active Directory → Overview → Tenant ID</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ssoDomains">Allowed Email Domains</label>
+        <input class="form-input" type="text" id="ssoDomains" placeholder="silverkeyrealty.com, silverkey.com">
+        <div class="form-hint">Comma-separated. Only emails from these domains can use SSO.</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="ssoDefaultRole">Default Role for New Users</label>
+          <select class="form-select" id="ssoDefaultRole"></select>
+        </div>
+        <div class="form-group" style="display:flex;flex-direction:column;justify-content:flex-end">
+          <div class="toggle-row">
+            <label class="toggle"><input type="checkbox" id="ssoAutoProvision"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+            <span class="toggle-label">Auto-provision new users on first SSO login</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label class="toggle"><input type="checkbox" id="ssoActive"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+        <span class="toggle-label">Enable this SSO provider (activate after testing)</span>
+      </div>
+
+      <div class="sso-actions">
+        <button class="btn-primary" id="ssoSave">Save Configuration</button>
+        <button class="btn-secondary" id="ssoCancel">Cancel</button>
+      </div>
+      <div class="sso-feedback" id="ssoFeedback"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/admin-permissions.js"></script>
+  <script>
+  (async function () {
+    var loading = document.getElementById('pageLoading');
+    var container = document.getElementById('pageContainer');
+
+    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
+    var member = await window.SKR_AUTH.getCurrentMember();
+    if (!member) { window.location.href = '/admin/'; return; }
+
+    if (['admin', 'broker'].indexOf(member.role) === -1) {
+      loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;text-align:center;padding:100px 20px">SSO configuration requires Broker or Admin role.<br><a href="../dashboard/" style="color:var(--skr-green-light)">← Back to Dashboard</a></p>';
+      return;
+    }
+
+    document.getElementById('navBadge').textContent = member.role.toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + member.role;
+    document.getElementById('navUser').textContent = member.display_name;
+    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
+
+    loading.style.display = 'none';
+    container.style.display = 'block';
+
+    var SA = window.SKR_AUTH;
+
+    // Load roles for default role dropdown
+    var roles = await SA.getRoles();
+    var sel = document.getElementById('ssoDefaultRole');
+    roles.forEach(function (r) {
+      if (r.hierarchy_level <= 0 || r.hierarchy_level >= 50) return;
+      var o = document.createElement('option'); o.value = r.slug; o.textContent = r.name; sel.appendChild(o);
+    });
+
+    // Load existing configs
+    var configs = await SA.getSsoConfig();
+    var configMap = {};
+    configs.forEach(function (c) { configMap[c.provider] = c; });
+
+    if (configMap.microsoft_entra) {
+      document.getElementById('entraStatus').textContent = configMap.microsoft_entra.is_active ? 'Active' : 'Configured';
+      document.getElementById('entraStatus').className = 'sso-card-status configured';
+      document.getElementById('entraCard').classList.add('active-provider');
+    }
+    if (configMap.google_workspace) {
+      document.getElementById('googleStatus').textContent = configMap.google_workspace.is_active ? 'Active' : 'Configured';
+      document.getElementById('googleStatus').className = 'sso-card-status configured';
+      document.getElementById('googleCard').classList.add('active-provider');
+    }
+
+    // Card click → open form
+    document.querySelectorAll('.sso-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var provider = this.dataset.provider;
+        var existing = configMap[provider];
+        var isEntra = provider === 'microsoft_entra';
+
+        document.getElementById('ssoProvider').value = provider;
+        document.getElementById('ssoFormTitle').textContent = 'Configure ' + (isEntra ? 'Microsoft Entra ID' : 'Google Workspace');
+        document.getElementById('ssoFormDesc').textContent = isEntra
+          ? 'You'll need your Azure AD Application (client) ID and Directory (tenant) ID from the Azure Portal.'
+          : 'You'll need your Google Cloud OAuth 2.0 Client ID from the Google Cloud Console.';
+        document.getElementById('tenantIdGroup').style.display = isEntra ? 'block' : 'none';
+        document.getElementById('clientIdHint').textContent = isEntra
+          ? 'From Azure Portal → App registrations → Application (client) ID'
+          : 'From Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID';
+
+        if (existing) {
+          document.getElementById('ssoClientId').value = existing.client_id || '';
+          document.getElementById('ssoTenantId').value = existing.azure_tenant_id || '';
+          document.getElementById('ssoDomains').value = (existing.allowed_domains || []).join(', ');
+          document.getElementById('ssoDefaultRole').value = existing.default_role || 'agent';
+          document.getElementById('ssoAutoProvision').checked = existing.auto_provision || false;
+          document.getElementById('ssoActive').checked = existing.is_active || false;
+        } else {
+          document.getElementById('ssoClientId').value = '';
+          document.getElementById('ssoTenantId').value = '';
+          document.getElementById('ssoDomains').value = '';
+          document.getElementById('ssoDefaultRole').value = 'agent';
+          document.getElementById('ssoAutoProvision').checked = false;
+          document.getElementById('ssoActive').checked = false;
+        }
+
+        document.getElementById('ssoForm').classList.add('open');
+        document.getElementById('ssoFeedback').textContent = '';
+      });
+    });
+
+    document.getElementById('ssoCancel').addEventListener('click', function () {
+      document.getElementById('ssoForm').classList.remove('open');
+    });
+
+    document.getElementById('ssoSave').addEventListener('click', async function () {
+      var btn = this;
+      var provider = document.getElementById('ssoProvider').value;
+      var clientId = document.getElementById('ssoClientId').value.trim();
+      var tenantId = document.getElementById('ssoTenantId').value.trim();
+      var domainsRaw = document.getElementById('ssoDomains').value.trim();
+      var defaultRole = document.getElementById('ssoDefaultRole').value;
+      var autoProvision = document.getElementById('ssoAutoProvision').checked;
+      var isActive = document.getElementById('ssoActive').checked;
+
+      if (!clientId) { document.getElementById('ssoFeedback').textContent = 'Client ID is required.'; document.getElementById('ssoFeedback').className = 'sso-feedback error'; return; }
+
+      var domains = domainsRaw ? domainsRaw.split(',').map(function (d) { return d.trim(); }).filter(Boolean) : [];
+
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+
+      var result = await SA.configureSso({
+        provider: provider,
+        client_id: clientId,
+        tenant_id: tenantId || null,
+        allowed_domains: domains,
+        auto_provision: autoProvision,
+        default_role: defaultRole,
+        is_active: isActive
+      });
+
+      if (result.success) {
+        document.getElementById('ssoFeedback').textContent = 'SSO configuration saved.';
+        document.getElementById('ssoFeedback').className = 'sso-feedback success';
+        setTimeout(function () { location.reload(); }, 1000);
+      } else {
+        document.getElementById('ssoFeedback').textContent = result.error || 'Failed to save.';
+        document.getElementById('ssoFeedback').className = 'sso-feedback error';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Save Configuration';
+    });
+  })();
+  </script>
+</body>
+</html>

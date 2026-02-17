@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Security</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/nav.css">
+  <link rel="stylesheet" href="../../assets/css/responsive.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .page{display:none;padding:80px 40px 60px;max-width:1000px;margin:0 auto}
+    .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
+    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+
+    .nav-right-dash{display:flex;align-items:center;gap:20px}
+    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
+    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.2);text-decoration:none;transition:color .3s}
+    .back-link:hover{color:var(--cream)}
+
+    .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-secondary{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s}
+    .btn-secondary:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .btn-danger{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#fff;background:rgba(192,57,43,.8);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-danger:hover{background:rgba(192,57,43,1)}
+
+    /* Security score */
+    .sec-score{display:flex;align-items:center;gap:24px;padding:28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:24px}
+    .sec-score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+    .sec-score-ring svg{width:80px;height:80px;transform:rotate(-90deg)}
+    .sec-score-ring circle{fill:none;stroke-width:4}
+    .sec-score-ring .bg{stroke:rgba(255,255,255,.04)}
+    .sec-score-ring .fg{stroke:var(--skr-green-light);stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+    .sec-score-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;font-weight:300;color:var(--cream)}
+    .sec-score-info h3{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:4px}
+    .sec-score-info p{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--silver);line-height:1.6}
+
+    /* Cards */
+    .sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+    .sec-card{padding:28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .4s}
+    .sec-card:hover{border-color:rgba(255,255,255,.08)}
+    .sec-card-icon{font-size:24px;margin-bottom:12px}
+    .sec-card h3{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream);margin-bottom:6px}
+    .sec-card p{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--silver);line-height:1.6;margin-bottom:16px}
+    .sec-card-status{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;display:inline-block;margin-bottom:16px}
+    .sec-card-status.active{background:rgba(46,125,82,.12);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
+    .sec-card-status.inactive{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.06)}
+    .sec-card-status.warning{background:rgba(212,160,23,.1);color:#d4a017;border:1px solid rgba(212,160,23,.2)}
+
+    /* MFA Section */
+    .mfa-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:28px;margin-bottom:24px}
+    .mfa-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:8px}
+    .mfa-desc{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-bottom:20px;line-height:1.6}
+    .mfa-step{font-family:var(--sans);font-size:12px;color:var(--silver);margin-bottom:12px}
+    .mfa-step strong{color:var(--cream);font-weight:400}
+    .mfa-code-input{font-family:var(--sans);font-size:18px;letter-spacing:8px;text-align:center;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:14px;width:200px;outline:none;transition:border-color .3s}
+    .mfa-code-input:focus{border-color:var(--skr-green-line)}
+    .mfa-feedback{font-family:var(--sans);font-weight:300;font-size:13px;margin-top:12px;min-height:20px}
+    .mfa-feedback.success{color:var(--skr-green-light)}
+    .mfa-feedback.error{color:#c0392b}
+    .mfa-actions{display:flex;gap:12px;margin-top:20px;align-items:center}
+
+    /* Login history */
+    .login-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:24px}
+    .login-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.04)}
+    .login-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream)}
+    .login-row{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.015);display:flex;justify-content:space-between;align-items:center}
+    .login-row:last-child{border-bottom:none}
+    .login-event{font-family:var(--sans);font-size:12px;color:var(--silver)}
+    .login-event strong{color:var(--cream);font-weight:400}
+    .login-risk{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1px;padding:2px 8px}
+    .login-risk.low{color:var(--skr-green-light);background:rgba(46,125,82,.1);border:1px solid rgba(46,125,82,.2)}
+    .login-risk.high{color:#e74c3c;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.15)}
+
+    .sec-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--skr-green-light);opacity:.6;margin-bottom:16px;padding-top:16px}
+
+    @media(max-width:768px){
+      .page{padding:80px 20px 40px}
+      .sec-grid{grid-template-columns:1fr}
+      .sec-score{flex-direction:column;text-align:center}
+    }
+  </style>
+</head>
+<body class="admin-dark">
+
+  <nav id="nav">
+    <a class="nav-logo" href="../../"><img src="../../assets/images/logo-transparent.png" alt="Silver Key Realty"></a>
+    <div class="nav-links" id="navLinks">
+      <a href="../dashboard/">Dashboard</a>
+      <a href="../team/">Team</a>
+      <a href="../permissions/">Permissions</a>
+      <a href="./" class="active">Security</a>
+      <div class="nav-right-dash">
+        <span class="nav-user-name" id="navUser">Loading…</span>
+        <span class="role-badge" id="navBadge"></span>
+        <button class="nav-signout-btn" id="signOut">Sign Out</button>
+      </div>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="dash-loading" id="pageLoading"><div class="dash-spinner"></div></div>
+
+  <div class="page" id="pageContainer">
+    <div class="page-hero">
+      <a href="../dashboard/" class="back-link">← Back to Dashboard</a>
+      <h1>Security <em style="color:var(--champagne)">Center</em></h1>
+      <p>Manage your security settings, MFA enrollment, and review login activity.</p>
+    </div>
+
+    <!-- Security Score -->
+    <div class="sec-score">
+      <div class="sec-score-ring">
+        <svg viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="34"/><circle class="fg" id="scoreCircle" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
+        <div class="sec-score-val" id="scoreVal">—</div>
+      </div>
+      <div class="sec-score-info">
+        <h3>Security Score</h3>
+        <p id="scoreDesc">Calculating your security posture based on active protections…</p>
+      </div>
+    </div>
+
+    <!-- Security Features Grid -->
+    <div class="sec-label">Active Protections</div>
+    <div class="sec-grid">
+      <div class="sec-card">
+        <div class="sec-card-icon">🔐</div>
+        <h3>Two-Layer Auth Guard</h3>
+        <span class="sec-card-status active">Active</span>
+        <p>Supabase verifies identity, then skr_team_members verifies authorization. No bypass possible.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-card-icon">🔒</div>
+        <h3>Field-Level Encryption</h3>
+        <span class="sec-card-status active">Active</span>
+        <p>PII fields (email, phone, name) encrypted via pgcrypto with SHA-256 hashing.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-card-icon">⛓️</div>
+        <h3>Blockchain Audit Chain</h3>
+        <span class="sec-card-status active">Active</span>
+        <p>Every action hash-chained with SHA-256. Immutable — no update or delete allowed.</p>
+      </div>
+      <div class="sec-card">
+        <div class="sec-card-icon">🛡️</div>
+        <h3>Wire Fraud Protection</h3>
+        <span class="sec-card-status active">Active</span>
+        <p>Shield system verifies wire instructions. Hash-chained audit trail on all verification events.</p>
+      </div>
+    </div>
+
+    <!-- MFA Section -->
+    <div class="sec-label">Multi-Factor Authentication</div>
+    <div class="mfa-section" id="mfaSection">
+      <div class="mfa-title">Two-Factor Authentication</div>
+      <div class="mfa-desc" id="mfaDesc">Loading MFA status…</div>
+      <div id="mfaContent"></div>
+    </div>
+
+    <!-- Login History -->
+    <div class="sec-label">Recent Login Activity</div>
+    <div class="login-section">
+      <div class="login-header"><span class="login-title">Login Forensics</span></div>
+      <div id="loginList">
+        <div style="padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178">Loading…</div>
+      </div>
+    </div>
+
+    <!-- SSO Link (broker+ only) -->
+    <div id="ssoLink" style="display:none;margin-top:24px">
+      <a href="../sso/" style="font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:1px;color:var(--champagne);text-decoration:none;transition:color .3s">Configure Single Sign-On (SSO) →</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/admin-permissions.js"></script>
+  <script>
+  (async function () {
+    var loading = document.getElementById('pageLoading');
+    var container = document.getElementById('pageContainer');
+
+    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
+    var member = await window.SKR_AUTH.getCurrentMember();
+    if (!member) { window.location.href = '/admin/'; return; }
+
+    document.getElementById('navBadge').textContent = member.role.toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + member.role;
+    document.getElementById('navUser').textContent = member.display_name;
+    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
+
+    if (['admin', 'broker'].indexOf(member.role) !== -1) {
+      document.getElementById('ssoLink').style.display = 'block';
+    }
+
+    loading.style.display = 'none';
+    container.style.display = 'block';
+
+    var SA = window.SKR_AUTH;
+    var sb = SA.supabase;
+
+    // ── SECURITY SCORE ──
+    var score = 60; // Base: auth guard + encryption + audit chain + RLS
+    var scoreItems = ['Two-layer auth guard', 'Field-level PII encryption', 'Blockchain audit chain', 'Wire fraud protection'];
+
+    // Check MFA
+    var mfaStatus = null;
+    try { mfaStatus = await SA.getMfaStatus(); } catch (e) {}
+    var mfaEnabled = mfaStatus && mfaStatus.is_enrolled;
+    if (mfaEnabled) { score += 20; scoreItems.push('MFA enabled'); }
+
+    // Check SSO
+    var ssoConfigs = [];
+    try { ssoConfigs = await SA.getSsoConfig(); } catch (e) {}
+    var ssoActive = ssoConfigs.some(function (c) { return c.is_active; });
+    if (ssoActive) { score += 10; scoreItems.push('SSO configured'); }
+
+    // Cap at 100
+    score = Math.min(score, 100);
+
+    // Render score
+    var circumference = 213.6;
+    var offset = circumference - (score / 100 * circumference);
+    document.getElementById('scoreCircle').style.strokeDashoffset = offset;
+    document.getElementById('scoreVal').textContent = score;
+    document.getElementById('scoreDesc').textContent = scoreItems.join(' · ') + (score < 80 ? '. Enable MFA to improve your score.' : '. Strong security posture.');
+
+    // ── MFA ──
+    if (mfaEnabled) {
+      document.getElementById('mfaDesc').textContent = 'Two-factor authentication is enabled for your account.';
+      document.getElementById('mfaContent').innerHTML =
+        '<span class="sec-card-status active" style="margin-bottom:16px;display:inline-block">Enrolled</span>' +
+        '<div class="mfa-step">Method: <strong>' + (mfaStatus.method || 'TOTP') + '</strong></div>' +
+        (mfaStatus.enrolled_at ? '<div class="mfa-step">Enrolled: <strong>' + new Date(mfaStatus.enrolled_at).toLocaleDateString() + '</strong></div>' : '') +
+        '<div class="mfa-actions"><button class="btn-danger" id="unenrollMfa">Disable MFA</button></div>' +
+        '<div class="mfa-feedback" id="mfaFeedback"></div>';
+
+      document.getElementById('unenrollMfa').addEventListener('click', async function () {
+        if (!confirm('Are you sure you want to disable MFA? This reduces your account security.')) return;
+        this.disabled = true;
+        this.textContent = 'Disabling…';
+        var r = await SA.unenrollMfa();
+        if (r.success) {
+          document.getElementById('mfaFeedback').textContent = 'MFA disabled.';
+          document.getElementById('mfaFeedback').className = 'mfa-feedback success';
+          setTimeout(function () { location.reload(); }, 1000);
+        } else {
+          document.getElementById('mfaFeedback').textContent = r.error || 'Failed to disable MFA.';
+          document.getElementById('mfaFeedback').className = 'mfa-feedback error';
+          this.disabled = false;
+          this.textContent = 'Disable MFA';
+        }
+      });
+    } else {
+      document.getElementById('mfaDesc').textContent = 'Add an extra layer of security to your account with a time-based one-time password (TOTP).';
+      document.getElementById('mfaContent').innerHTML =
+        '<span class="sec-card-status warning" style="margin-bottom:16px;display:inline-block">Not Enrolled</span>' +
+        '<div class="mfa-step"><strong>Step 1:</strong> Click "Enable MFA" to generate a setup code.</div>' +
+        '<div class="mfa-step"><strong>Step 2:</strong> Scan the QR code with an authenticator app (Google Authenticator, Authy, etc.).</div>' +
+        '<div class="mfa-step"><strong>Step 3:</strong> Enter the 6-digit verification code to confirm enrollment.</div>' +
+        '<div class="mfa-actions"><button class="btn-primary" id="enrollMfa">Enable MFA</button></div>' +
+        '<div id="mfaEnrollArea" style="display:none;margin-top:20px">' +
+          '<div class="mfa-step" id="mfaEnrollInfo"></div>' +
+          '<div style="margin-top:12px"><input class="mfa-code-input" type="text" id="mfaCode" maxlength="6" placeholder="000000"></div>' +
+          '<div class="mfa-actions"><button class="btn-primary" id="verifyMfa">Verify Code</button><button class="btn-secondary" id="cancelMfa">Cancel</button></div>' +
+        '</div>' +
+        '<div class="mfa-feedback" id="mfaFeedback"></div>';
+
+      document.getElementById('enrollMfa').addEventListener('click', async function () {
+        this.disabled = true;
+        this.textContent = 'Setting up…';
+        var r = await SA.enrollMfa('totp');
+        if (r.success) {
+          this.style.display = 'none';
+          document.getElementById('mfaEnrollArea').style.display = 'block';
+          document.getElementById('mfaEnrollInfo').innerHTML = '<strong>Setup initiated.</strong> If your authenticator app supports TOTP, add Silver Key Realty manually. Then enter the 6-digit code below.';
+        } else {
+          document.getElementById('mfaFeedback').textContent = r.error || 'Failed to start MFA enrollment.';
+          document.getElementById('mfaFeedback').className = 'mfa-feedback error';
+          this.disabled = false;
+          this.textContent = 'Enable MFA';
+        }
+      });
+
+      document.addEventListener('click', function (e) {
+        if (e.target.id === 'verifyMfa') {
+          var code = document.getElementById('mfaCode').value.trim();
+          if (code.length !== 6) { document.getElementById('mfaFeedback').textContent = 'Enter a 6-digit code.'; document.getElementById('mfaFeedback').className = 'mfa-feedback error'; return; }
+          e.target.disabled = true;
+          e.target.textContent = 'Verifying…';
+          SA.verifyMfa(code).then(function (r) {
+            if (r.success) {
+              document.getElementById('mfaFeedback').textContent = 'MFA enabled successfully!';
+              document.getElementById('mfaFeedback').className = 'mfa-feedback success';
+              setTimeout(function () { location.reload(); }, 1000);
+            } else {
+              document.getElementById('mfaFeedback').textContent = r.error || 'Invalid code. Try again.';
+              document.getElementById('mfaFeedback').className = 'mfa-feedback error';
+              e.target.disabled = false;
+              e.target.textContent = 'Verify Code';
+            }
+          });
+        }
+        if (e.target.id === 'cancelMfa') {
+          document.getElementById('mfaEnrollArea').style.display = 'none';
+          var enrollBtn = document.getElementById('enrollMfa');
+          if (enrollBtn) { enrollBtn.style.display = 'inline-block'; enrollBtn.disabled = false; enrollBtn.textContent = 'Enable MFA'; }
+        }
+      });
+    }
+
+    // ── LOGIN FORENSICS ──
+    try {
+      var r = await sb.from('skr_login_forensics').select('*').order('created_at', { ascending: false }).limit(10);
+      if (r.data && r.data.length > 0) {
+        var h = '';
+        r.data.forEach(function (l) {
+          var isLow = l.risk_score <= 30;
+          var d = new Date(l.created_at).toLocaleString();
+          h += '<div class="login-row">' +
+            '<div class="login-event"><strong>' + (l.event_type || 'login') + '</strong> — ' + d + '</div>' +
+            '<span class="login-risk ' + (isLow ? 'low' : 'high') + '">Risk: ' + l.risk_score + '</span></div>';
+        });
+        document.getElementById('loginList').innerHTML = h;
+      } else {
+        document.getElementById('loginList').innerHTML = '<div style="padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178">No login events recorded yet.</div>';
+      }
+    } catch (e) {
+      document.getElementById('loginList').innerHTML = '<div style="padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178">Login forensics table not available.</div>';
+    }
+  })();
+  </script>
+</body>
+</html>

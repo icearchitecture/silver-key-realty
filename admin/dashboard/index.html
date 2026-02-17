@@ -130,6 +130,9 @@
   <nav id="nav">
     <a class="nav-logo" href="../../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
     <div class="nav-links nav-right-dash" id="navLinks">
+      <a href="../team/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Team</a>
+      <a href="../permissions/" id="navPermLink" style="display:none;font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Permissions</a>
+      <a href="../security/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Security</a>
       <span class="role-badge admin" id="navBadge"></span>
       <span class="nav-user-name" id="navUser"></span>
       <button class="nav-signout-btn" id="signOut">Sign Out</button>
@@ -297,7 +300,13 @@
       }
     } catch(e){ console.warn('[SKR] Team:',e); }
 
-    document.getElementById('addEmployee').addEventListener('click', function(){ alert('Add Employee — next build.'); });
+    document.getElementById('addEmployee').addEventListener('click', function(){ window.location.href = '/admin/team/'; });
+
+    // Show permissions link for broker+ roles
+    if (member.role === 'admin' || member.role === 'broker') {
+      var permLink = document.getElementById('navPermLink');
+      if (permLink) permLink.style.display = 'inline';
+    }
   })();
   </script>
 </body>
