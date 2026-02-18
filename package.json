@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "silver-key-realty",
+  "dependencies": {
+    "@azure/communication-email": "^1.0.0",
+    "@supabase/supabase-js": "^2.49.1"
+  }
+}
