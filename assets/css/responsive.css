@@ -272,6 +272,58 @@ img, video, iframe {
 }
 
 /* ============================================================
+   BREAKPOINT: 768px — Pathway Pages (dark-cards, hero-pathway)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* Pathway hero */
+  .hero.hero-pathway {
+    min-height: 60vh !important;
+    padding: 80px 24px 48px !important;
+    background-color: #111 !important;
+  }
+
+  .hero.hero-pathway .hero-content {
+    padding-top: 0 !important;
+  }
+
+  .hero.hero-pathway h1 {
+    font-size: clamp(24px, 6vw, 36px) !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Dark card grid — stack vertically */
+  .dark-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 40px 20px !important;
+  }
+
+  .dark-card {
+    width: 100% !important;
+    padding: 28px 24px !important;
+  }
+
+  .dark-card h3 {
+    font-size: 20px !important;
+  }
+
+  .dark-card p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  .dark-card-checks {
+    gap: 8px !important;
+  }
+
+  .dark-chk span {
+    font-size: 13px !important;
+  }
+}
+
+/* ============================================================
    BREAKPOINT: 480px (existing + small phones)
    ============================================================ */
 

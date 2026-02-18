@@ -1,41 +1,63 @@
 /* ============================================================
    SILVER KEY REALTY — NAV
-   Scroll state detection + mobile menu toggle
+   Scroll state detection + mobile menu overlay toggle
    ============================================================ */
 
 (function() {
-  const nav = document.getElementById('nav');
-  const toggle = document.getElementById('navToggle');
-  const links = document.getElementById('navLinks');
+  var nav = document.getElementById('nav');
+  var toggle = document.getElementById('navToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
 
   if (!nav) return;
 
   // Scroll state: frosted glass after 60px
-  const SCROLL_TRIGGER = 60;
+  var SCROLL_TRIGGER = 60;
 
   function updateNav() {
     nav.classList.toggle('scrolled', window.scrollY > SCROLL_TRIGGER);
   }
 
   window.addEventListener('scroll', updateNav, { passive: true });
-  updateNav(); // Initial check
+  updateNav();
 
-  // Mobile toggle
-  if (toggle && links) {
+  // Mobile menu overlay toggle
+  if (toggle && mobileMenu) {
     toggle.addEventListener('click', function() {
-      links.classList.toggle('open');
+      var isOpen = mobileMenu.classList.contains('open');
+      if (isOpen) {
+        closeMobileMenu();
+      } else {
+        mobileMenu.classList.add('open');
+        toggle.classList.add('active');
+        document.body.classList.add('menu-open');
+      }
     });
   }
 
   // Smooth scroll for anchor links + close mobile menu
   document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     a.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (links) links.classList.remove('open');
-      var target = document.querySelector(a.getAttribute('href'));
+      var href = a.getAttribute('href');
+      if (href === '#') return;
+      var target = document.querySelector(href);
       if (target) {
+        e.preventDefault();
+        closeMobileMenu();
         target.scrollIntoView({ behavior: 'smooth' });
       }
     });
   });
+
+  // Close on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMobileMenu();
+  });
 })();
+
+function closeMobileMenu() {
+  var mobileMenu = document.getElementById('mobileMenu');
+  var navToggle = document.getElementById('navToggle');
+  if (mobileMenu) mobileMenu.classList.remove('open');
+  if (navToggle) navToggle.classList.remove('active');
+  document.body.classList.remove('menu-open');
+}
