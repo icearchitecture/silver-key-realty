@@ -5,12 +5,12 @@
  * It checks the user's role and either allows access or redirects.
  *
  * Permission levels:
- *   admin=50, broker=40, manager=30, agent=20, assistant=15, viewer=5, client=1, public=0
+ *   admin=60, broker=50, agent=40, assistant=30, client=20, applicant=15, lead=10, public=0
  */
 window.SKR_ROUTER = (function () {
   var ROLE_LEVELS = {
-    admin: 50, broker: 40, manager: 30, agent: 20,
-    assistant: 15, viewer: 5, client: 1, public: 0
+    admin: 60, broker: 50, agent: 40, assistant: 30,
+    client: 20, applicant: 15, lead: 10, public: 0
   };
 
   async function init(options) {
@@ -59,7 +59,7 @@ window.SKR_ROUTER = (function () {
       // Get role details
       var roleResult = await sb
         .from('skr_roles')
-        .select('slug, name, permission_level')
+        .select('role_name, permission_level')
         .eq('id', member.role_id)
         .single();
 
@@ -90,8 +90,8 @@ window.SKR_ROUTER = (function () {
         email: member.email,
         displayName: member.display_name || (member.first_name + ' ' + (member.last_name || '')).trim(),
         firstName: member.first_name,
-        role: role.slug,
-        roleName: role.name,
+        role: role.role_name,
+        roleName: role.role_name,
         permissionLevel: role.permission_level
       };
 
@@ -122,7 +122,7 @@ window.SKR_ROUTER = (function () {
         firstName: lead ? lead.first_name : '',
         role: 'client',
         roleName: 'Client',
-        permissionLevel: 1,
+        permissionLevel: 20,
         leadType: lead ? lead.lead_type : null,
         leadStatus: lead ? lead.status : 'new'
       };

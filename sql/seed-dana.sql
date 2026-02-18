@@ -28,7 +28,7 @@ BEGIN
   END IF;
 
   -- Get broker role
-  SELECT id INTO v_broker_role_id FROM skr_roles WHERE slug = 'broker' LIMIT 1;
+  SELECT id INTO v_broker_role_id FROM skr_roles WHERE role_name = 'broker' LIMIT 1;
 
   IF v_broker_role_id IS NULL THEN
     RAISE EXCEPTION 'Broker role not found. Run the auth schema SQL first.';

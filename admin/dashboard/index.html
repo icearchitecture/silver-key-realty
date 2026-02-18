@@ -227,11 +227,11 @@
     }
 
     var roleCheck = await sb.from('skr_roles')
-      .select('slug, permission_level')
+      .select('role_name, permission_level')
       .eq('id', memberCheck.data.role_id)
       .single();
 
-    var userRole = roleCheck.data ? roleCheck.data.slug : 'viewer';
+    var userRole = roleCheck.data ? roleCheck.data.role_name : 'lead';
     var userLevel = roleCheck.data ? roleCheck.data.permission_level : 0;
 
     window.SKR_USER = {
@@ -241,14 +241,14 @@
       displayName: memberCheck.data.display_name
     };
 
-    if (userLevel < 50) {
+    if (userLevel < 60) {
       document.querySelectorAll('[data-min-role="admin"]').forEach(function(el) { el.style.display = 'none'; });
     }
-    if (userLevel < 40) {
+    if (userLevel < 50) {
       document.querySelectorAll('[data-min-role="broker"]').forEach(function(el) { el.style.display = 'none'; });
     }
-    if (userLevel < 30) {
-      document.querySelectorAll('[data-min-role="manager"]').forEach(function(el) { el.style.display = 'none'; });
+    if (userLevel < 40) {
+      document.querySelectorAll('[data-min-role="agent"]').forEach(function(el) { el.style.display = 'none'; });
     }
     // === END ROLE GATE ===
 
@@ -334,7 +334,7 @@
     } catch(e){ console.warn('[SKR] Activity:',e); }
 
     // Team list (broker+ only, hidden by data-min-role for lower roles)
-    if (userLevel >= 40) {
+    if (userLevel >= 50) {
       try {
         var teamResult = await sb.from('skr_team_members')
           .select('id, display_name, email, role_id, is_active')
@@ -342,14 +342,14 @@
           .order('display_name');
         var teamMembers = teamResult.data;
         if (teamMembers && teamMembers.length > 0) {
-          var rolesResult = await sb.from('skr_roles').select('id, slug');
+          var rolesResult = await sb.from('skr_roles').select('id, role_name');
           var roleMap = {};
-          if (rolesResult.data) rolesResult.data.forEach(function(r){ roleMap[r.id] = r.slug; });
+          if (rolesResult.data) rolesResult.data.forEach(function(r){ roleMap[r.id] = r.role_name; });
           var h = '';
           teamMembers.forEach(function(m){
             var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
-            var roleSlug = roleMap[m.role_id] || 'agent';
-            h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleSlug+'">'+roleSlug+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
+            var roleName = roleMap[m.role_id] || 'agent';
+            h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleName+'">'+roleName+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
           });
           document.getElementById('teamList').innerHTML = h;
         }
@@ -359,7 +359,7 @@
     }
 
     // Show permissions link for broker+ roles
-    if (userLevel >= 40) {
+    if (userLevel >= 50) {
       var permLink = document.getElementById('navPermLink');
       if (permLink) permLink.style.display = 'inline';
     }
