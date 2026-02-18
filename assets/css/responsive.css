@@ -3,6 +3,21 @@
    Mobile-first overrides. Primary breakpoint: 900px.
    ============================================================ */
 
+/* ── Always-applied: hero dark fallback so text is readable ── */
+.hero, [class*="hero"] {
+  background-color: #111;
+}
+
+/* ── Base mobile resets ── */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   BREAKPOINT: 900px (primary — existing layout)
+   ============================================================ */
+
 @media (max-width: 900px) {
   /* Nav */
   nav { padding: 16px var(--padding-mobile); }
@@ -69,9 +84,219 @@
   }
 }
 
+/* ============================================================
+   BREAKPOINT: 768px (mobile — hero, cards, form, typography)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* ── Navigation ── */
+  nav, .nav, header nav {
+    padding: 12px 20px !important;
+  }
+
+  .nav-links, .nav-menu {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ── Hero Section ── */
+  .hero, body.home-dark .hero {
+    min-height: 100svh;
+    padding: 100px 24px 60px !important;
+    background-color: #111;
+  }
+
+  .hero h1, body.home-dark .hero h1 {
+    font-size: clamp(28px, 7vw, 48px) !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+  }
+
+  .hero-sub, .hero p {
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+    max-width: 100% !important;
+  }
+
+  .hero-tag {
+    font-size: 10px !important;
+    letter-spacing: 2px !important;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .hero .btn-primary, .hero-actions a {
+    padding: 14px 28px !important;
+    font-size: 12px !important;
+    width: auto !important;
+    display: inline-block !important;
+  }
+
+  .hero-bg {
+    display: none !important;
+  }
+
+  /* ── Pathway Cards ── */
+  .home-pw-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .home-pathways {
+    padding: 40px 20px !important;
+  }
+
+  .home-pw {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 28px 24px !important;
+  }
+
+  .home-pw h3 {
+    font-size: 20px !important;
+  }
+
+  .home-pw > p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  .home-pw-num {
+    font-size: 36px !important;
+  }
+
+  .pathways-header h2, .home-pathways h2 {
+    font-size: clamp(24px, 6vw, 40px) !important;
+    line-height: 1.2 !important;
+  }
+
+  /* ── Three Pillars ── */
+  .home-pillars {
+    padding: 40px 20px !important;
+  }
+
+  .home-pil-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .home-pil {
+    padding: 36px 24px !important;
+  }
+
+  .home-pil h3 {
+    font-size: 20px !important;
+  }
+
+  .pillars-header h2 {
+    font-size: clamp(24px, 6vw, 40px) !important;
+    line-height: 1.2 !important;
+  }
+
+  .pillars-tag {
+    font-size: 10px !important;
+  }
+
+  /* ── CTA + Form ── */
+  .cta {
+    padding: 40px 20px !important;
+  }
+
+  .cta h2 {
+    font-size: clamp(24px, 6vw, 40px) !important;
+    line-height: 1.2 !important;
+  }
+
+  .dark-form, .skr-form {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .form-input, .form-textarea, .form-select {
+    width: 100% !important;
+    font-size: 16px !important;
+    padding: 14px !important;
+  }
+
+  .form-textarea {
+    min-height: 100px !important;
+  }
+
+  .form-submit {
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 14px !important;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 32px 20px !important;
+    text-align: center !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .footer-left {
+    align-items: center;
+    text-align: center;
+  }
+
+  footer img {
+    max-width: 80px !important;
+  }
+
+  /* ── General Typography ── */
+  h1 { font-size: clamp(28px, 7vw, 48px) !important; }
+  h2 { font-size: clamp(24px, 6vw, 40px) !important; }
+  h3 { font-size: clamp(18px, 5vw, 28px) !important; }
+
+  p, li {
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+  }
+
+  body, html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  section {
+    overflow-x: hidden;
+  }
+}
+
+/* ============================================================
+   BREAKPOINT: 480px (existing + small phones)
+   ============================================================ */
+
 @media (max-width: 480px) {
   .hero h1 { font-size: 34px; }
   .pathway-number { font-size: 48px; }
   .pathway-title { font-size: 24px; }
   .feature-stats { flex-direction: column; gap: 24px; }
+}
+
+/* ── iPhone SE and very small screens ── */
+@media (max-width: 375px) {
+  .hero h1, body.home-dark .hero h1 {
+    font-size: 26px !important;
+  }
+
+  section {
+    padding: 32px 16px !important;
+  }
+
+  .home-pw {
+    padding: 24px 20px !important;
+  }
+
+  .home-pil {
+    padding: 28px 20px !important;
+  }
 }
