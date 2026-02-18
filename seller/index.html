@@ -24,7 +24,7 @@
     </a>
     <div class="nav-links" id="navLinks">
       <a href="../#pathways">Pathways</a>
-      <a href="../#connect" class="nav-cta">Begin</a>
+      <a href="#" class="nav-login-btn" onclick="openLoginModal(); return false;">Login</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
       <span></span><span></span><span></span>
@@ -62,8 +62,7 @@
       </nav>
       <div class="mobile-menu-divider"></div>
       <div class="mobile-menu-actions">
-        <a href="../#connect" class="mobile-menu-cta">Request Consultation</a>
-        <a href="../admin/" class="mobile-menu-employee">Employee Portal</a>
+        <a href="#" class="mobile-menu-cta" onclick="closeMenuAndLogin(); return false;">Login / Get Started</a>
       </div>
       <div class="mobile-menu-footer">
         <div class="mobile-menu-footer-text">silverkeyrealty.llc · Pontiac, Michigan</div>
@@ -140,7 +139,112 @@
     <div class="footer-right">© 2026 Silver Key Realty LLC</div>
   </footer>
 
+  <!-- Login Modal -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-modal-backdrop" onclick="closeLoginModal()"></div>
+    <div class="login-modal-card">
+      <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
+
+      <div class="login-step active" id="loginStep1">
+        <div class="login-modal-brand">SKR</div>
+        <div class="login-modal-title">How would you like to get started?</div>
+        <div class="login-modal-subtitle">Select your role and we'll personalize your experience.</div>
+        <div class="login-roles">
+          <button class="login-role" onclick="selectRole('buyer')">
+            <span class="login-role-icon">&#127968;</span>
+            <span class="login-role-name">I'm Buying</span>
+            <span class="login-role-desc">Find your next home</span>
+          </button>
+          <button class="login-role" onclick="selectRole('seller')">
+            <span class="login-role-icon">&#128196;</span>
+            <span class="login-role-name">I'm Selling</span>
+            <span class="login-role-desc">List your property</span>
+          </button>
+          <button class="login-role" onclick="selectRole('investor')">
+            <span class="login-role-icon">&#128200;</span>
+            <span class="login-role-name">I'm Investing</span>
+            <span class="login-role-desc">Acquire assets</span>
+          </button>
+          <button class="login-role" onclick="selectRole('renter')">
+            <span class="login-role-icon">&#128205;</span>
+            <span class="login-role-name">I'm Renting</span>
+            <span class="login-role-desc">Find a space</span>
+          </button>
+          <button class="login-role" onclick="selectRole('agent')">
+            <span class="login-role-icon">&#127919;</span>
+            <span class="login-role-name">I'm an Agent</span>
+            <span class="login-role-desc">Join the team</span>
+          </button>
+          <button class="login-role login-role-employee" onclick="window.location.href='/admin/'">
+            <span class="login-role-icon">&#128274;</span>
+            <span class="login-role-name">Employee Portal</span>
+            <span class="login-role-desc">Team sign in</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="login-step" id="loginStep2">
+        <button class="login-back" onclick="showLoginStep(1)">&larr; Back</button>
+        <div class="login-modal-title" id="loginStep2Title">Sign in to continue</div>
+        <div class="login-modal-subtitle">Choose how you'd like to sign in.</div>
+        <div class="login-auth-options">
+          <button class="login-auth-btn" onclick="signInWithGoogle()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            <span>Continue with Google</span>
+          </button>
+          <button class="login-auth-btn" onclick="signInWithMicrosoft()">
+            <svg width="20" height="20" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg>
+            <span>Continue with Microsoft</span>
+          </button>
+          <div class="login-auth-divider"><span>or</span></div>
+          <button class="login-auth-btn" onclick="showEmailForm()">
+            <span>&#9993;</span>
+            <span>Sign in with Email</span>
+          </button>
+        </div>
+        <div class="login-email-form" id="loginEmailForm" style="display:none">
+          <input type="email" id="loginEmailInput" placeholder="Enter your email" class="login-input">
+          <button class="login-submit-btn" onclick="sendMagicLink()">Send Magic Link</button>
+          <div class="login-email-note">We'll email you a secure link to sign in — no password needed.</div>
+        </div>
+        <div class="login-auth-footer">By continuing, you agree to Silver Key Realty's terms of service.</div>
+      </div>
+
+      <div class="login-step" id="loginStep3">
+        <div style="text-align:center; padding: 20px 0;">
+          <div style="font-size:40px; margin-bottom:16px;">&#9993;&#65039;</div>
+          <div class="login-modal-title">Check your inbox</div>
+          <div class="login-modal-subtitle" id="loginSentEmail">We sent a link to your email.</div>
+          <div style="margin-top:24px;">
+            <button class="login-back" onclick="showLoginStep(2)">Try a different method</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/js/admin-config.js"></script>
+  <script>
+  var sb = (function() {
+    var url = (window.SKR_CONFIG && window.SKR_CONFIG.SUPABASE_URL) || 'https://onhwgirbmoxaquxpkfie.supabase.co';
+    var key = (window.SKR_CONFIG && window.SKR_CONFIG.SUPABASE_ANON_KEY) || '';
+    return supabase.createClient(url, key);
+  })();
+  var selectedRole = null;
+  function openLoginModal() { document.getElementById('loginModal').classList.add('open'); document.body.classList.add('modal-open'); showLoginStep(1); if (typeof closeMobileMenu === 'function') closeMobileMenu(); }
+  function closeLoginModal() { document.getElementById('loginModal').classList.remove('open'); document.body.classList.remove('modal-open'); }
+  function closeMenuAndLogin() { closeMobileMenu(); setTimeout(function() { openLoginModal(); }, 300); }
+  function showLoginStep(step) { document.querySelectorAll('.login-step').forEach(function(s) { s.classList.remove('active'); }); document.getElementById('loginStep' + step).classList.add('active'); if (step === 2) document.getElementById('loginEmailForm').style.display = 'none'; }
+  function selectRole(role) { selectedRole = role; localStorage.setItem('skr_selected_role', role); var titles = { buyer:'Sign in as a Buyer', seller:'Sign in as a Seller', investor:'Sign in as an Investor', renter:'Sign in as a Renter', agent:'Sign in as an Agent' }; document.getElementById('loginStep2Title').textContent = titles[role] || 'Sign in to continue'; showLoginStep(2); }
+  function showEmailForm() { document.getElementById('loginEmailForm').style.display = 'block'; document.getElementById('loginEmailInput').focus(); }
+  async function signInWithGoogle() { var { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/admin/' } }); if (error) alert('Sign in failed: ' + error.message); }
+  async function signInWithMicrosoft() { var { error } = await sb.auth.signInWithOAuth({ provider: 'azure', options: { redirectTo: window.location.origin + '/admin/' } }); if (error) alert('Sign in failed: ' + error.message); }
+  async function sendMagicLink() { var email = document.getElementById('loginEmailInput').value.trim(); if (!email) return; var { error } = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + '/admin/' } }); if (error) { alert('Error: ' + error.message); return; } document.getElementById('loginSentEmail').textContent = 'We sent a link to ' + email; showLoginStep(3); }
+  document.addEventListener('DOMContentLoaded', function() { var emailInput = document.getElementById('loginEmailInput'); if (emailInput) emailInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMagicLink(); }); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLoginModal(); });
+  </script>
 </body>
 </html>
