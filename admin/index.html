@@ -3,189 +3,522 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Employee Login</title>
+  <title>Silver Key Realty — Sign In</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tokens.css">
-  <link rel="stylesheet" href="../assets/css/base.css">
-  <link rel="stylesheet" href="../assets/css/nav.css">
-  <link rel="stylesheet" href="../assets/css/responsive.css">
-  <link rel="stylesheet" href="../assets/css/admin.css">
   <style>
-    .pw-wrap{position:relative}
-    .pw-wrap .form-input{padding-right:48px}
-    .pw-toggle{position:absolute;right:1px;top:1px;bottom:1px;width:44px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:16px;transition:color .3s}
-    .pw-toggle:hover{color:var(--cream)}
+    :root {
+      --bg: #111;
+      --card: #1A1A1A;
+      --cream: #F0EBE3;
+      --silver: #8A8178;
+      --muted: #5A5550;
+      --green: #3A9464;
+      --green-hover: #2E7D52;
+      --gold: #C9B99A;
+      --border: rgba(255,255,255,0.06);
+      --border-light: rgba(255,255,255,0.08);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Outfit', Arial, sans-serif;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); font-family:var(--sans); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+
+    .login-wrap { width:100%; max-width:420px; }
+
+    .brand { text-align:center; margin-bottom:40px; }
+    .brand-logo { font-family:var(--serif); font-size:38px; color:var(--gold); letter-spacing:2px; margin-bottom:16px; }
+    .brand-logo .k { color:var(--green); font-size:42px; }
+    .brand-name { font-family:var(--serif); font-size:22px; font-weight:400; color:var(--cream); margin-bottom:4px; }
+    .brand-sub { font-size:11px; font-weight:300; letter-spacing:2px; text-transform:uppercase; color:var(--silver); }
+
+    .card { background:var(--card); border:1px solid var(--border); padding:36px 32px; }
+
+    .error-msg { padding:10px 14px; background:rgba(231,76,60,0.08); border:1px solid rgba(231,76,60,0.2); margin-bottom:20px; font-size:13px; color:#e74c3c; display:none; }
+    .success-msg { padding:10px 14px; background:rgba(58,148,100,0.08); border:1px solid rgba(58,148,100,0.2); margin-bottom:20px; font-size:13px; color:var(--green); display:none; }
+
+    .sso-btn { width:100%; padding:14px 16px; background:#2F2F2F; border:1px solid rgba(255,255,255,0.1); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; transition:all 0.15s; }
+    .sso-btn:hover { background:#383838; border-color:rgba(255,255,255,0.15); }
+    .sso-btn:disabled { opacity:0.6; cursor:wait; }
+    .sso-btn span { font-family:var(--sans); font-size:14px; font-weight:400; color:var(--cream); }
+
+    .divider { display:flex; align-items:center; gap:16px; margin:24px 0; }
+    .divider-line { flex:1; height:1px; background:var(--border); }
+    .divider-text { font-size:11px; font-weight:300; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+
+    .field { margin-bottom:16px; }
+    .field-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+    label { display:block; font-size:11px; font-weight:400; letter-spacing:1px; text-transform:uppercase; color:var(--silver); margin-bottom:6px; }
+    input[type="email"], input[type="password"], input[type="text"] {
+      width:100%; padding:13px 14px; background:var(--bg); border:1px solid var(--border-light);
+      color:var(--cream); font-size:14px; font-family:var(--sans); outline:none; transition:border-color 0.2s;
+    }
+    input:focus { border-color:rgba(58,148,100,0.4); }
+
+    .mfa-input { text-align:center; font-size:28px; font-weight:300; letter-spacing:12px; padding:16px 14px; }
+
+    .forgot-link { background:none; border:none; cursor:pointer; font-size:11px; color:var(--green); font-family:var(--sans); padding:0; }
+
+    .primary-btn { width:100%; padding:14px; background:var(--green); border:none; cursor:pointer; transition:background 0.2s; margin-top:20px; }
+    .primary-btn:hover { background:var(--green-hover); }
+    .primary-btn:disabled { background:var(--green-hover); opacity:0.7; cursor:wait; }
+    .primary-btn span { font-size:13px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:#fff; }
+
+    .mfa-btn { background:#0078D4; margin-top:0; }
+    .mfa-btn:hover { background:#106EBE; }
+    .mfa-btn:disabled { background:#333; cursor:default; }
+
+    .text-btn { background:none; border:none; cursor:pointer; font-size:12px; color:var(--silver); font-family:var(--sans); }
+    .text-btn:hover { color:var(--cream); }
+    .text-center { text-align:center; margin-top:16px; }
+
+    .legend { margin-top:20px; padding:14px 16px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); }
+    .legend-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+    .legend-item { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); }
+
+    .footer { text-align:center; margin-top:24px; }
+    .footer-line { font-size:10px; color:var(--muted); letter-spacing:1px; }
+    .footer-security { font-size:10px; color:#3A3530; margin-top:4px; }
+
+    .mfa-icon-lg { text-align:center; margin-bottom:16px; }
+    .mfa-help { text-align:center; margin-top:20px; font-size:12px; color:var(--muted); line-height:1.6; }
+
+    .sent-icon { font-size:40px; margin-bottom:16px; }
+    .sent-title { font-family:var(--serif); font-size:22px; color:var(--cream); margin-bottom:8px; }
+    .sent-label { font-size:14px; color:var(--silver); margin-bottom:8px; }
+    .sent-email { font-size:15px; color:var(--green); font-weight:500; margin-bottom:20px; }
+    .sent-detail { font-size:12px; color:var(--muted); line-height:1.6; }
+
+    .screen { display:none; }
+    .screen.active { display:block; }
   </style>
 </head>
-<body class="admin-dark">
+<body>
+  <div class="login-wrap">
 
-  <nav id="nav">
-    <a class="nav-logo" href="../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
-    <div class="nav-links" id="navLinks"><a href="../">← Home</a></div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  </nav>
+    <div class="brand">
+      <div class="brand-logo">S<span class="k">K</span>R</div>
+      <div class="brand-name">Silver Key Realty</div>
+      <div class="brand-sub" id="subtitle">Sign in to your account</div>
+    </div>
 
-  <section class="admin-login">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-logo">Silver <span>Key</span> Realty</div>
-        <div class="login-badge">Employee Portal</div>
+    <div class="card">
+      <div class="error-msg" id="errorMsg"></div>
+      <div class="success-msg" id="successMsg"></div>
+
+      <!-- ===== LOGIN SCREEN ===== -->
+      <div class="screen active" id="screenLogin">
+
+        <button class="sso-btn" id="btnMicrosoft" onclick="handleMicrosoft()">
+          <svg width="20" height="20" viewBox="0 0 21 21" fill="none">
+            <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+            <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+            <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+          </svg>
+          <span>Continue with Microsoft</span>
+        </button>
+
+        <button class="sso-btn" id="btnGoogle" onclick="handleGoogle()">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <button class="sso-btn" onclick="showScreen('mfa')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 5.5V11.5C4 16.45 7.4 21.05 12 22C16.6 21.05 20 16.45 20 11.5V5.5L12 2Z" fill="#0078D4" opacity="0.9"/>
+            <path d="M10.5 14.5L8 12L9.41 10.59L10.5 11.67L14.59 7.59L16 9L10.5 14.5Z" fill="white"/>
+          </svg>
+          <span>Sign in with Authenticator</span>
+        </button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span class="divider-text">or sign in with email</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <div class="field" style="margin-bottom:8px">
+          <div class="field-row">
+            <label style="margin-bottom:0">Password</label>
+            <button class="forgot-link" onclick="showScreen('reset')">Forgot?</button>
+          </div>
+          <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+
+        <button class="primary-btn" id="btnSignIn" onclick="handleEmailLogin()">
+          <span>Sign In</span>
+        </button>
+
+        <div class="text-center">
+          <button class="text-btn" onclick="showScreen('magic')">Sign in with magic link instead</button>
+        </div>
       </div>
 
-      <form class="login-form" id="loginForm">
-        <div class="form-group">
-          <label class="form-label" for="authEmail">Email</label>
-          <input class="form-input" type="email" id="authEmail" name="email" placeholder="you@company.com" autocomplete="email" required>
+      <!-- ===== MFA SCREEN ===== -->
+      <div class="screen" id="screenMfa">
+        <div class="mfa-icon-lg">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 5.5V11.5C4 16.45 7.4 21.05 12 22C16.6 21.05 20 16.45 20 11.5V5.5L12 2Z" fill="#0078D4" opacity="0.9"/>
+            <path d="M10.5 14.5L8 12L9.41 10.59L10.5 11.67L14.59 7.59L16 9L10.5 14.5Z" fill="white"/>
+          </svg>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="authPassword">Password</label>
-          <div class="pw-wrap">
-            <input class="form-input" type="password" id="authPassword" name="password" placeholder="••••••••" autocomplete="current-password" required>
-            <button type="button" class="pw-toggle" id="togglePw" aria-label="Show password">👁</button>
-          </div>
+        <div style="text-align:center;font-size:14px;color:#B8B0A8;line-height:1.6;margin-bottom:24px">
+          Enter the 6-digit code from your<br>Microsoft Authenticator or TOTP app.
         </div>
-        <button type="submit" class="login-submit" id="loginSubmit">
-          <span class="login-text">Sign In</span>
-          <span class="login-spinner"></span>
+        <div class="field">
+          <label style="text-align:center">Verification Code</label>
+          <input type="text" id="mfaCode" class="mfa-input" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+        </div>
+        <button class="primary-btn mfa-btn" id="btnMfaVerify" onclick="handleMfaVerify()" disabled>
+          <span>Verify Code</span>
         </button>
-      </form>
+        <div class="mfa-help">Open your authenticator app and enter the<br>current code for Silver Key Realty.</div>
+        <div class="text-center"><button class="text-btn" onclick="showScreen('login')">&larr; Back to sign in</button></div>
+      </div>
 
-      <div class="login-divider"><span>or</span></div>
+      <!-- ===== MAGIC LINK SCREEN ===== -->
+      <div class="screen" id="screenMagic">
+        <div style="font-size:14px;color:#B8B0A8;line-height:1.6;margin-bottom:24px">
+          Enter your email and we'll send you a secure link to sign in &mdash; no password needed.
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="magicEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="primary-btn" id="btnMagicSend" onclick="handleMagicLink()" style="margin-top:0">
+          <span>Send Magic Link</span>
+        </button>
+        <div class="text-center"><button class="text-btn" onclick="showScreen('login')">&larr; Back to sign in</button></div>
+      </div>
 
-      <button class="login-magic" id="magicLinkBtn">Send Magic Link</button>
+      <!-- ===== MAGIC SENT SCREEN ===== -->
+      <div class="screen" id="screenMagicSent" style="text-align:center">
+        <div class="sent-icon">&#9993;&#65039;</div>
+        <div class="sent-title">Check your inbox.</div>
+        <div class="sent-label">We sent a magic link to</div>
+        <div class="sent-email" id="magicSentEmail"></div>
+        <div class="sent-detail">Click the link in your email to sign in.<br>The link expires in 1 hour.</div>
+        <div class="text-center"><button class="text-btn" onclick="showScreen('login')">&larr; Back to sign in</button></div>
+      </div>
 
-      <div class="login-feedback" id="loginFeedback"></div>
+      <!-- ===== RESET SCREEN ===== -->
+      <div class="screen" id="screenReset">
+        <div style="font-size:14px;color:#B8B0A8;line-height:1.6;margin-bottom:24px">
+          Enter your email and we'll send you a link to reset your password.
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="resetEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="primary-btn" id="btnResetSend" onclick="handlePasswordReset()" style="margin-top:0">
+          <span>Send Reset Link</span>
+        </button>
+        <div class="text-center"><button class="text-btn" onclick="showScreen('login')">&larr; Back to sign in</button></div>
+      </div>
 
-      <div class="login-footer">
-        <a href="reset/" style="display:block;margin-bottom:12px;">Forgot your password?</a>
-        <a href="../">← Return to Silver Key Realty</a>
+      <!-- ===== RESET SENT SCREEN ===== -->
+      <div class="screen" id="screenResetSent" style="text-align:center">
+        <div class="sent-icon">&#128273;</div>
+        <div class="sent-title">Reset link sent.</div>
+        <div class="sent-label">We sent a password reset link to</div>
+        <div class="sent-email" id="resetSentEmail"></div>
+        <div class="sent-detail">Click the link to set a new password.<br>Expires in 1 hour. Check spam if you don't see it.</div>
+        <div class="text-center"><button class="text-btn" onclick="showScreen('login')">&larr; Back to sign in</button></div>
+      </div>
+
+    </div>
+
+    <div class="legend">
+      <div class="legend-row">
+        <div class="legend-item">
+          <svg width="14" height="14" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg>
+          Agents &amp; Staff
+        </div>
+        <div class="legend-item">
+          <svg width="14" height="14" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Clients &amp; Buyers
+        </div>
+        <div class="legend-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5.5V11.5C4 16.45 7.4 21.05 12 22C16.6 21.05 20 16.45 20 11.5V5.5L12 2Z" fill="#0078D4" opacity="0.7"/><path d="M10.5 14.5L8 12L9.41 10.59L10.5 11.67L14.59 7.59L16 9L10.5 14.5Z" fill="white"/></svg>
+          MFA Enabled
+        </div>
+        <div class="legend-item">&#9993;&#65039; Anyone</div>
       </div>
     </div>
-  </section>
+
+    <div class="footer">
+      <div class="footer-line">silverkeyrealty.llc &middot; Pontiac, Michigan</div>
+      <div class="footer-security">Protected by RLS policies &middot; End-to-end encryption &middot; Immutable audit chain</div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../assets/js/admin-config.js"></script>
-  <script src="../assets/js/nav.js"></script>
-  <script src="../assets/js/admin-auth.js"></script>
   <script>
-  (function () {
-    // View password toggle
-    var pwField = document.getElementById('authPassword');
-    document.getElementById('togglePw').addEventListener('click', function () {
-      var showing = pwField.type === 'text';
-      pwField.type = showing ? 'password' : 'text';
-      this.textContent = showing ? '👁' : '👁‍🗨';
-    });
+    var SUPABASE_URL = 'https://onhwgirbmoxaquxpkfie.supabase.co';
+    var SUPABASE_ANON_KEY = '';
 
-    // Config check
-    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL || !window.SKR_CONFIG.SUPABASE_ANON_KEY) {
-      document.getElementById('loginFeedback').textContent = 'Portal is being configured. Please try again shortly.';
-      document.getElementById('loginFeedback').className = 'login-feedback error';
-      document.getElementById('loginSubmit').disabled = true;
-      document.getElementById('magicLinkBtn').disabled = true;
-      return;
+    if (window.SKR_CONFIG && window.SKR_CONFIG.SUPABASE_URL) {
+      SUPABASE_URL = window.SKR_CONFIG.SUPABASE_URL;
+      SUPABASE_ANON_KEY = window.SKR_CONFIG.SUPABASE_ANON_KEY || '';
     }
 
-    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
-    var form = document.getElementById('loginForm');
-    var emailInput = document.getElementById('authEmail');
-    var passInput = document.getElementById('authPassword');
-    var submitBtn = document.getElementById('loginSubmit');
-    var magicBtn = document.getElementById('magicLinkBtn');
-    var feedback = document.getElementById('loginFeedback');
+    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function showErr(msg) {
-      feedback.textContent = msg;
-      feedback.className = 'login-feedback error';
-    }
-    function showOk(msg) {
-      feedback.textContent = msg;
-      feedback.className = 'login-feedback success';
-    }
-    function resetUI() {
-      submitBtn.classList.remove('loading');
-      submitBtn.disabled = false;
+    var subtitles = {
+      login: 'Sign in to your account',
+      mfa: 'Two-factor authentication',
+      magic: 'Sign in with email link',
+      magicSent: 'Check your email',
+      reset: 'Reset your password',
+      resetSent: 'Check your email'
+    };
+
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      var screenId = 'screen' + name.charAt(0).toUpperCase() + name.slice(1);
+      var el = document.getElementById(screenId);
+      if (el) el.classList.add('active');
+      document.getElementById('subtitle').textContent = subtitles[name] || '';
+      hideError(); hideSuccess();
     }
 
-    // Check if already logged in
-    (async function () {
-      if (window.SKR_AUTH) {
-        var member = await window.SKR_AUTH.getCurrentMember();
-        if (member) window.location.href = 'dashboard/';
+    function showError(msg) {
+      var el = document.getElementById('errorMsg');
+      el.textContent = msg; el.style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+    function hideError() { document.getElementById('errorMsg').style.display = 'none'; }
+    function showSuccess(msg) {
+      var el = document.getElementById('successMsg');
+      el.textContent = msg; el.style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+    function hideSuccess() { document.getElementById('successMsg').style.display = 'none'; }
+
+    // ===== Microsoft SSO =====
+    async function handleMicrosoft() {
+      var btn = document.getElementById('btnMicrosoft');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Redirecting to Microsoft...';
+      hideError();
+
+      var { error } = await sb.auth.signInWithOAuth({
+        provider: 'azure',
+        options: { redirectTo: window.location.origin + '/admin/dashboard/' }
+      });
+
+      if (error) {
+        showError(error.message);
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Continue with Microsoft';
       }
-    })();
+    }
 
-    // Email + Password
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      var email = emailInput.value.trim();
-      var pass = passInput.value;
-      if (!email || !pass) { showErr('Please enter email and password.'); return; }
+    // ===== Google Sign-In =====
+    async function handleGoogle() {
+      var btn = document.getElementById('btnGoogle');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Redirecting to Google...';
+      hideError();
 
-      submitBtn.classList.add('loading');
-      submitBtn.disabled = true;
-      feedback.textContent = '';
+      var { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/admin/dashboard/' }
+      });
+
+      if (error) {
+        showError(error.message);
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Continue with Google';
+      }
+    }
+
+    // ===== Email/Password =====
+    async function handleEmailLogin() {
+      var email = document.getElementById('loginEmail').value.trim();
+      var password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) { showError('Please enter your email and password.'); return; }
+
+      var btn = document.getElementById('btnSignIn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Signing in...';
+      hideError();
+
+      var { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+
+      if (error) {
+        showError(error.message);
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Sign In';
+        return;
+      }
+
+      // Check if MFA is enrolled
+      var { data: factors } = await sb.auth.mfa.listFactors();
+      if (factors && factors.totp && factors.totp.length > 0) {
+        showScreen('mfa');
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Sign In';
+        return;
+      }
+
+      // Check team membership — non-members go to client portal
+      var { data: member } = await sb.from('skr_team_members')
+        .select('id, first_name')
+        .eq('auth_user_id', data.user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (!member) {
+        window.location.href = '/admin/portal/';
+        return;
+      }
+
+      window.location.href = '/admin/dashboard/';
+    }
+
+    // ===== Magic Link =====
+    async function handleMagicLink() {
+      var email = document.getElementById('magicEmail').value.trim();
+      if (!email) { showError('Please enter your email.'); return; }
+
+      var btn = document.getElementById('btnMagicSend');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Sending...';
+      hideError();
+
+      var { error } = await sb.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: window.location.origin + '/admin/dashboard/' }
+      });
+
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Send Magic Link';
+
+      if (error) { showError(error.message); return; }
+
+      document.getElementById('magicSentEmail').textContent = email;
+      showScreen('magicSent');
+    }
+
+    // ===== Password Reset =====
+    async function handlePasswordReset() {
+      var email = document.getElementById('resetEmail').value.trim();
+      if (!email) { showError('Please enter your email.'); return; }
+
+      var btn = document.getElementById('btnResetSend');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Sending...';
+      hideError();
+
+      var { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/admin/update-password/'
+      });
+
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Send Reset Link';
+
+      if (error) { showError(error.message); return; }
+
+      document.getElementById('resetSentEmail').textContent = email;
+      showScreen('resetSent');
+    }
+
+    // ===== MFA Verify =====
+    async function handleMfaVerify() {
+      var code = document.getElementById('mfaCode').value.trim();
+      if (!code || code.length !== 6) { showError('Please enter your 6-digit code.'); return; }
+
+      var btn = document.getElementById('btnMfaVerify');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Verifying...';
+      hideError();
 
       try {
-        var { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
-        if (error) { showErr(error.message || 'Invalid credentials.'); resetUI(); return; }
+        var { data: factors } = await sb.auth.mfa.listFactors();
+        var totpFactor = factors.totp[0];
+        var { data: challenge, error: challengeErr } = await sb.auth.mfa.challenge({ factorId: totpFactor.id });
 
-        // Check team membership
-        var { data: member, error: teamErr } = await sb
-          .from('skr_team_members')
-          .select('id, display_name, role, is_active')
-          .eq('email', email)
-          .single();
+        if (challengeErr) { showError(challengeErr.message); btn.disabled = false; btn.querySelector('span').textContent = 'Verify Code'; return; }
 
-        if (teamErr || !member) {
-          // Not a team member — redirect to client portal instead of blocking
-          window.location.href = 'portal/';
-          return;
-        }
-
-        if (!member.is_active) {
-          await sb.auth.signOut();
-          showErr('This account has been deactivated. Contact your administrator.');
-          resetUI();
-          return;
-        }
-
-        sessionStorage.setItem('skr_member', JSON.stringify(member));
-        window.location.href = 'dashboard/';
-
-      } catch (err) {
-        showErr('Something went wrong. Please try again.');
-        resetUI();
-      }
-    });
-
-    // Magic Link
-    magicBtn.addEventListener('click', async function () {
-      var email = emailInput.value.trim();
-      if (!email) { showErr('Enter your email first, then click Magic Link.'); return; }
-
-      magicBtn.disabled = true;
-      magicBtn.textContent = 'Sending...';
-      feedback.textContent = '';
-
-      try {
-        var { error } = await sb.auth.signInWithOtp({
-          email: email,
-          options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
+        var { error: verifyErr } = await sb.auth.mfa.verify({
+          factorId: totpFactor.id,
+          challengeId: challenge.id,
+          code: code
         });
 
-        if (error) { showErr(error.message); magicBtn.disabled = false; magicBtn.textContent = 'Send Magic Link'; return; }
-        showOk('Check your email for the magic link.');
-      } catch (err) {
-        showErr('Could not send magic link.');
-        magicBtn.disabled = false;
-        magicBtn.textContent = 'Send Magic Link';
+        if (verifyErr) {
+          showError('Invalid code. Please try again.');
+          document.getElementById('mfaCode').value = '';
+          btn.disabled = false;
+          btn.querySelector('span').textContent = 'Verify Code';
+          return;
+        }
+
+        window.location.href = '/admin/dashboard/';
+      } catch (e) {
+        showError('Verification failed. Please try again.');
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Verify Code';
       }
+    }
+
+    // MFA code input — enable button when 6 digits entered
+    document.getElementById('mfaCode').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+      var btn = document.getElementById('btnMfaVerify');
+      btn.disabled = this.value.length !== 6;
+      btn.style.background = this.value.length === 6 ? '#0078D4' : '#333';
     });
-  })();
+
+    // Enter key handlers
+    document.getElementById('loginEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('loginPassword').focus();
+    });
+    document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleEmailLogin();
+    });
+    document.getElementById('magicEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleMagicLink();
+    });
+    document.getElementById('resetEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handlePasswordReset();
+    });
+    document.getElementById('mfaCode').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && e.target.value.length === 6) handleMfaVerify();
+    });
+
+    // Check if already logged in — team members go to dashboard, others to portal
+    (async function() {
+      var { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        var { data: member } = await sb.from('skr_team_members')
+          .select('id')
+          .eq('auth_user_id', session.user.id)
+          .eq('is_active', true)
+          .single();
+        if (member) {
+          window.location.href = '/admin/dashboard/';
+        } else {
+          window.location.href = '/admin/portal/';
+        }
+      }
+    })();
   </script>
 </body>
 </html>
