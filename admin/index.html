@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Admin</title>
+  <title>Silver Key Realty — Employee Login</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,20 +22,12 @@
 </head>
 <body class="admin-dark">
 
-  <!-- NAV -->
   <nav id="nav">
-    <a class="nav-logo" href="../">
-      <img src="../assets/images/logo-transparent.png" alt="Silver Key Realty">
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="../">← Back to Site</a>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+    <a class="nav-logo" href="../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
+    <div class="nav-links" id="navLinks"><a href="../">← Home</a></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </nav>
 
-  <!-- LOGIN -->
   <section class="admin-login">
     <div class="login-card">
       <div class="login-header">
@@ -43,10 +35,10 @@
         <div class="login-badge">Employee Portal</div>
       </div>
 
-      <form class="login-form" id="loginForm" autocomplete="on">
+      <form class="login-form" id="loginForm">
         <div class="form-group">
           <label class="form-label" for="authEmail">Email</label>
-          <input class="form-input" type="email" id="authEmail" name="email" placeholder="agent@silverkey.com" autocomplete="email" required>
+          <input class="form-input" type="email" id="authEmail" name="email" placeholder="you@company.com" autocomplete="email" required>
         </div>
         <div class="form-group">
           <label class="form-label" for="authPassword">Password</label>
@@ -63,9 +55,7 @@
 
       <div class="login-divider"><span>or</span></div>
 
-      <button class="login-magic" id="magicLinkBtn">
-        Send Magic Link
-      </button>
+      <button class="login-magic" id="magicLinkBtn">Send Magic Link</button>
 
       <div class="login-feedback" id="loginFeedback"></div>
 
@@ -76,40 +66,125 @@
     </div>
   </section>
 
-  <!-- Supabase JS (client library) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-  <!-- Config — Cursor/Vercel will inject real values -->
-  <!-- Config: auto-generated at build time from Vercel env vars -->
   <script src="../assets/js/admin-config.js"></script>
-
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/admin-auth.js"></script>
   <script>
   (function () {
     // View password toggle
     var pwField = document.getElementById('authPassword');
-    var toggle = document.getElementById('togglePw');
-    if (toggle && pwField) {
-      toggle.addEventListener('click', function () {
-        var showing = pwField.type === 'text';
-        pwField.type = showing ? 'password' : 'text';
-        this.textContent = showing ? '👁' : '👁‍🗨';
-      });
+    document.getElementById('togglePw').addEventListener('click', function () {
+      var showing = pwField.type === 'text';
+      pwField.type = showing ? 'password' : 'text';
+      this.textContent = showing ? '👁' : '👁‍🗨';
+    });
+
+    // Config check
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL || !window.SKR_CONFIG.SUPABASE_ANON_KEY) {
+      document.getElementById('loginFeedback').textContent = 'Portal is being configured. Please try again shortly.';
+      document.getElementById('loginFeedback').className = 'login-feedback error';
+      document.getElementById('loginSubmit').disabled = true;
+      document.getElementById('magicLinkBtn').disabled = true;
+      return;
     }
 
-    // Config check (friendly UX if build-time injection hasn't run)
-    var feedback = document.getElementById('loginFeedback');
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var form = document.getElementById('loginForm');
+    var emailInput = document.getElementById('authEmail');
+    var passInput = document.getElementById('authPassword');
     var submitBtn = document.getElementById('loginSubmit');
     var magicBtn = document.getElementById('magicLinkBtn');
-    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL || !window.SKR_CONFIG.SUPABASE_ANON_KEY) {
-      if (feedback) {
-        feedback.textContent = 'Portal is being configured. Please try again shortly.';
-        feedback.className = 'login-feedback error';
-      }
-      if (submitBtn) submitBtn.disabled = true;
-      if (magicBtn) magicBtn.disabled = true;
+    var feedback = document.getElementById('loginFeedback');
+
+    function showErr(msg) {
+      feedback.textContent = msg;
+      feedback.className = 'login-feedback error';
     }
+    function showOk(msg) {
+      feedback.textContent = msg;
+      feedback.className = 'login-feedback success';
+    }
+    function resetUI() {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+
+    // Check if already logged in
+    (async function () {
+      if (window.SKR_AUTH) {
+        var member = await window.SKR_AUTH.getCurrentMember();
+        if (member) window.location.href = 'dashboard/';
+      }
+    })();
+
+    // Email + Password
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var email = emailInput.value.trim();
+      var pass = passInput.value;
+      if (!email || !pass) { showErr('Please enter email and password.'); return; }
+
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+      feedback.textContent = '';
+
+      try {
+        var { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+        if (error) { showErr(error.message || 'Invalid credentials.'); resetUI(); return; }
+
+        // Check team membership
+        var { data: member, error: teamErr } = await sb
+          .from('skr_team_members')
+          .select('id, display_name, role, is_active')
+          .eq('email', email)
+          .single();
+
+        if (teamErr || !member) {
+          // Not a team member — redirect to client portal instead of blocking
+          window.location.href = 'portal/';
+          return;
+        }
+
+        if (!member.is_active) {
+          await sb.auth.signOut();
+          showErr('This account has been deactivated. Contact your administrator.');
+          resetUI();
+          return;
+        }
+
+        sessionStorage.setItem('skr_member', JSON.stringify(member));
+        window.location.href = 'dashboard/';
+
+      } catch (err) {
+        showErr('Something went wrong. Please try again.');
+        resetUI();
+      }
+    });
+
+    // Magic Link
+    magicBtn.addEventListener('click', async function () {
+      var email = emailInput.value.trim();
+      if (!email) { showErr('Enter your email first, then click Magic Link.'); return; }
+
+      magicBtn.disabled = true;
+      magicBtn.textContent = 'Sending...';
+      feedback.textContent = '';
+
+      try {
+        var { error } = await sb.auth.signInWithOtp({
+          email: email,
+          options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
+        });
+
+        if (error) { showErr(error.message); magicBtn.disabled = false; magicBtn.textContent = 'Send Magic Link'; return; }
+        showOk('Check your email for the magic link.');
+      } catch (err) {
+        showErr('Could not send magic link.');
+        magicBtn.disabled = false;
+        magicBtn.textContent = 'Send Magic Link';
+      }
+    });
   })();
   </script>
 </body>

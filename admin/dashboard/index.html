@@ -175,11 +175,11 @@
       <div class="mgmt-card"><div class="mgmt-icon">🏠</div><h3>Properties</h3><p>Active listings, three-pillar assessments, staging coordination, and buyer matching status.</p><div class="mgmt-arrow">Manage Listings <span class="arrow">→</span></div></div>
       <div class="mgmt-card"><div class="mgmt-icon">💰</div><h3>Deals</h3><p>Active transactions from offer to close. Contract status, escrow tracking, milestone alerts.</p><div class="mgmt-arrow">Track Deals <span class="arrow">→</span></div></div>
       <div class="mgmt-card"><div class="mgmt-icon">📋</div><h3>Documents</h3><p>Encrypted vault. Contracts, disclosures, inspection reports. Version-controlled and audit-logged.</p><div class="mgmt-arrow">Open Vault <span class="arrow">→</span></div></div>
-      <div class="mgmt-card"><div class="mgmt-icon">🔒</div><h3>Audit Log</h3><p>Immutable forensic trail. Every action timestamped, IP-hashed, and tamper-proof. Exportable.</p><div class="mgmt-arrow">View Log <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" data-min-role="broker"><div class="mgmt-icon">🔒</div><h3>Audit Log</h3><p>Immutable forensic trail. Every action timestamped, IP-hashed, and tamper-proof. Exportable.</p><div class="mgmt-arrow">View Log <span class="arrow">→</span></div></div>
     </div>
 
-    <div class="sec-label">Team Management</div>
-    <div class="team-section">
+    <div class="sec-label" data-min-role="broker">Team Management</div>
+    <div class="team-section" data-min-role="broker">
       <div class="team-header"><span class="team-title">Employees</span><button class="team-add" id="addEmployee">+ Add Employee</button></div>
       <div class="team-row header"><span>Name</span><span>Role</span><span>Status</span><span>Assigned Leads</span><span></span></div>
       <div id="teamList"><div class="empty"><div class="empty-icon">👤</div><div class="empty-msg">No team members yet.<br>Click "+ Add Employee" to get started.</div></div></div>
@@ -196,26 +196,73 @@
   <script src="../../assets/js/admin-config.js"></script>
   <script src="../../assets/js/nav.js"></script>
   <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/auth-router.js"></script>
   <script>
   (async function () {
     var loading = document.getElementById('dashLoading');
     var container = document.getElementById('dashContainer');
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
-    var member = await window.SKR_AUTH.getCurrentMember();
-    if (!member) { window.location.href = '/admin/'; return; }
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+      loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+      return;
+    }
 
-    document.getElementById('navBadge').textContent = member.role.toUpperCase();
-    document.getElementById('navBadge').className = 'role-badge ' + member.role;
-    document.getElementById('navUser').textContent = member.display_name;
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session) { window.location.href = '/admin/'; return; }
+
+    // === ROLE GATE ===
+    var memberCheck = await sb.from('skr_team_members')
+      .select('id, role_id, display_name')
+      .eq('auth_user_id', session.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (!memberCheck.data) {
+      window.location.href = '/admin/portal/';
+      return;
+    }
+
+    var roleCheck = await sb.from('skr_roles')
+      .select('slug, permission_level')
+      .eq('id', memberCheck.data.role_id)
+      .single();
+
+    var userRole = roleCheck.data ? roleCheck.data.slug : 'viewer';
+    var userLevel = roleCheck.data ? roleCheck.data.permission_level : 0;
+
+    window.SKR_USER = {
+      id: memberCheck.data.id,
+      role: userRole,
+      permissionLevel: userLevel,
+      displayName: memberCheck.data.display_name
+    };
+
+    if (userLevel < 50) {
+      document.querySelectorAll('[data-min-role="admin"]').forEach(function(el) { el.style.display = 'none'; });
+    }
+    if (userLevel < 40) {
+      document.querySelectorAll('[data-min-role="broker"]').forEach(function(el) { el.style.display = 'none'; });
+    }
+    if (userLevel < 30) {
+      document.querySelectorAll('[data-min-role="manager"]').forEach(function(el) { el.style.display = 'none'; });
+    }
+    // === END ROLE GATE ===
+
+    document.getElementById('navBadge').textContent = userRole.toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + userRole;
+    document.getElementById('navUser').textContent = memberCheck.data.display_name;
 
     loading.style.display = 'none';
     container.style.display = 'block';
 
-    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
-
-    var sb = window.SKR_AUTH.supabase;
+    document.getElementById('signOut').addEventListener('click', async function () {
+      await sb.auth.signOut();
+      window.location.href = '/admin/';
+    });
 
     function timeAgo(dateStr) {
       var diff = Date.now() - new Date(dateStr).getTime();
@@ -286,24 +333,33 @@
       }
     } catch(e){ console.warn('[SKR] Activity:',e); }
 
-    // Team (universal — works with both full + simple schema)
-    try {
-      var teamMembers = await window.SKR_AUTH.fetchTeamMembers();
-      if (teamMembers && teamMembers.length > 0) {
-        var h = '';
-        teamMembers.forEach(function(m){
-          var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
-          var roleClass = m.role.replace(/[^a-z]/g,'') || 'agent';
-          h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleClass+'">'+m.role+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
-        });
-        document.getElementById('teamList').innerHTML = h;
-      }
-    } catch(e){ console.warn('[SKR] Team:',e); }
+    // Team list (broker+ only, hidden by data-min-role for lower roles)
+    if (userLevel >= 40) {
+      try {
+        var teamResult = await sb.from('skr_team_members')
+          .select('id, display_name, email, role_id, is_active')
+          .eq('is_active', true)
+          .order('display_name');
+        var teamMembers = teamResult.data;
+        if (teamMembers && teamMembers.length > 0) {
+          var rolesResult = await sb.from('skr_roles').select('id, slug');
+          var roleMap = {};
+          if (rolesResult.data) rolesResult.data.forEach(function(r){ roleMap[r.id] = r.slug; });
+          var h = '';
+          teamMembers.forEach(function(m){
+            var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
+            var roleSlug = roleMap[m.role_id] || 'agent';
+            h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleSlug+'">'+roleSlug+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
+          });
+          document.getElementById('teamList').innerHTML = h;
+        }
+      } catch(e){ console.warn('[SKR] Team:',e); }
 
-    document.getElementById('addEmployee').addEventListener('click', function(){ window.location.href = '/admin/team/'; });
+      document.getElementById('addEmployee').addEventListener('click', function(){ window.location.href = '/admin/team/'; });
+    }
 
     // Show permissions link for broker+ roles
-    if (member.role === 'admin' || member.role === 'broker') {
+    if (userLevel >= 40) {
       var permLink = document.getElementById('navPermLink');
       if (permLink) permLink.style.display = 'inline';
     }

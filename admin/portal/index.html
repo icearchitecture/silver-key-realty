@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Your Portal</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#111;--card:#1A1A1A;--cream:#F0EBE3;--silver:#8A8178;--muted:#5A5550;--green:#3A9464;--gold:#C9B99A;--border:rgba(255,255,255,.06);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--sans);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+
+    .portal{width:100%;max-width:600px}
+    .portal-brand{text-align:center;margin-bottom:32px}
+    .portal-logo{font-family:var(--serif);font-size:38px;color:var(--gold);letter-spacing:2px;margin-bottom:8px}
+    .portal-logo .k{color:var(--green);font-size:42px}
+
+    .portal-card{background:var(--card);border:1px solid var(--border);padding:48px 40px;text-align:center}
+
+    .portal-greeting{font-family:var(--serif);font-size:28px;font-weight:400;color:var(--cream);margin-bottom:8px}
+    .portal-subtitle{font-size:14px;font-weight:300;color:var(--silver);line-height:1.7;margin-bottom:32px}
+
+    .status-badge{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;background:rgba(58,148,100,.06);border:1px solid rgba(58,148,100,.15);margin-bottom:32px}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
+    .status-text{font-size:12px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--green)}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .portal-divider{height:1px;background:var(--border);margin:0 0 32px}
+
+    .portal-section-label{font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+
+    .portal-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;text-align:left}
+    .portal-feature{padding:20px 16px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.03)}
+    .pf-icon{font-size:20px;margin-bottom:8px}
+    .pf-name{font-size:13px;font-weight:400;color:var(--cream);margin-bottom:4px}
+    .pf-desc{font-size:11px;font-weight:300;color:var(--muted);line-height:1.5}
+    .pf-soon{display:inline-block;font-size:9px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(201,185,154,.08);padding:2px 8px;margin-top:6px}
+
+    .portal-message{font-size:13px;font-weight:300;color:var(--silver);line-height:1.8;margin-bottom:24px}
+    .portal-message strong{font-weight:400;color:var(--cream)}
+
+    .portal-signout{background:none;border:1px solid rgba(255,255,255,.06);padding:10px 24px;cursor:pointer;font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);transition:all .3s}
+    .portal-signout:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    .portal-footer{text-align:center;margin-top:24px}
+    .portal-footer-line{font-size:10px;color:var(--muted);letter-spacing:1px}
+
+    .loading{text-align:center;padding:60px}
+    .loading-spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 16px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{font-size:13px;color:var(--silver)}
+  </style>
+</head>
+<body>
+  <div class="portal">
+    <div class="portal-brand">
+      <div class="portal-logo">S<span class="k">K</span>R</div>
+    </div>
+
+    <!-- Loading -->
+    <div id="portalLoading" class="portal-card">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading your portal...</div>
+      </div>
+    </div>
+
+    <!-- Main Content (hidden until loaded) -->
+    <div id="portalContent" style="display:none">
+      <div class="portal-card">
+        <div class="portal-greeting">Welcome, <span id="clientName">there</span>.</div>
+        <div class="portal-subtitle">Your Silver Key Realty portal is being prepared.<br>Our team is setting up your personalized experience.</div>
+
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <div class="status-text" id="statusText">Profile Being Configured</div>
+        </div>
+
+        <div class="portal-divider"></div>
+
+        <div class="portal-section-label">What's Coming for You</div>
+
+        <div class="portal-features">
+          <div class="portal-feature">
+            <div class="pf-icon">&#127968;</div>
+            <div class="pf-name">Property Dashboard</div>
+            <div class="pf-desc">Curated properties matched to your preferences and lifestyle.</div>
+            <div class="pf-soon">Coming Soon</div>
+          </div>
+          <div class="portal-feature">
+            <div class="pf-icon">&#128196;</div>
+            <div class="pf-name">Document Center</div>
+            <div class="pf-desc">Securely upload and sign documents from anywhere.</div>
+            <div class="pf-soon">Coming Soon</div>
+          </div>
+          <div class="portal-feature">
+            <div class="pf-icon">&#128172;</div>
+            <div class="pf-name">Direct Messaging</div>
+            <div class="pf-desc">Chat directly with your assigned agent in real time.</div>
+            <div class="pf-soon">Coming Soon</div>
+          </div>
+          <div class="portal-feature">
+            <div class="pf-icon">&#128205;</div>
+            <div class="pf-name">Journey Tracker</div>
+            <div class="pf-desc">Follow every milestone from first call to closing day.</div>
+            <div class="pf-soon">Coming Soon</div>
+          </div>
+        </div>
+
+        <div class="portal-divider"></div>
+
+        <div class="portal-message">
+          A licensed agent from our team will reach out to you within <strong>24 hours</strong> to begin your journey. In the meantime, if you have questions, email us at <strong>info@silverkeyrealty.llc</strong>.
+        </div>
+
+        <button class="portal-signout" id="btnSignOut">Sign Out</button>
+      </div>
+    </div>
+
+    <div class="portal-footer">
+      <div class="portal-footer-line">silverkeyrealty.llc &middot; Pontiac, Michigan</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script>
+  (async function() {
+    var sb = supabase.createClient(
+      window.SKR_CONFIG?.SUPABASE_URL || '',
+      window.SKR_CONFIG?.SUPABASE_ANON_KEY || ''
+    );
+
+    // Check session
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+
+    if (!session) {
+      window.location.href = '/admin/';
+      return;
+    }
+
+    var user = session.user;
+
+    // If they ARE a team member, redirect to dashboard
+    var memberResult = await sb
+      .from('skr_team_members')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (memberResult.data) {
+      window.location.href = '/admin/dashboard/';
+      return;
+    }
+
+    // Check leads table for name
+    var leadResult = await sb
+      .from('skr_leads')
+      .select('first_name, last_name, lead_type, status')
+      .eq('email', user.email.toLowerCase())
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    var firstName = 'there';
+    var statusText = 'Profile Being Configured';
+
+    if (leadResult.data) {
+      firstName = leadResult.data.first_name || 'there';
+
+      var statusMap = {
+        'new': 'Profile Being Configured',
+        'contacted': 'Agent Assigned — Expect a Call',
+        'qualified': 'Your Journey Has Begun',
+        'consultation_scheduled': 'Consultation Scheduled',
+        'active': 'Active — Portal Loading Soon',
+        'nurturing': 'Profile Being Configured'
+      };
+      statusText = statusMap[leadResult.data.status] || 'Profile Being Configured';
+    } else {
+      firstName = user.email.split('@')[0].split('.')[0];
+      firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    }
+
+    document.getElementById('clientName').textContent = firstName;
+    document.getElementById('statusText').textContent = statusText;
+
+    // Show content
+    document.getElementById('portalLoading').style.display = 'none';
+    document.getElementById('portalContent').style.display = 'block';
+
+    // Sign out
+    document.getElementById('btnSignOut').addEventListener('click', async function() {
+      await sb.auth.signOut();
+      window.location.href = '/admin/';
+    });
+  })();
+  </script>
+</body>
+</html>
