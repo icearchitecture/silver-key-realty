@@ -187,24 +187,20 @@
     var session = sessionResult.data.session;
     if (!session) { window.location.href = '/admin/'; return; }
 
-    var memberCheck = await sb.from('skr_team_members')
-      .select('id, role_id, display_name')
+    var memberRaw = await sb.from('skr_team_members')
+      .select('id, tenant_id, first_name, last_name, email, role_id, title, is_active, skr_roles!inner(role_name, permission_level)')
       .eq('auth_user_id', session.user.id)
       .eq('is_active', true)
       .maybeSingle();
 
-    if (!memberCheck.data) { window.location.href = '/admin/portal/'; return; }
+    if (!memberRaw.data) { window.location.href = '/admin/portal/'; return; }
 
-    var roleCheck = await sb.from('skr_roles')
-      .select('role_name, permission_level')
-      .eq('id', memberCheck.data.role_id)
-      .single();
-
+    var m = memberRaw.data;
     window.SKR_USER = {
-      id: memberCheck.data.id,
-      role: roleCheck.data ? roleCheck.data.role_name : 'agent',
-      permissionLevel: roleCheck.data ? roleCheck.data.permission_level : 0,
-      displayName: memberCheck.data.display_name
+      id: m.id,
+      role: m.skr_roles ? m.skr_roles.role_name : 'agent',
+      permissionLevel: m.skr_roles ? m.skr_roles.permission_level : 0,
+      displayName: ((m.first_name || '') + ' ' + (m.last_name || '')).trim()
     };
 
     loadingEl.style.display = 'none';

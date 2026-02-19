@@ -261,24 +261,20 @@
     var session = sessionResult.data.session;
     if (!session) { window.location.href = '/admin/'; return; }
 
-    var memberCheck = await sb.from('skr_team_members')
-      .select('id, role_id, display_name')
+    var memberRaw = await sb.from('skr_team_members')
+      .select('id, tenant_id, first_name, last_name, email, role_id, title, is_active, skr_roles!inner(role_name, permission_level)')
       .eq('auth_user_id', session.user.id)
       .eq('is_active', true)
       .maybeSingle();
 
-    if (!memberCheck.data) { window.location.href = '/admin/portal/'; return; }
+    if (!memberRaw.data) { window.location.href = '/admin/portal/'; return; }
 
-    var roleCheck = await sb.from('skr_roles')
-      .select('role_name, permission_level')
-      .eq('id', memberCheck.data.role_id)
-      .single();
-
+    var m = memberRaw.data;
     window.SKR_USER = {
-      id: memberCheck.data.id,
-      role: roleCheck.data ? roleCheck.data.role_name : 'agent',
-      permissionLevel: roleCheck.data ? roleCheck.data.permission_level : 0,
-      displayName: memberCheck.data.display_name
+      id: m.id,
+      role: m.skr_roles ? m.skr_roles.role_name : 'agent',
+      permissionLevel: m.skr_roles ? m.skr_roles.permission_level : 0,
+      displayName: ((m.first_name || '') + ' ' + (m.last_name || '')).trim()
     };
 
     var token = session.access_token;
@@ -457,14 +453,15 @@
       if (!hasAgent) {
         try {
           var agentsResult = await sb.from('skr_deal_agents')
-            .select('role, team_member:skr_team_members(display_name, email)')
+            .select('role, team_member:skr_team_members(first_name, last_name, email)')
             .eq('deal_id', dealId);
           if (agentsResult.data && agentsResult.data.length > 0) {
             agentsResult.data.forEach(function(a) {
               var tm = a.team_member || {};
+              var tmName = ((tm.first_name || '') + ' ' + (tm.last_name || '')).trim() || 'Team Member';
               agentsHtml += '<div class="agent-block">'
                 + '<div class="agent-role">' + escapeHtml((a.role || 'agent').replace(/_/g, ' ')) + '</div>'
-                + '<div class="agent-name">' + escapeHtml(tm.display_name || 'Team Member') + '</div>'
+                + '<div class="agent-name">' + escapeHtml(tmName) + '</div>'
                 + (tm.email ? '<div class="agent-email">' + escapeHtml(tm.email) + '</div>' : '')
                 + '</div>';
             });

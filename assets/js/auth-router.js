@@ -48,7 +48,7 @@ window.SKR_ROUTER = (function () {
     // Check team member table
     var memberResult = await sb
       .from('skr_team_members')
-      .select('id, role_id, display_name, first_name, last_name, email, is_active')
+      .select('id, role_id, first_name, last_name, email, is_active')
       .eq('auth_user_id', user.id)
       .eq('is_active', true)
       .maybeSingle();
@@ -88,7 +88,7 @@ window.SKR_ROUTER = (function () {
         id: member.id,
         authId: user.id,
         email: member.email,
-        displayName: member.display_name || (member.first_name + ' ' + (member.last_name || '')).trim(),
+        displayName: ((member.first_name || '') + ' ' + (member.last_name || '')).trim() || member.email,
         firstName: member.first_name,
         role: role.role_name,
         roleName: role.role_name,

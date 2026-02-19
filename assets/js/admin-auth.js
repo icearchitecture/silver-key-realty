@@ -1,16 +1,9 @@
 /* ============================================================
-   SILVER KEY REALTY — ADMIN AUTH (Universal Schema)
+   SILVER KEY REALTY — ADMIN AUTH
    ============================================================
-   Detects and handles two database structures:
-   
-   FULL SCHEMA (existing brokerage):
-     first_name, last_name, role_id (UUID), photo_url
-   
-   SIMPLE SCHEMA (new installs):
-     display_name, role (text), avatar_url
-   
-   The auth normalizes both into a standard member object:
-     { id, display_name, email, role, is_active, avatar_url }
+   Handles team member verification against skr_team_members.
+   Uses auth_user_id (primary) with email fallback.
+   Joins skr_roles for role_name and permission_level.
    ============================================================ */
 
 (function () {
@@ -26,144 +19,73 @@
 
   var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ── SCHEMA DETECTION ──
-  var _detectedSchema = null;
+  var MEMBER_SELECT = 'id, tenant_id, first_name, last_name, email, role_id, title, is_active, trust_score, trust_level, skr_roles!inner(role_name, permission_level)';
 
-  var FULL_COLS = 'id, first_name, last_name, email, role_id, is_active, photo_url, title';
-  var SIMPLE_COLS = 'id, display_name, email, role, is_active, avatar_url';
+  async function verifyTeamMember(user) {
+    var { data: member, error } = await supabase
+      .from('skr_team_members')
+      .select(MEMBER_SELECT)
+      .eq('auth_user_id', user.id)
+      .eq('is_active', true)
+      .single();
 
-  async function detectSchema() {
-    if (_detectedSchema) return _detectedSchema;
-
-    // Try full schema first (first_name + last_name + role_id)
-    var r1 = await supabase.from('skr_team_members').select(FULL_COLS).limit(1);
-    if (!r1.error) {
-      _detectedSchema = 'full';
-      console.log('[SKR Auth] Detected full brokerage schema');
-      return 'full';
-    }
-
-    // Try simple schema (display_name + role text)
-    var r2 = await supabase.from('skr_team_members').select(SIMPLE_COLS).limit(1);
-    if (!r2.error) {
-      _detectedSchema = 'simple';
-      console.log('[SKR Auth] Detected simple schema');
-      return 'simple';
-    }
-
-    console.error('[SKR Auth] Could not detect schema. Table may not exist.');
-    return null;
-  }
-
-  // ── ROLE RESOLVER ──
-  var _roleCache = {};
-
-  async function resolveRole(roleId) {
-    if (!roleId) return 'agent';
-    if (_roleCache[roleId]) return _roleCache[roleId];
-
-    // Try common role table names
-    var tables = ['skr_roles', 'skr_team_roles', 'roles'];
-    for (var i = 0; i < tables.length; i++) {
-      var r = await supabase
-        .from(tables[i])
-        .select('id, name, slug, role_name')
-        .eq('id', roleId)
+    if (!member && user.email) {
+      var fallback = await supabase
+        .from('skr_team_members')
+        .select(MEMBER_SELECT)
+        .eq('email', user.email)
+        .eq('is_active', true)
         .single();
 
-      if (r.data && !r.error) {
-        var name = r.data.slug || r.data.name || r.data.role_name || 'agent';
-        _roleCache[roleId] = name.toLowerCase();
-        return _roleCache[roleId];
+      if (fallback.data && !fallback.error) {
+        member = fallback.data;
+        await supabase.from('skr_team_members')
+          .update({ auth_user_id: user.id })
+          .eq('id', member.id);
       }
     }
 
-    _roleCache[roleId] = 'team_member';
-    return 'team_member';
+    if (!member) return { authorized: false, reason: 'not_found' };
+    if (!member.is_active) return { authorized: false, reason: 'deactivated' };
+
+    var normalized = normalizeMember(member);
+    return { authorized: true, member: normalized };
   }
 
-  // ── NORMALIZE MEMBER ──
-  async function normalizeMember(raw, schema) {
-    if (schema === 'full') {
-      var roleName = await resolveRole(raw.role_id);
-      return {
-        id: raw.id,
-        display_name: ((raw.first_name || '') + ' ' + (raw.last_name || '')).trim() || raw.email,
-        first_name: raw.first_name || '',
-        last_name: raw.last_name || '',
-        email: raw.email,
-        role: roleName,
-        role_id: raw.role_id,
-        is_active: raw.is_active,
-        avatar_url: raw.photo_url || null,
-        title: raw.title || '',
-        _schema: 'full',
-      };
-    } else {
-      return {
-        id: raw.id,
-        display_name: raw.display_name || raw.email,
-        first_name: '',
-        last_name: '',
-        email: raw.email,
-        role: raw.role || 'agent',
-        role_id: null,
-        is_active: raw.is_active,
-        avatar_url: raw.avatar_url || null,
-        title: '',
-        _schema: 'simple',
-      };
-    }
+  function normalizeMember(raw) {
+    var roleName = raw.skr_roles ? raw.skr_roles.role_name : 'agent';
+    var permLevel = raw.skr_roles ? raw.skr_roles.permission_level : 40;
+    return {
+      id: raw.id,
+      tenant_id: raw.tenant_id,
+      first_name: raw.first_name || '',
+      last_name: raw.last_name || '',
+      display_name: ((raw.first_name || '') + ' ' + (raw.last_name || '')).trim() || raw.email,
+      email: raw.email,
+      role: roleName,
+      role_name: roleName,
+      permission_level: permLevel,
+      role_id: raw.role_id,
+      is_active: raw.is_active,
+      title: raw.title || '',
+    };
   }
 
-  // ── VERIFY TEAM MEMBER ──
-  async function verifyTeamMember(user) {
-    var schema = await detectSchema();
-    if (!schema) return { authorized: false, reason: 'no_table' };
-
-    var cols = schema === 'full' ? FULL_COLS : SIMPLE_COLS;
-    var r = await supabase
-      .from('skr_team_members')
-      .select(cols)
-      .eq('email', user.email)
-      .single();
-
-    if (r.error || !r.data) return { authorized: false, reason: 'not_found' };
-    if (!r.data.is_active) return { authorized: false, reason: 'deactivated' };
-
-    var member = await normalizeMember(r.data, schema);
-    return { authorized: true, member: member };
-  }
-
-  // ── FETCH ALL TEAM MEMBERS (for dashboard) ──
   async function fetchTeamMembers() {
-    var schema = await detectSchema();
-    if (!schema) return [];
-
-    var cols = schema === 'full' ? FULL_COLS : SIMPLE_COLS;
-    var orderCol = schema === 'full' ? 'last_name' : 'role';
-
     var r = await supabase
       .from('skr_team_members')
-      .select(cols)
-      .order(orderCol, { ascending: true });
+      .select(MEMBER_SELECT)
+      .order('first_name', { ascending: true });
 
     if (r.error || !r.data) return [];
-
-    var members = [];
-    for (var i = 0; i < r.data.length; i++) {
-      members.push(await normalizeMember(r.data[i], schema));
-    }
-    return members;
+    return r.data.map(normalizeMember);
   }
 
-  // ── POST-AUTH REDIRECT ──
   function handleAuthorized(member) {
     sessionStorage.setItem('skr_member', JSON.stringify(member));
     window.location.href = '/admin/dashboard/';
   }
 
-  // ── LOGIN FORM ──
   var loginForm = document.getElementById('loginForm');
   var magicBtn = document.getElementById('magicLinkBtn');
   var emailInput = document.getElementById('authEmail');
@@ -174,7 +96,7 @@
   function showFeedback(msg, type) {
     if (!feedback) return;
     feedback.textContent = msg;
-    feedback.className = 'login-feedback ' + type;
+    feedback.className = 'login-feedback ' + (type || '');
   }
 
   function setLoading(btn, loading) {
@@ -183,7 +105,6 @@
     btn.disabled = loading;
   }
 
-  // Email + Password
   if (loginForm) {
     loginForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -204,7 +125,6 @@
           await supabase.auth.signOut();
           var msgs = {
             deactivated: 'Your account has been deactivated. Contact your administrator.',
-            no_table: 'Employee portal is being set up. Contact your administrator.',
             not_found: 'This account is not authorized for the Employee Portal.',
           };
           showFeedback(msgs[result.reason] || msgs.not_found, 'error');
@@ -223,7 +143,6 @@
     });
   }
 
-  // Magic Link
   if (magicBtn) {
     magicBtn.addEventListener('click', async function () {
       showFeedback('', '');
@@ -249,23 +168,12 @@
     });
   }
 
-  // Session check on login page
-  if (loginForm) {
-    (async function () {
-      var s = await supabase.auth.getSession();
-      if (s.data.session && s.data.session.user) {
-        var result = await verifyTeamMember(s.data.session.user);
-        if (result.authorized) handleAuthorized(result.member);
-      }
-    })();
-  }
-
-  // ── EXPOSE FOR DASHBOARD + OTHER PAGES ──
-  window.SKR_AUTH = {
+  var existing = window.SKR_AUTH || {};
+  window.SKR_AUTH = Object.assign(existing, {
     supabase: supabase,
     verifyTeamMember: verifyTeamMember,
     fetchTeamMembers: fetchTeamMembers,
-    detectSchema: detectSchema,
+    normalizeMember: normalizeMember,
 
     async getSession() {
       var s = await supabase.auth.getSession();
@@ -284,6 +192,6 @@
       await supabase.auth.signOut();
       window.location.href = '/admin/';
     },
-  };
+  });
 
 })();

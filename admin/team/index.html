@@ -259,58 +259,80 @@
   <script src="../../assets/js/admin-config.js"></script>
   <script src="../../assets/js/nav.js"></script>
   <script src="../../assets/js/admin-auth.js"></script>
+  <script src="/admin/assets/js/skr-auth.js"></script>
   <script src="../../assets/js/admin-permissions.js"></script>
   <script>
-  (async function () {
-    var loading = document.getElementById('pageLoading');
-    var container = document.getElementById('pageContainer');
+  if (!window.SKR_AUTH) {
+    document.getElementById('pageLoading').innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+  } else {
+    window.SKR_AUTH.guard(function (member, sb) {
+      var loading = document.getElementById('pageLoading');
+      var container = document.getElementById('pageContainer');
+      var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
 
-    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
-    var member = await window.SKR_AUTH.getCurrentMember();
-    if (!member) { window.location.href = '/admin/'; return; }
+      document.getElementById('navBadge').textContent = (member.role_name || member.role || 'agent').toUpperCase();
+      document.getElementById('navBadge').className = 'role-badge ' + roleSlug;
+      document.getElementById('navUser').textContent = (window.SKR_AUTH.displayName ? window.SKR_AUTH.displayName(member) : ((member.first_name || '') + ' ' + (member.last_name || '')).trim() || member.email || '');
+      document.getElementById('signOut').addEventListener('click', function () { (window.SKR_AUTH.signOut || function () { window.sb && window.sb.auth.signOut(); sessionStorage.removeItem('skr_member'); window.location.href = '/admin/'; })(); });
 
-    document.getElementById('navBadge').textContent = member.role.toUpperCase();
-    document.getElementById('navBadge').className = 'role-badge ' + member.role;
-    document.getElementById('navUser').textContent = member.display_name;
-    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
+      loading.style.display = 'none';
+      container.style.display = 'block';
 
-    loading.style.display = 'none';
-    container.style.display = 'block';
-
-    var SA = window.SKR_AUTH;
-    var roles = [];
+      var SA = window.SKR_AUTH;
+      var roles = [];
 
     // ── LOAD ROLES FOR DROPDOWNS ──
+    (async function () {
     try {
-      roles = await SA.getRoles();
+      var rolesRes = await sb.from('skr_roles').select('id, role_name, slug, permission_level');
+      roles = (rolesRes.data || []).map(function (r) {
+        return { id: r.id, name: r.role_name || r.slug || 'agent', slug: (r.slug || r.role_name || 'agent').toLowerCase(), hierarchy_level: r.permission_level || 0 };
+      });
       var addSel = document.getElementById('addRole');
       var editSel = document.getElementById('editRole');
       roles.forEach(function (r) {
         if (r.hierarchy_level <= 0) return; // skip public
-        var o1 = document.createElement('option'); o1.value = r.slug; o1.textContent = r.name; addSel.appendChild(o1);
-        var o2 = document.createElement('option'); o2.value = r.slug; o2.textContent = r.name; editSel.appendChild(o2);
+        var slug = r.slug || (r.name || '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+        var o1 = document.createElement('option'); o1.value = slug; o1.textContent = r.name; addSel.appendChild(o1);
+        var o2 = document.createElement('option'); o2.value = slug; o2.textContent = r.name; editSel.appendChild(o2);
       });
     } catch (e) { console.warn('[SKR] Roles load:', e); }
 
     // ── LOAD TEAM ──
     async function loadTeam() {
       try {
-        var members = await SA.fetchTeamMembers();
+        var teamRes = await sb.from('skr_team_members')
+          .select('id, first_name, last_name, email, role_id, title, is_active, skr_roles(role_name, slug)')
+          .order('first_name', { ascending: true });
+        var members = (teamRes.data || []).map(function (m) {
+          var roleLabel = (m.skr_roles && m.skr_roles.role_name) || 'agent';
+          var roleSlug = ((m.skr_roles && m.skr_roles.slug) || roleLabel).toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+          return {
+            id: m.id,
+            first_name: m.first_name,
+            last_name: m.last_name,
+            email: m.email,
+            title: m.title,
+            is_active: m.is_active,
+            role: roleLabel,
+            role_slug: roleSlug,
+            displayName: ((m.first_name || '') + ' ' + (m.last_name || '')).trim() || m.email || 'Unnamed'
+          };
+        });
         var active = 0, inactive = 0;
         if (members && members.length > 0) {
           var h = '';
           members.forEach(function (m) {
             if (m.is_active) active++; else inactive++;
             var sc = m.is_active ? 'active' : 'inactive', st = m.is_active ? 'Active' : 'Inactive';
-            var roleClass = m.role.replace(/[^a-z]/g, '') || 'agent';
             h += '<div class="team-row">' +
-              '<div><div class="t-name">' + (m.display_name || 'Unnamed') + '</div><div class="t-email">' + (m.email || '') + '</div>' + (m.title ? '<div class="t-title">' + m.title + '</div>' : '') + '</div>' +
-              '<div><span class="t-role ' + roleClass + '">' + m.role + '</span></div>' +
+              '<div><div class="t-name">' + m.displayName + '</div><div class="t-email">' + (m.email || '') + '</div>' + (m.title ? '<div class="t-title">' + m.title + '</div>' : '') + '</div>' +
+              '<div><span class="t-role ' + m.role_slug + '">' + m.role + '</span></div>' +
               '<div><span class="t-status ' + sc + '">' + st + '</span></div>' +
               '<div class="t-title-col" style="font-family:var(--sans);font-size:12px;color:var(--silver)">' + (m.title || '—') + '</div>' +
               '<div class="t-actions">' +
-                '<button class="t-action edit-btn" data-id="' + m.id + '" data-role="' + m.role + '" data-title="' + (m.title || '') + '" data-name="' + (m.display_name || '') + '">Edit</button>' +
-                (m.is_active ? '<button class="t-action danger deactivate-btn" data-id="' + m.id + '" data-name="' + (m.display_name || '') + '">Deactivate</button>'
+                '<button class="t-action edit-btn" data-id="' + m.id + '" data-role="' + m.role_slug + '" data-title="' + (m.title || '') + '" data-name="' + m.displayName + '">Edit</button>' +
+                (m.is_active ? '<button class="t-action danger deactivate-btn" data-id="' + m.id + '" data-name="' + m.displayName + '">Deactivate</button>'
                   : '<button class="t-action reactivate-btn" data-id="' + m.id + '">Reactivate</button>') +
               '</div></div>';
           });
@@ -343,6 +365,7 @@
 
     await loadTeam();
     await loadInvitations();
+    })();
 
     // ── MODAL HELPERS ──
     function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -462,7 +485,8 @@
       btn.disabled = false;
       btn.textContent = 'Deactivate';
     });
-  })();
+    });
+  }
   </script>
 </body>
 </html>

@@ -244,7 +244,7 @@
   async function signInWithGoogle() {
     var { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/admin/' }
+      options: { redirectTo: window.location.origin + '/admin/callback/' }
     });
     if (error) alert('Sign in failed: ' + error.message);
   }
@@ -252,7 +252,7 @@
   async function signInWithMicrosoft() {
     var { error } = await sb.auth.signInWithOAuth({
       provider: 'azure',
-      options: { redirectTo: window.location.origin + '/admin/' }
+      options: { redirectTo: window.location.origin + '/admin/callback/' }
     });
     if (error) alert('Sign in failed: ' + error.message);
   }
@@ -261,7 +261,7 @@
     var { error } = await sb.auth.signInWithOAuth({
       provider: 'azure',
       options: {
-        redirectTo: window.location.origin + '/admin/',
+        redirectTo: window.location.origin + '/admin/callback/',
         scopes: 'email openid profile'
       }
     });
@@ -273,7 +273,7 @@
     if (!email) return;
     var { error } = await sb.auth.signInWithOtp({
       email: email,
-      options: { emailRedirectTo: window.location.origin + '/admin/' }
+      options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
     });
     if (error) { alert('Error: ' + error.message); return; }
     document.getElementById('loginSentEmail').textContent = 'We sent a link to ' + email;

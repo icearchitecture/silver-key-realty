@@ -196,53 +196,54 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <!-- Config: auto-generated at build time from Vercel env vars -->
   <script src="../../assets/js/admin-config.js"></script>
   <script src="../../assets/js/nav.js"></script>
-  <script src="../../assets/js/admin-auth.js"></script>
-  <script src="../../assets/js/auth-router.js"></script>
+  <script src="/admin/assets/js/skr-auth.js"></script>
   <script>
   (async function () {
     var loading = document.getElementById('dashLoading');
     var container = document.getElementById('dashContainer');
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+    var url = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_URL : null;
+    var key = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_ANON_KEY : null;
+
+    if (!url || !key || url.indexOf('%%') > -1) {
       loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
       return;
     }
 
-    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var sb = window.supabase.createClient(url, key);
+    window.sb = sb;
 
-    var sessionResult = await sb.auth.getSession();
-    var session = sessionResult.data.session;
-    if (!session) { window.location.href = '/admin/'; return; }
+    var { data } = await sb.auth.getSession();
+    if (!data.session) { window.location.href = '/admin/'; return; }
 
-    // === ROLE GATE ===
-    var memberCheck = await sb.from('skr_team_members')
-      .select('id, role_id, display_name')
-      .eq('auth_user_id', session.user.id)
-      .eq('is_active', true)
-      .maybeSingle();
-
-    if (!memberCheck.data) {
-      window.location.href = '/admin/portal/';
-      return;
+    var cached = sessionStorage.getItem('skr_member');
+    var member = null;
+    if (cached) {
+      try { member = JSON.parse(cached); } catch(e) { sessionStorage.removeItem('skr_member'); }
     }
 
-    var roleCheck = await sb.from('skr_roles')
-      .select('role_name, permission_level')
-      .eq('id', memberCheck.data.role_id)
-      .single();
+    if (!member) {
+      member = await SKR_AUTH.lookupTeamMember(sb, data.session.user);
+      if (!member) {
+        window.location.href = '/admin/portal/';
+        return;
+      }
+      member = SKR_AUTH.formatMember(member);
+      sessionStorage.setItem('skr_member', JSON.stringify(member));
+    }
 
-    var userRole = roleCheck.data ? roleCheck.data.role_name : 'lead';
-    var userLevel = roleCheck.data ? roleCheck.data.permission_level : 0;
+    var userRole = member.role_name || 'agent';
+    var userLevel = member.permission_level || 40;
+    var displayName = (member.first_name + ' ' + (member.last_name || '')).trim();
 
     window.SKR_USER = {
-      id: memberCheck.data.id,
+      id: member.id,
       role: userRole,
       permissionLevel: userLevel,
-      displayName: memberCheck.data.display_name
+      displayName: displayName
     };
 
     if (userLevel < 60) {
@@ -254,16 +255,16 @@
     if (userLevel < 40) {
       document.querySelectorAll('[data-min-role="agent"]').forEach(function(el) { el.style.display = 'none'; });
     }
-    // === END ROLE GATE ===
 
     document.getElementById('navBadge').textContent = userRole.toUpperCase();
     document.getElementById('navBadge').className = 'role-badge ' + userRole;
-    document.getElementById('navUser').textContent = memberCheck.data.display_name;
+    document.getElementById('navUser').textContent = displayName;
 
     loading.style.display = 'none';
     container.style.display = 'block';
 
     document.getElementById('signOut').addEventListener('click', async function () {
+      sessionStorage.removeItem('skr_member');
       await sb.auth.signOut();
       window.location.href = '/admin/';
     });
@@ -279,7 +280,6 @@
       return days + ' day' + (days > 1 ? 's' : '') + ' ago';
     }
 
-    // Stats (each query fails gracefully if table doesn't exist)
     async function safeStat(table, filter, el) {
       try {
         var q = sb.from(table).select('*',{count:'exact',head:true});
@@ -295,11 +295,9 @@
     await safeStat('skr_properties', {eq:['status','active']}, 'sProps');
     await safeStat('skr_team_members', {eq:['is_active',true]}, 'sTeam');
 
-    // Leads (tries with 'archived' column, falls back without)
     try {
       var leadResult = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').eq('archived',false).order('created_at',{ascending:false}).limit(20);
       var leads = leadResult.data;
-      // If 'archived' column doesn't exist, try without it
       if (leadResult.error) {
         var fallback = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').order('created_at',{ascending:false}).limit(20);
         leads = fallback.data;
@@ -315,11 +313,9 @@
       }
     } catch(e){ console.warn('[SKR] Leads:',e); }
 
-    // Activity (tries skr_audit_log, falls back to skr_events)
     try {
       var actResult = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, resource_type, resource_id, created_at').order('created_at',{ascending:false}).limit(15);
       var acts = actResult.data;
-      // If audit_log doesn't exist, try skr_events
       if (actResult.error) {
         var evResult = await sb.from('skr_events').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
         acts = evResult.data;
@@ -342,13 +338,12 @@
       }
     } catch(e){ console.warn('[SKR] Activity:',e); }
 
-    // Team list (broker+ only, hidden by data-min-role for lower roles)
     if (userLevel >= 50) {
       try {
         var teamResult = await sb.from('skr_team_members')
-          .select('id, display_name, email, role_id, is_active')
+          .select('id, first_name, last_name, email, role_id, is_active')
           .eq('is_active', true)
-          .order('display_name');
+          .order('first_name');
         var teamMembers = teamResult.data;
         if (teamMembers && teamMembers.length > 0) {
           var rolesResult = await sb.from('skr_roles').select('id, role_name');
@@ -358,7 +353,8 @@
           teamMembers.forEach(function(m){
             var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
             var roleName = roleMap[m.role_id] || 'agent';
-            h += '<div class="team-row"><div><div class="t-name">'+(m.display_name||'Unnamed')+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleName+'">'+roleName+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
+            var mName = ((m.first_name||'') + ' ' + (m.last_name||'')).trim() || 'Unnamed';
+            h += '<div class="team-row"><div><div class="t-name">'+mName+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleName+'">'+roleName+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
           });
           document.getElementById('teamList').innerHTML = h;
         }
@@ -367,13 +363,11 @@
       document.getElementById('addEmployee').addEventListener('click', function(){ window.location.href = '/admin/team/'; });
     }
 
-    // Show permissions link for broker+ roles
     if (userLevel >= 50) {
       var permLink = document.getElementById('navPermLink');
       if (permLink) permLink.style.display = 'inline';
     }
 
-    // Load notification badge
     if (window.SKR_USER) {
       sb.rpc('skr_get_unread_count', { p_team_member_id: window.SKR_USER.id })
         .then(function(result) {

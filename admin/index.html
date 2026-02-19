@@ -11,6 +11,10 @@
   <link rel="stylesheet" href="../assets/css/tokens.css">
   <link rel="stylesheet" href="../assets/css/nav.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
+  <style>
+    .admin-login .login-card { opacity: 0; transition: opacity 0.3s; }
+    body.ready .admin-login .login-card { opacity: 1; }
+  </style>
 </head>
 <body class="admin-dark">
 
@@ -65,6 +69,113 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../assets/js/admin-config.js"></script>
   <script src="../assets/js/nav.js"></script>
-  <script src="../assets/js/admin-auth.js"></script>
+  <script src="/admin/assets/js/skr-auth.js"></script>
+  <script>
+  (async function() {
+    var url = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_URL : null;
+    var key = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_ANON_KEY : null;
+
+    if (!url || !key || url.indexOf('%%') > -1) {
+      showFeedback('Configuration error. Contact your administrator.', 'error');
+      document.body.classList.add('ready');
+      return;
+    }
+
+    window.sb = supabase.createClient(url, key);
+
+    sb.auth.onAuthStateChange(function(event, session) {
+      if (event === 'SIGNED_IN' && session) {
+        verifyAndRedirect(session.user);
+      }
+    });
+
+    var { data } = await sb.auth.getSession();
+    if (data.session) {
+      verifyAndRedirect(data.session.user);
+      return;
+    }
+
+    document.body.classList.add('ready');
+  })();
+
+  async function verifyAndRedirect(user) {
+    var member = await SKR_AUTH.lookupTeamMember(sb, user);
+    if (member) {
+      sessionStorage.setItem('skr_member', JSON.stringify(SKR_AUTH.formatMember(member)));
+      window.location.href = '/admin/dashboard/';
+    } else {
+      document.body.classList.add('ready');
+    }
+  }
+
+  function showFeedback(msg, type) {
+    var el = document.getElementById('loginFeedback');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'login-feedback ' + (type || '');
+  }
+
+  var loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      showFeedback('', '');
+      var email = document.getElementById('authEmail').value.trim();
+      var pass = document.getElementById('authPassword').value;
+      if (!email || !pass) { showFeedback('Email and password are required.', 'error'); return; }
+
+      var btn = document.getElementById('loginSubmit');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        var { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+        if (error) {
+          showFeedback('Invalid email or password.', 'error');
+          btn.classList.remove('loading'); btn.disabled = false;
+          return;
+        }
+
+        var member = await SKR_AUTH.lookupTeamMember(sb, data.user);
+        if (!member) {
+          await sb.auth.signOut();
+          showFeedback('This account is not authorized for admin access.', 'error');
+          btn.classList.remove('loading'); btn.disabled = false;
+          return;
+        }
+
+        sessionStorage.setItem('skr_member', JSON.stringify(SKR_AUTH.formatMember(member)));
+        showFeedback('Welcome back, ' + SKR_AUTH.displayName(member) + '.', 'success');
+        setTimeout(function() { window.location.href = '/admin/dashboard/'; }, 800);
+      } catch(err) {
+        showFeedback('Something went wrong. Please try again.', 'error');
+        btn.classList.remove('loading'); btn.disabled = false;
+      }
+    });
+  }
+
+  var magicBtn = document.getElementById('magicLinkBtn');
+  if (magicBtn) {
+    magicBtn.addEventListener('click', async function() {
+      showFeedback('', '');
+      var email = document.getElementById('authEmail').value.trim();
+      if (!email) { showFeedback('Enter your email address first.', 'error'); return; }
+
+      magicBtn.disabled = true;
+      try {
+        var { error } = await sb.auth.signInWithOtp({
+          email: email,
+          options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
+        });
+        magicBtn.disabled = false;
+        if (error) { showFeedback('Could not send magic link. Try again.', 'error'); return; }
+        showFeedback('Magic link sent. Check your email.', 'success');
+      } catch(err) {
+        showFeedback('Something went wrong. Please try again.', 'error');
+        magicBtn.disabled = false;
+      }
+    });
+  }
+  </script>
 </body>
 </html>

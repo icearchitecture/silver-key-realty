@@ -141,6 +141,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../../assets/js/admin-config.js"></script>
+  <script src="/admin/assets/js/skr-auth.js"></script>
   <script src="../../assets/js/nav.js"></script>
   <script src="../../assets/js/admin-auth.js"></script>
   <script src="../../assets/js/admin-permissions.js"></script>
@@ -153,15 +154,18 @@
     var member = await window.SKR_AUTH.getCurrentMember();
     if (!member) { window.location.href = '/admin/'; return; }
 
+    var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+    var displayName = ((member.first_name || '') + ' ' + (member.last_name || '')).trim() || member.email || 'Unnamed';
+
     // Only broker+ can access
-    if (['admin','broker'].indexOf(member.role) === -1) {
+    if (['admin','broker'].indexOf(roleSlug) === -1) {
       loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;text-align:center;padding:100px 20px">Permission management requires Broker or Admin role.<br><a href="../dashboard/" style="color:var(--skr-green-light)">← Back to Dashboard</a></p>';
       return;
     }
 
-    document.getElementById('navBadge').textContent = member.role.toUpperCase();
-    document.getElementById('navBadge').className = 'role-badge ' + member.role;
-    document.getElementById('navUser').textContent = member.display_name;
+    document.getElementById('navBadge').textContent = (member.role_name || member.role || 'agent').toUpperCase();
+    document.getElementById('navBadge').className = 'role-badge ' + roleSlug;
+    document.getElementById('navUser').textContent = displayName;
     document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
 
     loading.style.display = 'none';

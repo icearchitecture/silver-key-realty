@@ -60,13 +60,13 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <!-- Config: auto-generated at build time from Vercel env vars -->
   <script src="../../assets/js/admin-config.js"></script>
+  <script src="/admin/assets/js/skr-auth.js"></script>
   <script>
     (async function () {
       var msg = document.getElementById('callbackMsg');
-      var url = window.SKR_CONFIG.SUPABASE_URL;
-      var key = window.SKR_CONFIG.SUPABASE_ANON_KEY;
+      var url = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_URL : null;
+      var key = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_ANON_KEY : null;
 
       if (!url || !key || url.indexOf('%%') > -1) {
         msg.textContent = 'Configuration error. Contact your administrator.';
@@ -75,35 +75,48 @@
 
       var sb = window.supabase.createClient(url, key);
 
-      // Supabase will pick up the token from the URL hash automatically
       var { data, error } = await sb.auth.getSession();
 
       if (error || !data.session) {
-        msg.textContent = 'Session could not be verified. Please try signing in again.';
-        setTimeout(function () { window.location.href = '/admin/'; }, 2500);
+        msg.textContent = 'Completing sign in...';
+
+        var timeout = setTimeout(function() {
+          msg.textContent = 'Session could not be verified. Redirecting to login...';
+          setTimeout(function() { window.location.href = '/admin/'; }, 1500);
+        }, 8000);
+
+        sb.auth.onAuthStateChange(function(event, session) {
+          if (event === 'SIGNED_IN' && session) {
+            clearTimeout(timeout);
+            handleSession(sb, session.user, msg);
+          }
+        });
         return;
       }
 
-      // Verify team membership
-      var user = data.session.user;
-      var { data: member, error: memberErr } = await sb
-        .from('skr_team_members')
-        .select('id, display_name, role, is_active')
-        .eq('email', user.email)
-        .single();
+      handleSession(sb, data.session.user, msg);
+    })();
 
-      if (memberErr || !member || !member.is_active) {
+    async function handleSession(sb, user, msg) {
+      msg.textContent = 'Verifying team access...';
+
+      var member = await SKR_AUTH.lookupTeamMember(sb, user);
+
+      if (!member) {
         await sb.auth.signOut();
         msg.textContent = 'This account is not authorized for admin access.';
-        setTimeout(function () { window.location.href = '/admin/'; }, 2500);
+        msg.style.color = '#E57373';
+        setTimeout(function() { window.location.href = '/admin/'; }, 2500);
         return;
       }
 
-      // Store and redirect
-      sessionStorage.setItem('skr_member', JSON.stringify(member));
-      msg.textContent = 'Welcome back, ' + member.display_name + '.';
-      setTimeout(function () { window.location.href = '/admin/dashboard/'; }, 800);
-    })();
+      sessionStorage.setItem('skr_member', JSON.stringify(SKR_AUTH.formatMember(member)));
+
+      var displayName = SKR_AUTH.displayName(member);
+      msg.textContent = 'Welcome back, ' + displayName + '.';
+      msg.style.color = '#3A9464';
+      setTimeout(function() { window.location.href = '/admin/dashboard/'; }, 800);
+    }
   </script>
 </body>
 </html>
