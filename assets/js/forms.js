@@ -5,7 +5,7 @@
    ============================================================ */
 
 (function() {
-  var API_ENDPOINT = '/api/submit';
+  var API_ENDPOINT = '/api/leads/submit';
 
   function getField(form, name) {
     return form.querySelector('[name="' + name + '"]');
@@ -72,14 +72,22 @@
         composedMessage = (messageText ? messageText + '\n\n' : '') + scheduleSummary;
       }
 
+      var fullName = (getField(form, 'name') ? getField(form, 'name').value : '').trim();
+      var nameParts = fullName.split(/\s+/);
+      var firstName = nameParts[0] || '';
+      var lastName = nameParts.slice(1).join(' ') || '';
+
+      var pathwayField = getField(form, 'pathway');
+      var pathway = (pathwayField && pathwayField.value) ? pathwayField.value : (form.getAttribute('data-pathway') || 'general');
+
       var data = {
-        name: getField(form, 'name').value,
-        email: getField(form, 'email').value,
+        firstName: firstName,
+        lastName: lastName,
+        email: getField(form, 'email') ? getField(form, 'email').value : '',
         phone: getField(form, 'phone') ? getField(form, 'phone').value : null,
-        pathway: form.getAttribute('data-pathway') || 'general',
+        pathway: pathway,
         message: composedMessage ? composedMessage : null,
-        source: window.location.pathname,
-        timestamp: new Date().toISOString()
+        source: window.location.pathname
       };
 
       fetch(API_ENDPOINT, {
@@ -91,9 +99,10 @@
       .then(function(result) {
         if (result.success) {
           // Success state
-          form.innerHTML = '<div class="form-success">' +
-            '<h3 style="font-family: var(--serif); font-size: 28px; font-weight: 300; color: var(--charcoal); margin-bottom: 12px;">Inquiry <em>received.</em></h3>' +
-            '<p style="font-family: var(--sans); font-weight: 200; font-size: 15px; color: var(--warm-gray); line-height: 1.8;">We will review your information and be in touch within 48 hours.</p>' +
+          form.innerHTML = '<div class="form-success" style="text-align:center;padding:40px 20px">' +
+            '<div style="font-size:36px;margin-bottom:12px">&#10003;</div>' +
+            '<h3 style="font-family: var(--serif); font-size: 28px; font-weight: 300; color: var(--light-warm, #F0EBE3); margin-bottom: 12px;">Thank <em>You</em></h3>' +
+            '<p style="font-family: var(--sans); font-weight: 200; font-size: 15px; color: var(--warm-gray, #9A8E80); line-height: 1.8;">' + (result.message || 'We will review your information and be in touch within 24 hours.') + '</p>' +
             '</div>';
         } else {
           // Validation error

@@ -143,6 +143,15 @@ export default async function handler(req, res) {
       }
     }
 
+    // Audit log (non-blocking)
+    supabase.from("skr_audit_log").insert({
+      tenant_id: tenant.id,
+      action: "lead_created",
+      resource_type: "lead",
+      resource_id: lead.id,
+      details: { pathway: pathway, source: source || "website_form" },
+    }).then(() => {}).catch(() => {});
+
     return res.status(200).json({
       success: true,
       message: "Thank you! We'll be in touch within 24 hours.",

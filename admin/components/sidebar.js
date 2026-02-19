@@ -5,10 +5,12 @@
     { href: '/admin/', icon: '\u25C6', label: 'Command Center', page: 'dashboard' },
     { href: '/admin/leads/', icon: '\u25CE', label: 'Leads', page: 'leads' },
     { href: '/admin/deals/', icon: '\u2B21', label: 'Deals', page: 'deals' },
+    { href: '/admin/properties/', icon: '\u2302', label: 'Properties', page: 'properties' },
     { href: '/admin/workspace/', icon: '\u25A6', label: 'Workspace', page: 'workspace' },
     { href: '/admin/source-drive/', icon: '\u25C8', label: 'Source Drive', page: 'drive' },
     { href: '/admin/email/', icon: '\u25B7', label: 'Email', page: 'email' },
     { href: '/admin/meetings/', icon: '\u25D1', label: 'Meetings', page: 'meetings' },
+    { href: '/admin/documents/', icon: '\u25A4', label: 'Documents', page: 'documents' },
     { href: '/admin/team/', icon: '\u25C9', label: 'Team', page: 'team' },
     { href: '/admin/settings/', icon: '\u2699', label: 'Settings', page: 'settings', minRole: 50 },
   ];

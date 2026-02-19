@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meetings — Silver Key Realty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/base.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/nav.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/responsive.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/admin.css?v=2">
+  <style>
+    :root{--bg:#111;--card-bg:rgba(255,255,255,0.015);--card-border:rgba(255,255,255,0.04);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif;--cream:#F0EBE3;--champagne:#C9B99A;--silver:#8A8178;--skr-green:#3A9464}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+    .admin-layout{display:flex;min-height:100vh}
+    .sidebar{width:220px;background:#0D0D0D;position:fixed;top:0;left:0;bottom:0;padding:80px 0 24px;z-index:100;border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
+    .sidebar-nav{flex:1;padding:16px 0}
+    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-family:var(--sans);font-size:13px;font-weight:300;color:#8A8178;text-decoration:none;transition:all 0.2s;border-left:2px solid transparent}
+    .sidebar-item:hover{color:var(--cream);background:rgba(255,255,255,0.02)}
+    .sidebar-item.active{color:var(--cream);border-left-color:#3A9464;background:rgba(58,148,100,0.04)}
+    .sidebar-icon{font-size:14px;width:20px;text-align:center}
+    .sidebar-user{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
+    .sidebar-user-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
+    .sidebar-user-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:2px}
+    .main-content{margin-left:220px;flex:1;padding:32px;padding-top:96px}
+
+    .loading-state{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .breadcrumb{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
+    .page-title{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--cream);line-height:1.2;margin-top:4px;margin-bottom:4px}
+    .page-title em{color:var(--champagne);font-style:italic}
+    .page-sub{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver);margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.04)}
+
+    .coming-soon{background:var(--card-bg);border:1px solid var(--card-border);text-align:center;padding:80px 40px}
+    .coming-soon-icon{font-size:52px;margin-bottom:20px;opacity:.6}
+    .coming-soon-title{font-family:var(--serif);font-size:24px;font-weight:300;color:var(--cream);margin-bottom:16px}
+    .coming-soon-desc{font-family:var(--sans);font-size:14px;font-weight:300;color:var(--silver);max-width:520px;margin:0 auto;line-height:1.7}
+    .coming-soon-badges{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .badge{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;display:inline-block}
+    .badge-green{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
+    .badge-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+    .badge-champagne{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
+
+    @media(max-width:900px){
+      .sidebar{display:none}
+      .main-content{margin-left:0;padding:20px;padding-top:80px}
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <div id="skr-sidebar" class="sidebar"></div>
+
+    <div class="main-content" id="mainContent" style="display:none">
+      <div class="breadcrumb">Silver Key Realty</div>
+      <h1 class="page-title"><em>Meetings</em></h1>
+      <p class="page-sub">Video calls, transcription, and AI summaries — powered by Azure Communication Services</p>
+
+      <div class="coming-soon">
+        <div class="coming-soon-icon">&#x1F3A5;</div>
+        <h2 class="coming-soon-title">Coming Soon</h2>
+        <p class="coming-soon-desc">14 meeting tables are deployed. Azure ACS voice/video integration, real-time transcription with speaker diarization, rolling AI summaries, and whiteboard collaboration are being connected.</p>
+        <div class="coming-soon-badges">
+          <span class="badge badge-green">14 tables deployed</span>
+          <span class="badge badge-purple">5 functions ready</span>
+          <span class="badge badge-champagne">3 storage buckets</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" id="loadingState"><div class="spinner"></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/auth-router.js"></script>
+  <script src="/admin/components/sidebar.js"></script>
+  <script>
+  (async function() {
+    var loadingEl = document.getElementById('loadingState');
+    var mainEl = document.getElementById('mainContent');
+
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+      loadingEl.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session) { window.location.href = '/admin/'; return; }
+
+    var memberRaw = await sb.from('skr_team_members')
+      .select('id, tenant_id, first_name, last_name, email, role_id, title, is_active, skr_roles!inner(role_name, permission_level)')
+      .eq('auth_user_id', session.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (!memberRaw.data) { window.location.href = '/admin/portal/'; return; }
+
+    var m = memberRaw.data;
+    window.SKR_USER = {
+      id: m.id,
+      tenantId: m.tenant_id,
+      role: m.skr_roles ? m.skr_roles.role_name : 'agent',
+      permissionLevel: m.skr_roles ? m.skr_roles.permission_level : 0,
+      displayName: ((m.first_name || '') + ' ' + (m.last_name || '')).trim()
+    };
+
+    loadingEl.style.display = 'none';
+    mainEl.style.display = 'block';
+    if (typeof window.initSidebar === 'function') window.initSidebar();
+  })();
+  </script>
+</body>
+</html>
