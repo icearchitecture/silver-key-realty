@@ -117,6 +117,70 @@
   <script>
     var sb;
 
+    // Handle errors from callback redirects
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var error = params.get('error');
+      if (error) {
+        var messages = {
+          callback_failed: 'Sign-in failed. Please try again.',
+          no_user: 'Could not verify your identity. Please try again.',
+          session_expired: 'Your session has expired. Please sign in again.'
+        };
+        var msg = messages[error] || 'An error occurred. Please try again.';
+
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'padding:12px 16px;margin-bottom:16px;border:1px solid rgba(231,76,60,0.2);background:rgba(231,76,60,0.05);color:#e74c3c;font-size:13px;text-align:center;font-family:Outfit,sans-serif;';
+        errDiv.textContent = msg;
+
+        var target = document.querySelector('.login-form')
+          || document.querySelector('.skr-card')
+          || document.querySelector('form')
+          || document.querySelector('main');
+        if (target) target.prepend(errDiv);
+
+        window.history.replaceState({}, '', '/admin/');
+      }
+    })();
+
+    // Brute force protection — client-side rate limiting
+    var loginAttempts = {
+      count: 0,
+      lastAttempt: 0,
+      locked: false,
+      lockUntil: 0
+    };
+
+    function canAttemptLogin() {
+      var now = Date.now();
+
+      if (loginAttempts.locked) {
+        if (now < loginAttempts.lockUntil) {
+          var secondsLeft = Math.ceil((loginAttempts.lockUntil - now) / 1000);
+          return { allowed: false, message: 'Too many failed attempts. Try again in ' + secondsLeft + ' seconds.' };
+        }
+        loginAttempts.locked = false;
+        loginAttempts.count = 0;
+      }
+
+      if (now - loginAttempts.lastAttempt > 300000) {
+        loginAttempts.count = 0;
+      }
+
+      return { allowed: true };
+    }
+
+    function recordFailedLogin() {
+      loginAttempts.count++;
+      loginAttempts.lastAttempt = Date.now();
+
+      if (loginAttempts.count >= 5) {
+        loginAttempts.locked = true;
+        var lockSeconds = 30 * Math.pow(2, Math.floor(loginAttempts.count / 5) - 1);
+        loginAttempts.lockUntil = Date.now() + (lockSeconds * 1000);
+      }
+    }
+
     (async function init() {
       var cfg = window.SKR_CONFIG;
       if (!cfg || !cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) {
@@ -178,12 +242,19 @@
       var password = document.getElementById('login-password').value;
       var btn = document.getElementById('login-submit');
 
+      var loginCheck = canAttemptLogin();
+      if (!loginCheck.allowed) {
+        showError(loginCheck.message);
+        return;
+      }
+
       btn.textContent = 'Signing in...'; btn.disabled = true;
       hideMessages();
 
       var result = await sb.auth.signInWithPassword({ email: email, password: password });
 
       if (result.error) {
+        recordFailedLogin();
         showError(result.error.message === 'Invalid login credentials' ? 'Invalid email or password.' : result.error.message);
         btn.textContent = 'Sign In'; btn.disabled = false;
         return;
@@ -209,7 +280,7 @@
 
       var result = await sb.auth.signInWithOtp({
         email: email,
-        options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
+        options: { emailRedirectTo: window.location.origin + '/admin/auth/callback/' }
       });
 
       if (result.error) {
@@ -226,7 +297,7 @@
     async function handleOAuth(provider) {
       var result = await sb.auth.signInWithOAuth({
         provider: provider,
-        options: { redirectTo: window.location.origin + '/admin/callback/' }
+        options: { redirectTo: window.location.origin + '/admin/auth/callback/' }
       });
       if (result.error) showError(result.error.message);
     }

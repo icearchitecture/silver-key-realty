@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Access Denied</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background:#111111; font-family:'Outfit',sans-serif; color:#F0EBE3;
+    }
+    .container {
+      text-align:center; max-width:480px; padding:48px 32px;
+      background:#1A1A1A; border:1px solid rgba(255,255,255,0.04);
+    }
+    .accent { border-top:2px solid #e74c3c; width:40px; margin:0 auto 24px; }
+    h1 {
+      font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300;
+      color:#F0EBE3; margin-bottom:8px;
+    }
+    h1 em { color:#C9B99A; }
+    .message { font-size:14px; color:#9A8E80; line-height:1.7; margin-bottom:32px; }
+    .deactivated-msg {
+      font-size:13px; color:#e74c3c; margin-bottom:24px;
+      padding:12px; border:1px solid rgba(231,76,60,0.2);
+      background:rgba(231,76,60,0.05);
+    }
+    .btn {
+      display:inline-block; padding:12px 32px; background:none;
+      border:1px solid rgba(255,255,255,0.08); color:#9A8E80;
+      font-family:'Outfit',sans-serif; font-size:11px; letter-spacing:2px;
+      text-transform:uppercase; text-decoration:none; cursor:pointer;
+      transition:all 0.15s;
+    }
+    .btn:hover { border-color:rgba(255,255,255,0.2); color:#F0EBE3; }
+    .contact { margin-top:24px; font-size:11px; color:#7A6E60; }
+    .contact a { color:#C9B99A; text-decoration:none; }
+    .logo { font-family:Georgia,serif; font-size:18px; color:#F0EBE3; margin-bottom:32px; }
+    .logo em { color:#C9B99A; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Silver Key <em>Realty</em></div>
+    <div class="accent"></div>
+    <h1>Access <em>Denied</em></h1>
+
+    <div id="deactivated" class="deactivated-msg" style="display:none">
+      Your account has been deactivated. Please contact your broker to restore access.
+    </div>
+
+    <p class="message">
+      Your account is not authorized to access the Silver Key Realty platform.
+      If you believe this is an error, please contact your managing broker to request access.
+    </p>
+
+    <a href="/admin/" class="btn">Back to Login</a>
+
+    <div class="contact">
+      Need help? Contact <a href="mailto:support@silverkeyrealty.llc">support@silverkeyrealty.llc</a>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reason') === 'deactivated') {
+      document.getElementById('deactivated').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

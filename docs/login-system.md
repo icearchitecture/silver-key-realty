@@ -127,7 +127,7 @@ var sb = (function() {
 ### Login Methods
 
 1. **Email + Password** — standard `signInWithPassword`, followed by team membership verification
-2. **Magic Link** — `signInWithOtp`, redirects to `/admin/callback/`
+2. **Magic Link** — `signInWithOtp`, redirects to `/admin/auth/callback/` (legacy `/admin/callback/` forwards)
 
 ### Post-Login Flow
 

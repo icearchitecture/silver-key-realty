@@ -28,87 +28,11 @@
     <div id="cb-error" class="cb-error"></div>
   </div>
 
-  <script src="../../assets/js/admin-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    (async function() {
-      var cfg = window.SKR_CONFIG;
-      if (!cfg || !cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) {
-        showError('Configuration error.');
-        return;
-      }
-
-      var sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
-
-      var attempts = 0;
-      var session = null;
-
-      while (attempts < 10) {
-        var result = await sb.auth.getSession();
-        if (result.data.session) {
-          session = result.data.session;
-          break;
-        }
-        attempts++;
-        await new Promise(function(r) { setTimeout(r, 500); });
-      }
-
-      if (!session) {
-        await new Promise(function(resolve) {
-          var timeout = setTimeout(function() { resolve(null); }, 3000);
-          sb.auth.onAuthStateChange(function(event, sess) {
-            if (sess) { session = sess; clearTimeout(timeout); resolve(sess); }
-          });
-        });
-      }
-
-      if (!session) {
-        showError('Authentication failed. <a href="/admin/">Return to login</a>');
-        return;
-      }
-
-      var member = await lookupTeamMember(sb, session);
-      if (!member) {
-        await sb.auth.signOut();
-        window.location.href = '/admin/?error=not_authorized';
-        return;
-      }
-
-      window.location.href = '/admin/dashboard/';
-    })();
-
-    async function lookupTeamMember(sb, session) {
-      var { data: member } = await sb
-        .from('skr_team_members')
-        .select('id')
-        .eq('auth_user_id', session.user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (member) return member;
-
-      if (session.user.email) {
-        var { data: emailMember } = await sb
-          .from('skr_team_members')
-          .select('id')
-          .eq('email', session.user.email)
-          .eq('is_active', true)
-          .single();
-
-        if (emailMember) {
-          await sb.from('skr_team_members').update({ auth_user_id: session.user.id }).eq('id', emailMember.id);
-          return emailMember;
-        }
-      }
-      return null;
-    }
-
-    function showError(msg) {
-      document.getElementById('cb-loading').style.display = 'none';
-      var el = document.getElementById('cb-error');
-      el.innerHTML = msg;
-      el.style.display = 'block';
-    }
+    // Compatibility shim: keep old callback URL working.
+    // Preserves query + hash tokens for implicit OAuth flows.
+    var dest = '/admin/auth/callback/' + window.location.search + window.location.hash;
+    window.location.replace(dest);
   </script>
 </body>
 </html>

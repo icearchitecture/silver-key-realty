@@ -14,6 +14,20 @@
   window.SKR_SUPA = sb;
 
   (async function () {
+    // Session timeout — force re-login after 8 hours
+    var SESSION_MAX_AGE = 8 * 60 * 60 * 1000;
+    var sessionStart = sessionStorage.getItem('skr_session_start');
+
+    if (sessionStart && (Date.now() - parseInt(sessionStart, 10)) > SESSION_MAX_AGE) {
+      await sb.auth.signOut();
+      sessionStorage.clear();
+      window.location.href = '/admin/?error=session_expired';
+      return;
+    }
+    if (!sessionStart) {
+      sessionStorage.setItem('skr_session_start', Date.now().toString());
+    }
+
     var sessionResult = await sb.auth.getSession();
     if (!sessionResult.data.session) {
       window.location.href = '/admin/';
@@ -21,33 +35,60 @@
     }
 
     var session = sessionResult.data.session;
-    var user = session.user;
+    // Confirm token validity with getUser()
+    var userResult = await sb.auth.getUser();
+    var user = userResult && userResult.data ? userResult.data.user : null;
+    if (!user) {
+      await sb.auth.signOut();
+      sessionStorage.clear();
+      window.location.href = '/admin/?error=no_user';
+      return;
+    }
 
-    var cached = sessionStorage.getItem('skr_member');
+    // SECURITY GATE — Verify team membership on every page load
     var member = null;
-    if (cached) {
-      try { member = JSON.parse(cached); } catch (e) { sessionStorage.removeItem('skr_member'); }
+    var cached = sessionStorage.getItem('skr_member');
+    var cacheTime = sessionStorage.getItem('skr_member_ts');
+    var cacheValid = cached && cacheTime && (Date.now() - parseInt(cacheTime, 10)) < 600000;
+
+    if (cacheValid) {
+      try { member = normalizeCachedMember(JSON.parse(cached)); } catch (e) { member = null; }
+      if (!member) {
+        sessionStorage.removeItem('skr_member');
+        sessionStorage.removeItem('skr_member_ts');
+      }
     }
 
     if (!member) {
-      member = await lookupTeamMember(sb, user);
-      if (!member) {
+      var dbMember = await lookupTeamMember(sb, user);
+      if (!dbMember) {
         await sb.auth.signOut();
         sessionStorage.removeItem('skr_member');
-        window.location.href = '/admin/?error=not_authorized';
+        sessionStorage.removeItem('skr_member_ts');
+        window.location.href = '/admin/access-denied/';
         return;
       }
-      member = formatMember(member);
-      sessionStorage.setItem('skr_member', JSON.stringify(member));
+      if (dbMember.is_active === false) {
+        await sb.auth.signOut();
+        sessionStorage.removeItem('skr_member');
+        sessionStorage.removeItem('skr_member_ts');
+        window.location.href = '/admin/access-denied/?reason=deactivated';
+        return;
+      }
+
+      var formatted = formatMember(dbMember);
+      member = normalizeCachedMember(formatted);
+      sessionStorage.setItem('skr_member', JSON.stringify(member.raw));
+      sessionStorage.setItem('skr_member_ts', Date.now().toString());
     }
 
     window.SKR_USER = {
       id: member.id,
-      tenantId: member.tenant_id,
-      role: member.role_name || 'agent',
-      permissionLevel: member.permission_level || 40,
-      displayName: ((member.first_name || '') + ' ' + (member.last_name || '')).trim() || member.email || '',
-      member: member,
+      tenantId: member.tenantId,
+      role: member.role || 'agent',
+      permissionLevel: member.permissionLevel || 40,
+      displayName: member.displayName || member.email || '',
+      member: member.raw,
       session: session,
     };
 
@@ -70,7 +111,6 @@
       .from('skr_team_members')
       .select(cols)
       .eq('auth_user_id', user.id)
-      .eq('is_active', true)
       .single();
 
     if (result.data) return result.data;
@@ -80,7 +120,6 @@
         .from('skr_team_members')
         .select(cols)
         .eq('email', user.email)
-        .eq('is_active', true)
         .single();
 
       if (emailResult.data) {
@@ -104,6 +143,35 @@
       role_name: m.skr_roles ? m.skr_roles.role_name : (m.role_name || 'agent'),
       permission_level: m.skr_roles ? m.skr_roles.permission_level : (m.permission_level || 40),
       title: m.title,
+    };
+  }
+
+  function normalizeCachedMember(obj) {
+    if (!obj || typeof obj !== 'object') return null;
+
+    // Accept either the "raw" format used by older skr-auth.js (tenant_id, role_name)
+    // or the cache format used by the new callback page (tenantId, role, permissionLevel).
+    var raw = obj;
+    var id = raw.id;
+    var tenantId = raw.tenantId || raw.tenant_id;
+    var email = raw.email;
+    var firstName = raw.firstName || raw.first_name;
+    var lastName = raw.lastName || raw.last_name;
+    var role = raw.role || raw.role_name || (raw.skr_roles && raw.skr_roles.role_name);
+    var permissionLevel = raw.permissionLevel || raw.permission_level || (raw.skr_roles && raw.skr_roles.permission_level);
+
+    if (!id || !tenantId) return null;
+
+    var displayName = ((firstName || '') + ' ' + (lastName || '')).trim() || email || '';
+
+    return {
+      id: id,
+      tenantId: tenantId,
+      email: email,
+      displayName: displayName,
+      role: role || 'agent',
+      permissionLevel: permissionLevel || 40,
+      raw: raw,
     };
   }
 

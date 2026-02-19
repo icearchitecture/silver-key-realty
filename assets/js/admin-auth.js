@@ -154,7 +154,7 @@
       try {
         var mlResult = await supabase.auth.signInWithOtp({
           email: email,
-          options: { emailRedirectTo: window.location.origin + '/admin/callback/' },
+          options: { emailRedirectTo: window.location.origin + '/admin/auth/callback/' },
         });
 
         if (mlResult.error) { showFeedback('Could not send magic link. Try again.', 'error'); setLoading(magicBtn, false); return; }
