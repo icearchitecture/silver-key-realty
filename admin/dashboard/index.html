@@ -130,9 +130,13 @@
   <nav id="nav">
     <a class="nav-logo" href="../../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
     <div class="nav-links nav-right-dash" id="navLinks">
+      <a href="../workspace/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Workspace</a>
       <a href="../team/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Team</a>
       <a href="../permissions/" id="navPermLink" style="display:none;font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Permissions</a>
       <a href="../security/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Security</a>
+      <a href="../notifications/" style="position:relative;font-size:14px;color:rgba(255,255,255,.3);text-decoration:none;padding:6px 10px;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'" title="Notifications">
+        &#128276;<span id="dashNotifBadge" style="display:none;position:absolute;top:-4px;right:-8px;background:#3A9464;color:#fff;font-size:8px;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center"></span>
+      </a>
       <span class="role-badge admin" id="navBadge"></span>
       <span class="nav-user-name" id="navUser"></span>
       <button class="nav-signout-btn" id="signOut">Sign Out</button>
@@ -362,6 +366,17 @@
     if (userLevel >= 50) {
       var permLink = document.getElementById('navPermLink');
       if (permLink) permLink.style.display = 'inline';
+    }
+
+    // Load notification badge
+    if (window.SKR_USER) {
+      sb.rpc('skr_get_unread_count', { p_team_member_id: window.SKR_USER.id })
+        .then(function(result) {
+          if (result.data && result.data > 0) {
+            var badge = document.getElementById('dashNotifBadge');
+            if (badge) { badge.textContent = result.data; badge.style.display = 'block'; }
+          }
+        });
     }
   })();
   </script>
