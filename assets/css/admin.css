@@ -338,3 +338,370 @@ body.admin-dark .hero-bg {
     padding: 40px 28px;
   }
 }
+
+/* ============================================================
+   SKR ADMIN SHELL — Sidebar Layout System
+   Used by pages that load assets/js/skr-auth.js
+   ============================================================ */
+
+.skr-loader {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+}
+
+.skr-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(58, 148, 100, .2);
+  border-top-color: #3A9464;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.skr-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #111;
+}
+
+.skr-sidebar {
+  width: 220px;
+  background: #0D0D0D;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  padding: 0;
+  z-index: 100;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+  overflow-y: auto;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #8A8178;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+}
+
+.sidebar-item:hover {
+  color: #F0EBE3;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sidebar-item.active {
+  color: #F0EBE3;
+  border-left-color: #3A9464;
+  background: rgba(58, 148, 100, 0.04);
+}
+
+.sidebar-icon {
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-user {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-user-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #F0EBE3;
+}
+
+.sidebar-user-role {
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #3A9464;
+  margin-top: 2px;
+}
+
+.sidebar-signout {
+  display: block;
+  margin-top: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #7A6E60;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.sidebar-signout:hover {
+  color: #F0EBE3;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.skr-content {
+  margin-left: 220px;
+  flex: 1;
+  padding: 32px;
+  min-height: 100vh;
+}
+
+/* ── PAGE HEADER ── */
+.skr-page-header {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.skr-page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: #F0EBE3;
+  line-height: 1.2;
+}
+
+.skr-page-title em {
+  color: #C9B99A;
+  font-style: italic;
+}
+
+.skr-page-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: #9A8E80;
+  margin-top: 4px;
+}
+
+/* ── CARDS ── */
+.skr-card {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skr-card:hover {
+  border-color: rgba(58, 148, 100, 0.12);
+  background: rgba(58, 148, 100, 0.03);
+}
+
+.skr-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #F0EBE3;
+}
+
+/* ── TABLE ── */
+.skr-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.skr-table thead th {
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #7A6E60;
+  text-align: left;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.skr-table tbody td {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #F0EBE3;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.skr-table tbody tr:hover {
+  background: rgba(58, 148, 100, 0.04);
+}
+
+/* ── BADGES ── */
+.skr-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  display: inline-block;
+}
+
+.badge-buyer { background: rgba(58, 148, 100, 0.12); color: #3A9464; }
+.badge-seller { background: rgba(201, 185, 154, 0.12); color: #C9B99A; }
+.badge-investor { background: rgba(240, 235, 227, 0.08); color: #9A8E80; }
+.badge-rental { background: rgba(212, 160, 23, 0.1); color: #d4a017; }
+.badge-general { background: rgba(255, 255, 255, 0.04); color: #9A8E80; }
+.badge-new { background: rgba(58, 148, 100, 0.12); color: #3A9464; }
+.badge-active { background: rgba(58, 148, 100, 0.12); color: #3A9464; }
+
+/* ── BUTTONS ── */
+.skr-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.skr-btn-primary {
+  background: #3A9464;
+  color: #F0EBE3;
+}
+
+.skr-btn-primary:hover {
+  background: #2d7a50;
+}
+
+.skr-btn-outline {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9A8E80;
+}
+
+.skr-btn-outline:hover {
+  color: #F0EBE3;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── FORM ELEMENTS ── */
+.skr-input,
+.skr-select {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #F0EBE3;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.skr-input:focus,
+.skr-select:focus {
+  border-color: rgba(58, 148, 100, 0.4);
+}
+
+.skr-input::placeholder {
+  color: #7A6E60;
+}
+
+.skr-label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #9A8E80;
+  margin-bottom: 6px;
+}
+
+.skr-form-row {
+  margin-bottom: 16px;
+}
+
+.skr-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* ── MODAL ── */
+.skr-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.skr-modal-overlay.open {
+  display: flex;
+}
+
+.skr-modal {
+  background: #1A1A1A;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 32px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.skr-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: #F0EBE3;
+  margin-bottom: 24px;
+}
+
+/* ── EMPTY STATE ── */
+.skr-empty {
+  text-align: center;
+  padding: 40px 24px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #7A6E60;
+  line-height: 1.7;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .skr-sidebar {
+    display: none;
+  }
+  .skr-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}

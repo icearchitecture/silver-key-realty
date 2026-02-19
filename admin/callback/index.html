@@ -3,119 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Signing In</title>
+  <title>Silver Key Realty — Authenticating...</title>
   <meta name="robots" content="noindex, nofollow">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
   <style>
-    .callback-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .callback-card {
-      max-width: 360px;
-      padding: 48px;
-    }
-    .callback-card h2 {
-      font-family: var(--serif);
-      font-size: 28px;
-      font-weight: 300;
-      color: var(--light-warm);
-      margin-bottom: 12px;
-    }
-    .callback-card p {
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 14px;
-      color: var(--silver);
-      line-height: 1.8;
-    }
-    .callback-spinner {
-      width: 24px;
-      height: 24px;
-      border: 2px solid rgba(46, 125, 82, 0.2);
-      border-top-color: var(--skr-green-light);
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin: 0 auto 24px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    body { background:#111; color:#F0EBE3; font-family:'Outfit',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; margin:0; }
+    .cb-card { text-align:center; padding:48px 40px; max-width:420px; }
+    .cb-spinner { width:32px; height:32px; border:2px solid rgba(58,148,100,.2); border-top-color:#3A9464; border-radius:50%; animation:spin .6s linear infinite; margin:0 auto 16px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .cb-error { color:#e74c3c; background:rgba(231,76,60,.08); border:1px solid rgba(231,76,60,.2); padding:12px 16px; margin-top:16px; font-size:13px; display:none; }
+    h1 { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:300; }
+    h1 em { color:#C9B99A; }
+    p { color:#7A6E60; font-size:13px; margin-top:8px; }
+    a { color:#C9B99A; text-decoration:none; }
   </style>
 </head>
-<body class="admin-dark">
-
-  <section class="callback-screen">
-    <div class="callback-card">
-      <div class="callback-spinner"></div>
-      <h2>Verifying<em>...</em></h2>
-      <p id="callbackMsg">Confirming your identity.</p>
+<body>
+  <div class="cb-card">
+    <div id="cb-loading">
+      <div class="cb-spinner"></div>
+      <h1>Silver Key <em>Realty</em></h1>
+      <p>Verifying your identity...</p>
     </div>
-  </section>
+    <div id="cb-error" class="cb-error"></div>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="/admin/assets/js/skr-auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    (async function () {
-      var msg = document.getElementById('callbackMsg');
-      var url = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_URL : null;
-      var key = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_ANON_KEY : null;
-
-      if (!url || !key || url.indexOf('%%') > -1) {
-        msg.textContent = 'Configuration error. Contact your administrator.';
+    (async function() {
+      var cfg = window.SKR_CONFIG;
+      if (!cfg || !cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) {
+        showError('Configuration error.');
         return;
       }
 
-      var sb = window.supabase.createClient(url, key);
+      var sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
-      var { data, error } = await sb.auth.getSession();
+      var attempts = 0;
+      var session = null;
 
-      if (error || !data.session) {
-        msg.textContent = 'Completing sign in...';
+      while (attempts < 10) {
+        var result = await sb.auth.getSession();
+        if (result.data.session) {
+          session = result.data.session;
+          break;
+        }
+        attempts++;
+        await new Promise(function(r) { setTimeout(r, 500); });
+      }
 
-        var timeout = setTimeout(function() {
-          msg.textContent = 'Session could not be verified. Redirecting to login...';
-          setTimeout(function() { window.location.href = '/admin/'; }, 1500);
-        }, 8000);
-
-        sb.auth.onAuthStateChange(function(event, session) {
-          if (event === 'SIGNED_IN' && session) {
-            clearTimeout(timeout);
-            handleSession(sb, session.user, msg);
-          }
+      if (!session) {
+        await new Promise(function(resolve) {
+          var timeout = setTimeout(function() { resolve(null); }, 3000);
+          sb.auth.onAuthStateChange(function(event, sess) {
+            if (sess) { session = sess; clearTimeout(timeout); resolve(sess); }
+          });
         });
+      }
+
+      if (!session) {
+        showError('Authentication failed. <a href="/admin/">Return to login</a>');
         return;
       }
 
-      handleSession(sb, data.session.user, msg);
-    })();
-
-    async function handleSession(sb, user, msg) {
-      msg.textContent = 'Verifying team access...';
-
-      var member = await SKR_AUTH.lookupTeamMember(sb, user);
-
+      var member = await lookupTeamMember(sb, session);
       if (!member) {
         await sb.auth.signOut();
-        msg.textContent = 'This account is not authorized for admin access.';
-        msg.style.color = '#E57373';
-        setTimeout(function() { window.location.href = '/admin/'; }, 2500);
+        window.location.href = '/admin/?error=not_authorized';
         return;
       }
 
-      sessionStorage.setItem('skr_member', JSON.stringify(SKR_AUTH.formatMember(member)));
+      window.location.href = '/admin/dashboard/';
+    })();
 
-      var displayName = SKR_AUTH.displayName(member);
-      msg.textContent = 'Welcome back, ' + displayName + '.';
-      msg.style.color = '#3A9464';
-      setTimeout(function() { window.location.href = '/admin/dashboard/'; }, 800);
+    async function lookupTeamMember(sb, session) {
+      var { data: member } = await sb
+        .from('skr_team_members')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (member) return member;
+
+      if (session.user.email) {
+        var { data: emailMember } = await sb
+          .from('skr_team_members')
+          .select('id')
+          .eq('email', session.user.email)
+          .eq('is_active', true)
+          .single();
+
+        if (emailMember) {
+          await sb.from('skr_team_members').update({ auth_user_id: session.user.id }).eq('id', emailMember.id);
+          return emailMember;
+        }
+      }
+      return null;
+    }
+
+    function showError(msg) {
+      document.getElementById('cb-loading').style.display = 'none';
+      var el = document.getElementById('cb-error');
+      el.innerHTML = msg;
+      el.style.display = 'block';
     }
   </script>
 </body>

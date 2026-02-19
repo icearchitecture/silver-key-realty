@@ -3,179 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Employee Portal</title>
+  <title>Silver Key Realty — Employee Login</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tokens.css">
-  <link rel="stylesheet" href="../assets/css/nav.css">
-  <link rel="stylesheet" href="../assets/css/admin.css">
   <style>
-    .admin-login .login-card { opacity: 0; transition: opacity 0.3s; }
-    body.ready .admin-login .login-card { opacity: 1; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#111; color:#F0EBE3; font-family:'Outfit',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+
+    .login-card { width:100%; max-width:420px; padding:48px 40px; background:#0D0D0D; border:1px solid rgba(255,255,255,.04); }
+
+    .login-brand { text-align:center; margin-bottom:36px; }
+    .login-brand h1 { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:#F0EBE3; }
+    .login-brand h1 em { color:#C9B99A; }
+    .login-brand p { font-size:11px; font-weight:300; color:#7A6E60; margin-top:6px; letter-spacing:1px; text-transform:uppercase; }
+
+    .login-form { display:flex; flex-direction:column; gap:16px; }
+
+    .login-input { width:100%; padding:12px 16px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:#F0EBE3; font-family:'Outfit',sans-serif; font-size:14px; font-weight:300; outline:none; transition:border-color .3s; }
+    .login-input:focus { border-color:rgba(58,148,100,.4); }
+    .login-input::placeholder { color:#7A6E60; }
+
+    .login-btn { width:100%; padding:14px; font-family:'Outfit',sans-serif; font-size:12px; font-weight:400; letter-spacing:2px; text-transform:uppercase; border:none; cursor:pointer; transition:all .3s; }
+    .login-btn-primary { background:#3A9464; color:#F0EBE3; }
+    .login-btn-primary:hover { background:#2d7a50; }
+    .login-btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+    .login-btn-outline { background:none; border:1px solid rgba(255,255,255,.08); color:#9A8E80; }
+    .login-btn-outline:hover { color:#F0EBE3; border-color:rgba(255,255,255,.15); }
+
+    .login-divider { display:flex; align-items:center; gap:12px; margin:8px 0; }
+    .login-divider span { font-size:10px; color:#7A6E60; letter-spacing:1.5px; text-transform:uppercase; white-space:nowrap; }
+    .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.06); }
+
+    .login-link { font-size:12px; color:#9A8E80; text-decoration:none; text-align:center; display:block; margin-top:8px; transition:color .3s; }
+    .login-link:hover { color:#C9B99A; }
+
+    .login-error { background:rgba(231,76,60,.08); border:1px solid rgba(231,76,60,.2); padding:10px 14px; font-size:12px; color:#e74c3c; display:none; }
+    .login-success { background:rgba(58,148,100,.08); border:1px solid rgba(58,148,100,.2); padding:10px 14px; font-size:12px; color:#3A9464; display:none; }
+
+    .login-footer { text-align:center; margin-top:32px; font-size:11px; color:#7A6E60; }
+    .login-footer a { color:#C9B99A; text-decoration:none; }
+
+    .login-loading { display:none; text-align:center; padding:40px; }
+    .login-spinner { width:24px; height:24px; border:2px solid rgba(58,148,100,.2); border-top-color:#3A9464; border-radius:50%; animation:spin .6s linear infinite; display:inline-block; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .view { display:none; }
+    .view.active { display:block; }
   </style>
 </head>
-<body class="admin-dark">
-
-  <nav id="nav">
-    <a class="nav-logo" href="../">
-      <img class="nav-logo-img" src="../assets/images/logo-transparent.png" alt="Silver Key Realty">
-      <span class="nav-logo-text">Silver <em>Key</em> Realty</span>
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="../">← Home</a>
+<body>
+  <div class="login-card">
+    <div class="login-brand">
+      <h1>Silver Key <em>Realty</em></h1>
+      <p>Employee Portal</p>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
 
-  <section class="admin-login">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-logo">Silver <span>Key</span> Realty</div>
-        <div class="login-badge">Employee Portal</div>
-      </div>
+    <div id="view-loading" class="login-loading" style="display:block">
+      <div class="login-spinner"></div>
+      <p style="color:#7A6E60;font-size:12px;margin-top:12px">Checking session...</p>
+    </div>
 
-      <form class="login-form" id="loginForm">
-        <div class="form-group">
-          <label class="form-label" for="authEmail">Email</label>
-          <input class="form-input" type="email" id="authEmail" name="email" placeholder="you@silverkeyrealty.llc" autocomplete="email" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="authPassword">Password</label>
-          <input class="form-input" type="password" id="authPassword" name="password" placeholder="••••••••" autocomplete="current-password" required>
-        </div>
-        <button type="submit" class="login-submit" id="loginSubmit">
-          <span class="login-text">Sign In</span>
-          <span class="login-spinner"></span>
-        </button>
+    <div id="view-login" class="view">
+      <div id="login-error" class="login-error"></div>
+      <div id="login-success" class="login-success"></div>
+
+      <form id="login-form" class="login-form" onsubmit="handleLogin(event)">
+        <input type="email" id="login-email" class="login-input" placeholder="Email address" required autocomplete="email">
+        <input type="password" id="login-password" class="login-input" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" id="login-submit" class="login-btn login-btn-primary">Sign In</button>
       </form>
 
       <div class="login-divider"><span>or</span></div>
 
-      <button class="login-magic" id="magicLinkBtn">Send Magic Link</button>
+      <button onclick="handleMagicLink()" id="magic-btn" class="login-btn login-btn-outline" style="width:100%">Send Magic Link</button>
 
-      <div class="login-feedback" id="loginFeedback"></div>
+      <div class="login-divider"><span>external providers</span></div>
 
-      <div class="login-footer">
-        <a href="reset/" style="display:block;margin-bottom:12px;">Forgot your password?</a>
-        <a href="../">← Return to Silver Key Realty</a>
+      <div style="display:flex;gap:8px">
+        <button onclick="handleOAuth('google')" class="login-btn login-btn-outline" style="flex:1">Google</button>
+        <button onclick="handleOAuth('azure')" class="login-btn login-btn-outline" style="flex:1">Microsoft</button>
+      </div>
+
+      <a href="#" onclick="showView('view-reset');return false" class="login-link">Forgot password?</a>
+    </div>
+
+    <div id="view-magic-sent" class="view">
+      <div style="text-align:center">
+        <div style="font-size:36px;margin-bottom:12px">&#9993;</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:8px">Check Your Email</h2>
+        <p style="color:#9A8E80;font-size:13px;margin-bottom:20px">We sent a magic link to <strong id="magic-email-display" style="color:#C9B99A"></strong></p>
+        <button onclick="showView('view-login')" class="login-btn login-btn-outline" style="width:100%">Back to Login</button>
       </div>
     </div>
-  </section>
+
+    <div id="view-reset" class="view">
+      <form class="login-form" onsubmit="handleReset(event)">
+        <p style="color:#9A8E80;font-size:13px;margin-bottom:8px">Enter your email and we'll send a reset link.</p>
+        <input type="email" id="reset-email" class="login-input" placeholder="Email address" required>
+        <button type="submit" id="reset-btn" class="login-btn login-btn-primary">Send Reset Link</button>
+        <button type="button" onclick="showView('view-login')" class="login-btn login-btn-outline">Back to Login</button>
+      </form>
+    </div>
+
+    <div class="login-footer">
+      <a href="/">&#8592; Back to Silver Key Realty</a>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../assets/js/admin-config.js"></script>
-  <script src="../assets/js/nav.js"></script>
-  <script src="/admin/assets/js/skr-auth.js"></script>
   <script>
-  (async function() {
-    var url = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_URL : null;
-    var key = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_ANON_KEY : null;
+    var sb;
 
-    if (!url || !key || url.indexOf('%%') > -1) {
-      showFeedback('Configuration error. Contact your administrator.', 'error');
-      document.body.classList.add('ready');
-      return;
-    }
-
-    window.sb = supabase.createClient(url, key);
-
-    sb.auth.onAuthStateChange(function(event, session) {
-      if (event === 'SIGNED_IN' && session) {
-        verifyAndRedirect(session.user);
+    (async function init() {
+      var cfg = window.SKR_CONFIG;
+      if (!cfg || !cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) {
+        showError('Configuration error. Please contact your administrator.');
+        showView('view-login');
+        return;
       }
-    });
 
-    var { data } = await sb.auth.getSession();
-    if (data.session) {
-      verifyAndRedirect(data.session.user);
-      return;
+      sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('error') === 'not_authorized') {
+        showError('Your account is not authorized. Contact your broker for access.');
+      }
+
+      var sessionResult = await sb.auth.getSession();
+      if (sessionResult.data.session) {
+        var teamOk = await checkTeamMember(sessionResult.data.session);
+        if (teamOk) {
+          window.location.href = '/admin/dashboard/';
+          return;
+        }
+        await sb.auth.signOut();
+        showError('Your account is not authorized as a team member.');
+      }
+
+      showView('view-login');
+    })();
+
+    async function checkTeamMember(session) {
+      var { data: member } = await sb
+        .from('skr_team_members')
+        .select('id')
+        .eq('auth_user_id', session.user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (member) return true;
+
+      if (session.user.email) {
+        var { data: emailMember } = await sb
+          .from('skr_team_members')
+          .select('id')
+          .eq('email', session.user.email)
+          .eq('is_active', true)
+          .single();
+
+        if (emailMember) {
+          await sb.from('skr_team_members').update({ auth_user_id: session.user.id }).eq('id', emailMember.id);
+          return true;
+        }
+      }
+      return false;
     }
 
-    document.body.classList.add('ready');
-  })();
-
-  async function verifyAndRedirect(user) {
-    var member = await SKR_AUTH.lookupTeamMember(sb, user);
-    if (member) {
-      sessionStorage.setItem('skr_member', JSON.stringify(SKR_AUTH.formatMember(member)));
-      window.location.href = '/admin/dashboard/';
-    } else {
-      document.body.classList.add('ready');
-    }
-  }
-
-  function showFeedback(msg, type) {
-    var el = document.getElementById('loginFeedback');
-    if (!el) return;
-    el.textContent = msg;
-    el.className = 'login-feedback ' + (type || '');
-  }
-
-  var loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', async function(e) {
+    async function handleLogin(e) {
       e.preventDefault();
-      showFeedback('', '');
-      var email = document.getElementById('authEmail').value.trim();
-      var pass = document.getElementById('authPassword').value;
-      if (!email || !pass) { showFeedback('Email and password are required.', 'error'); return; }
+      var email = document.getElementById('login-email').value.trim();
+      var password = document.getElementById('login-password').value;
+      var btn = document.getElementById('login-submit');
 
-      var btn = document.getElementById('loginSubmit');
-      btn.classList.add('loading');
-      btn.disabled = true;
+      btn.textContent = 'Signing in...'; btn.disabled = true;
+      hideMessages();
 
-      try {
-        var { data, error } = await sb.auth.signInWithPassword({ email: email, password: pass });
-        if (error) {
-          showFeedback('Invalid email or password.', 'error');
-          btn.classList.remove('loading'); btn.disabled = false;
-          return;
-        }
+      var result = await sb.auth.signInWithPassword({ email: email, password: password });
 
-        var member = await SKR_AUTH.lookupTeamMember(sb, data.user);
-        if (!member) {
-          await sb.auth.signOut();
-          showFeedback('This account is not authorized for admin access.', 'error');
-          btn.classList.remove('loading'); btn.disabled = false;
-          return;
-        }
-
-        sessionStorage.setItem('skr_member', JSON.stringify(SKR_AUTH.formatMember(member)));
-        showFeedback('Welcome back, ' + SKR_AUTH.displayName(member) + '.', 'success');
-        setTimeout(function() { window.location.href = '/admin/dashboard/'; }, 800);
-      } catch(err) {
-        showFeedback('Something went wrong. Please try again.', 'error');
-        btn.classList.remove('loading'); btn.disabled = false;
+      if (result.error) {
+        showError(result.error.message === 'Invalid login credentials' ? 'Invalid email or password.' : result.error.message);
+        btn.textContent = 'Sign In'; btn.disabled = false;
+        return;
       }
-    });
-  }
 
-  var magicBtn = document.getElementById('magicLinkBtn');
-  if (magicBtn) {
-    magicBtn.addEventListener('click', async function() {
-      showFeedback('', '');
-      var email = document.getElementById('authEmail').value.trim();
-      if (!email) { showFeedback('Enter your email address first.', 'error'); return; }
-
-      magicBtn.disabled = true;
-      try {
-        var { error } = await sb.auth.signInWithOtp({
-          email: email,
-          options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
-        });
-        magicBtn.disabled = false;
-        if (error) { showFeedback('Could not send magic link. Try again.', 'error'); return; }
-        showFeedback('Magic link sent. Check your email.', 'success');
-      } catch(err) {
-        showFeedback('Something went wrong. Please try again.', 'error');
-        magicBtn.disabled = false;
+      var teamOk = await checkTeamMember(result.data.session);
+      if (!teamOk) {
+        await sb.auth.signOut();
+        showError('Your account is not authorized as a team member. Contact your broker.');
+        btn.textContent = 'Sign In'; btn.disabled = false;
+        return;
       }
-    });
-  }
+
+      window.location.href = '/admin/dashboard/';
+    }
+
+    async function handleMagicLink() {
+      var email = document.getElementById('login-email').value.trim();
+      if (!email) { showError('Enter your email address first.'); return; }
+
+      var btn = document.getElementById('magic-btn');
+      btn.textContent = 'Sending...'; btn.disabled = true;
+
+      var result = await sb.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: window.location.origin + '/admin/callback/' }
+      });
+
+      if (result.error) {
+        showError(result.error.message);
+        btn.textContent = 'Send Magic Link'; btn.disabled = false;
+        return;
+      }
+
+      document.getElementById('magic-email-display').textContent = email;
+      showView('view-magic-sent');
+      btn.textContent = 'Send Magic Link'; btn.disabled = false;
+    }
+
+    async function handleOAuth(provider) {
+      var result = await sb.auth.signInWithOAuth({
+        provider: provider,
+        options: { redirectTo: window.location.origin + '/admin/callback/' }
+      });
+      if (result.error) showError(result.error.message);
+    }
+
+    async function handleReset(e) {
+      e.preventDefault();
+      var email = document.getElementById('reset-email').value.trim();
+      var btn = document.getElementById('reset-btn');
+      btn.textContent = 'Sending...'; btn.disabled = true;
+
+      await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/admin/reset-password/'
+      });
+
+      showView('view-login');
+      showSuccess('If that email is registered, you\'ll receive a reset link shortly.');
+      btn.textContent = 'Send Reset Link'; btn.disabled = false;
+    }
+
+    function showView(id) {
+      document.querySelectorAll('.view, .login-loading').forEach(function(el) { el.style.display = 'none'; el.classList.remove('active'); });
+      var el = document.getElementById(id);
+      if (el) { el.style.display = 'block'; el.classList.add('active'); }
+    }
+
+    function showError(msg) {
+      var el = document.getElementById('login-error');
+      if (el) { el.textContent = msg; el.style.display = 'block'; }
+    }
+
+    function showSuccess(msg) {
+      var el = document.getElementById('login-success');
+      if (el) { el.textContent = msg; el.style.display = 'block'; }
+    }
+
+    function hideMessages() {
+      var err = document.getElementById('login-error');
+      var suc = document.getElementById('login-success');
+      if (err) err.style.display = 'none';
+      if (suc) suc.style.display = 'none';
+    }
   </script>
 </body>
 </html>

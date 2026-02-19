@@ -10,374 +10,187 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/tokens.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/nav.css">
-  <link rel="stylesheet" href="../../assets/css/responsive.css">
   <link rel="stylesheet" href="../../assets/css/admin.css">
-  <style>
-    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-
-    .dash{display:none;padding:80px 40px 60px;max-width:1500px;margin:0 auto}
-
-    .dash-hero{padding:32px 0 40px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
-    .dash-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,44px);font-weight:300;color:var(--cream);line-height:1.15}
-    .dash-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
-    .dash-hero-right{text-align:right}
-    .dash-date{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
-    .dash-status{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--skr-green-light);margin-top:4px}
-    .dash-status::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--skr-green-light);margin-right:8px;animation:pulse 2s ease-in-out infinite}
-
-    .nav-right-dash{display:flex;align-items:center;gap:20px}
-    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
-    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
-    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
-
-    .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
-    .stat{padding:24px 20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .5s cubic-bezier(.22,1,.36,1)}
-    .stat:hover{border-color:rgba(46,125,82,.12);background:rgba(46,125,82,.03)}
-    .stat-val{font-family:var(--serif);font-size:32px;font-weight:300;color:var(--cream);margin-bottom:2px}
-    .stat-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver)}
-
-    .sec-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--skr-green-light);opacity:.6;margin-bottom:16px;padding-top:16px}
-
-    .cols{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:32px}
-
-    .feed,.activity-box{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);max-height:520px;overflow-y:auto}
-    .feed-header,.activity-header-bar{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(26,26,26,.98);z-index:2}
-    .feed-title,.activity-title-text{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream)}
-    .feed-count{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:rgba(255,255,255,.04);padding:4px 10px}
-
-    .feed-item{padding:18px 24px;border-bottom:1px solid rgba(255,255,255,.02);display:flex;justify-content:space-between;align-items:center;transition:background .3s;cursor:pointer}
-    .feed-item:hover{background:rgba(46,125,82,.03)}
-    .feed-item:last-child{border-bottom:none}
-    .fi-left{flex:1}.fi-right{text-align:right}
-    .fi-name{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--cream);margin-bottom:2px}
-    .fi-detail{font-family:var(--sans);font-weight:200;font-size:12px;color:#8A8178}
-    .fi-pathway{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;margin-bottom:4px;display:inline-block}
-    .fi-pathway.buyer{background:rgba(46,125,82,.12);color:var(--skr-green-light)}
-    .fi-pathway.seller{background:rgba(201,185,154,.12);color:var(--champagne)}
-    .fi-pathway.investor{background:rgba(240,235,227,.08);color:var(--silver)}
-    .fi-pathway.rental{background:rgba(212,160,23,.1);color:#d4a017}
-    .fi-pathway.general{background:rgba(255,255,255,.04);color:var(--silver)}
-    .fi-time{font-family:var(--sans);font-size:11px;font-weight:200;color:#8A8178}
-
-    .act-item{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.02)}
-    .act-item:last-child{border-bottom:none}
-    .act-icon{font-size:14px;margin-right:8px}
-    .act-text{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);line-height:1.6}
-    .act-text strong{font-weight:400;color:var(--cream)}
-    .act-time{font-family:var(--sans);font-size:11px;font-weight:200;color:#8A8178;margin-top:4px}
-
-    .empty{padding:48px 24px;text-align:center}
-    .empty-icon{font-size:32px;margin-bottom:12px;opacity:.4}
-    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
-
-    .mgmt{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
-    .mgmt-card{padding:32px 28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .5s cubic-bezier(.22,1,.36,1);cursor:pointer;position:relative}
-    .mgmt-card::after{content:'';position:absolute;bottom:0;left:15%;width:70%;height:1px;background:var(--skr-green);filter:blur(4px);opacity:0;transition:opacity .5s}
-    .mgmt-card:hover{background:rgba(46,125,82,.04);border-color:rgba(46,125,82,.12);transform:translateY(-2px)}.mgmt-card:hover::after{opacity:.5}
-    .mgmt-icon{font-size:24px;margin-bottom:14px}
-    .mgmt-card h3{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:6px}
-    .mgmt-card p{font-family:var(--sans);font-weight:300;font-size:12px;line-height:1.7;color:var(--silver)}
-    .mgmt-arrow{font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:#8A8178;margin-top:16px;transition:all .4s;display:flex;align-items:center;gap:6px}
-    .mgmt-card:hover .mgmt-arrow{color:var(--cream)}.mgmt-card:hover .mgmt-arrow .arrow{transform:translateX(4px);color:var(--skr-green-light)}
-    .arrow{transition:transform .4s}
-
-    .team-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:32px}
-    .team-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
-    .team-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream)}
-    .team-add{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:8px 18px;border:none;cursor:pointer;transition:all .4s}
-    .team-add:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
-    .team-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.02);align-items:center;transition:background .3s}
-    .team-row:hover{background:rgba(46,125,82,.02)}
-    .team-row:last-child{border-bottom:none}
-    .team-row.header{border-bottom:1px solid rgba(255,255,255,.04)}
-    .team-row.header span{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#8A8178}
-    .t-name{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--cream)}
-    .t-email{font-family:var(--sans);font-weight:200;font-size:12px;color:#8A8178;margin-top:1px}
-    .t-role{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px;display:inline-block}
-    .t-role.admin{background:rgba(46,125,82,.15);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
-    .t-role.broker{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
-    .t-role.agent{background:rgba(240,235,227,.08);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
-    .t-role.assistant{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
-    .t-status{font-family:var(--sans);font-size:11px;font-weight:300}
-    .t-status.active{color:var(--skr-green-light)}.t-status.active::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--skr-green-light);margin-right:6px}
-    .t-status.inactive{color:#8A8178}.t-status.inactive::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#8A8178;margin-right:6px}
-    .t-leads{font-family:var(--sans);font-size:13px;color:var(--silver)}
-    .t-action{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:#8A8178;cursor:pointer;transition:color .3s;padding:6px 12px;border:1px solid rgba(255,255,255,.04);background:none}
-    .t-action:hover{color:var(--cream);border-color:rgba(255,255,255,.1)}
-
-    .dash-footer{padding:32px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.04);position:relative}
-    .dash-footer::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:120px;height:1px;background:var(--skr-green-line)}
-    .ft-logo{font-family:var(--serif);font-size:16px;font-weight:300;color:var(--cream);opacity:.3}.ft-logo em{color:var(--champagne)}
-    .ft-copy{font-family:var(--sans);font-size:10px;font-weight:200;color:rgba(255,255,255,.2)}
-
-    @media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.mgmt{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:900px){
-      .dash{padding:72px 20px 40px}.stats{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.mgmt{grid-template-columns:1fr}
-      .team-row{grid-template-columns:1fr 1fr;gap:8px;padding:14px 20px}.team-row.header{display:none}
-      .dash-hero{flex-direction:column;align-items:flex-start;gap:16px}
-      .dash-footer{flex-direction:column;gap:8px;padding:24px 20px}
-      .nav-right-dash{display:none}
-    }
-    @media(max-width:480px){.stats{grid-template-columns:1fr}}
-  </style>
 </head>
-<body class="admin-dark">
+<body>
+  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
 
-  <nav id="nav">
-    <a class="nav-logo" href="../../"><span class="nav-logo-text">Silver <em>Key</em> Realty</span></a>
-    <div class="nav-links nav-right-dash" id="navLinks">
-      <a href="../workspace/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Workspace</a>
-      <a href="../team/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Team</a>
-      <a href="../permissions/" id="navPermLink" style="display:none;font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Permissions</a>
-      <a href="../security/" style="font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.3);text-decoration:none;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Security</a>
-      <a href="../notifications/" style="position:relative;font-size:14px;color:rgba(255,255,255,.3);text-decoration:none;padding:6px 10px;transition:color .3s" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(255,255,255,.3)'" title="Notifications">
-        &#128276;<span id="dashNotifBadge" style="display:none;position:absolute;top:-4px;right:-8px;background:#3A9464;color:#fff;font-size:8px;padding:1px 4px;border-radius:6px;min-width:14px;text-align:center"></span>
-      </a>
-      <span class="role-badge admin" id="navBadge"></span>
-      <span class="nav-user-name" id="navUser"></span>
-      <button class="nav-signout-btn" id="signOut">Sign Out</button>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  </nav>
+  <div id="skr-main" class="skr-shell" style="display:none">
+    <aside id="skr-sidebar" class="skr-sidebar"></aside>
 
-  <div class="dash-loading" id="dashLoading"><div class="dash-spinner"></div></div>
-
-  <div class="dash" id="dashContainer">
-    <div class="dash-hero">
-      <div><h1>Command <em>Center.</em></h1><p>Silver Key Realty — Administration Dashboard</p></div>
-      <div class="dash-hero-right"><div class="dash-date" id="dashDate"></div><div class="dash-status">All Systems Operational</div></div>
-    </div>
-
-    <div class="stats">
-      <div class="stat"><div class="stat-val" id="sLeads">—</div><div class="stat-label">New Leads</div></div>
-      <div class="stat"><div class="stat-val" id="sConsult">—</div><div class="stat-label">Scheduled</div></div>
-      <div class="stat"><div class="stat-val" id="sDeals">—</div><div class="stat-label">Active Deals</div></div>
-      <div class="stat"><div class="stat-val" id="sProps">—</div><div class="stat-label">Listings</div></div>
-      <div class="stat"><div class="stat-val" id="sTeam">—</div><div class="stat-label">Team</div></div>
-    </div>
-
-    <div class="sec-label">Live Pipeline</div>
-    <div class="cols">
-      <div class="feed">
-        <div class="feed-header"><span class="feed-title">Incoming Leads</span><span class="feed-count" id="feedCount">0 New</span></div>
-        <div id="feedList"><div class="empty"><div class="empty-icon">📥</div><div class="empty-msg">No leads yet.<br>They'll appear here in real time as inquiries come in.</div></div></div>
+    <main class="skr-content">
+      <div class="skr-page-header" style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <h1 class="skr-page-title">Command <em>Center</em></h1>
+          <p class="skr-page-sub" id="dash-greeting">Welcome back</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:#9A8E80" id="dash-date"></div>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:4px">&#9679; System Online</div>
+        </div>
       </div>
-      <div class="activity-box">
-        <div class="activity-header-bar"><span class="activity-title-text">Activity</span></div>
-        <div id="activityList"><div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No activity yet.<br>Actions will be logged here automatically.</div></div></div>
+
+      <div id="dash-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px">
+        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Leads</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#3A9464;margin-top:4px">&mdash;</div></div>
+        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Active Deals</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#C9B99A;margin-top:4px">&mdash;</div></div>
+        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Properties</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#a78bfa;margin-top:4px">&mdash;</div></div>
+        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Team</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#F0EBE3;margin-top:4px">&mdash;</div></div>
       </div>
-    </div>
 
-    <div class="sec-label">Management</div>
-    <div class="mgmt">
-      <div class="mgmt-card" onclick="window.location.href='/admin/leads/'"><div class="mgmt-icon">📥</div><h3>Lead Pipeline</h3><p>View, assign, and manage all incoming inquiries. Filter by pathway, status, score, and agent.</p><div class="mgmt-arrow">Open Pipeline <span class="arrow">→</span></div></div>
-      <div class="mgmt-card" onclick="window.location.href='/admin/meetings/'"><div class="mgmt-icon">📅</div><h3>Consultations</h3><p>Scheduled meetings, video links, follow-ups. Calendar view with pathway color coding.</p><div class="mgmt-arrow">View Schedule <span class="arrow">→</span></div></div>
-      <div class="mgmt-card" onclick="window.location.href='/admin/properties/'"><div class="mgmt-icon">🏠</div><h3>Properties</h3><p>Active listings, three-pillar assessments, staging coordination, and buyer matching status.</p><div class="mgmt-arrow">Manage Listings <span class="arrow">→</span></div></div>
-      <div class="mgmt-card" onclick="window.location.href='/admin/deals/'"><div class="mgmt-icon">💰</div><h3>Deals</h3><p>Active transactions from offer to close. Contract status, escrow tracking, milestone alerts.</p><div class="mgmt-arrow">Track Deals <span class="arrow">→</span></div></div>
-      <div class="mgmt-card" onclick="window.location.href='/admin/source-drive/'"><div class="mgmt-icon">📋</div><h3>Source Drive</h3><p>Search across leads, deals, properties, documents, notes, and files. Everything in one place.</p><div class="mgmt-arrow">Open Drive <span class="arrow">→</span></div></div>
-      <div class="mgmt-card" data-min-role="broker" onclick="window.location.href='/admin/security/'"><div class="mgmt-icon">🔒</div><h3>Audit Log</h3><p>Immutable forensic trail. Every action timestamped, IP-hashed, and tamper-proof. Exportable.</p><div class="mgmt-arrow">View Log <span class="arrow">→</span></div></div>
-    </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="skr-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div class="skr-card-title">Recent Leads</div>
+            <a href="/admin/leads/" style="font-size:11px;color:#C9B99A;text-decoration:none;text-transform:uppercase;letter-spacing:1px">View All &#8594;</a>
+          </div>
+          <div id="dash-leads"><p class="skr-empty">Loading...</p></div>
+        </div>
 
-    <div class="sec-label" data-min-role="broker">Team Management</div>
-    <div class="team-section" data-min-role="broker">
-      <div class="team-header"><span class="team-title">Employees</span><button class="team-add" id="addEmployee">+ Add Employee</button></div>
-      <div class="team-row header"><span>Name</span><span>Role</span><span>Status</span><span>Assigned Leads</span><span></span></div>
-      <div id="teamList"><div class="empty"><div class="empty-icon">👤</div><div class="empty-msg">No team members yet.<br>Click "+ Add Employee" to get started.</div></div></div>
-    </div>
+        <div class="skr-card">
+          <div class="skr-card-title" style="margin-bottom:16px">Recent Activity</div>
+          <div id="dash-activity"><p class="skr-empty">Loading...</p></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px">
+        <a href="/admin/leads/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
+          <div style="font-size:20px;margin-bottom:6px">&#9678;</div>
+          <div style="color:#F0EBE3;font-size:13px">Leads</div>
+        </a>
+        <a href="/admin/deals/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
+          <div style="font-size:20px;margin-bottom:6px">&#11041;</div>
+          <div style="color:#F0EBE3;font-size:13px">Deals</div>
+        </a>
+        <a href="/admin/properties/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
+          <div style="font-size:20px;margin-bottom:6px">&#8962;</div>
+          <div style="color:#F0EBE3;font-size:13px">Properties</div>
+        </a>
+        <a href="/admin/source-drive/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
+          <div style="font-size:20px;margin-bottom:6px">&#9672;</div>
+          <div style="color:#F0EBE3;font-size:13px">Search</div>
+        </a>
+      </div>
+    </main>
   </div>
-
-  <footer class="dash-footer">
-    <div class="ft-logo">Silver <em>Key</em> Realty</div>
-    <div class="ft-copy">© 2026 Silver Key Realty LLC — Command Center v1.0</div>
-  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/nav.js"></script>
-  <script src="/admin/assets/js/skr-auth.js"></script>
+  <script src="../../assets/js/skr-auth.js"></script>
   <script>
-  (async function () {
-    var loading = document.getElementById('dashLoading');
-    var container = document.getElementById('dashContainer');
-    document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    window.addEventListener('skr-ready', async function() {
+      var u = window.SKR_USER;
 
-    var url = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_URL : null;
-    var key = window.SKR_CONFIG ? window.SKR_CONFIG.SUPABASE_ANON_KEY : null;
+      var hour = new Date().getHours();
+      var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      document.getElementById('dash-greeting').textContent = greeting + ', ' + (u.member.first_name || u.displayName);
+      document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-    if (!url || !key || url.indexOf('%%') > -1) {
-      loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
-      return;
-    }
+      try {
+        var stats = await skrAPI('/api/dashboard/stats');
 
-    var sb = window.supabase.createClient(url, key);
-    window.sb = sb;
+        var cards = document.getElementById('dash-stats').children;
+        var colors = ['#3A9464', '#C9B99A', '#a78bfa', '#F0EBE3'];
+        var keys = ['leads', 'activeDeals', 'properties', 'team'];
+        keys.forEach(function(k, i) {
+          cards[i].querySelector('div:last-child').textContent = (stats.counts && stats.counts[k]) || 0;
+          cards[i].querySelector('div:last-child').style.color = colors[i];
+        });
 
-    var { data } = await sb.auth.getSession();
-    if (!data.session) { window.location.href = '/admin/'; return; }
+        var leadsContainer = document.getElementById('dash-leads');
+        if (!stats.recentLeads || stats.recentLeads.length === 0) {
+          leadsContainer.innerHTML = '<p class="skr-empty">No leads yet. Share your website to start receiving inquiries.</p>';
+        } else {
+          leadsContainer.innerHTML = stats.recentLeads.slice(0, 8).map(function(l) {
+            return '<a href="/admin/leads/" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);text-decoration:none">'
+              + '<div>'
+              + '<div style="color:#F0EBE3;font-size:13px;font-weight:400">' + (l.first_name || '') + ' ' + (l.last_name || '') + '</div>'
+              + '<div style="font-size:11px;color:#7A6E60;margin-top:2px">' + timeAgo(l.created_at) + '</div>'
+              + '</div>'
+              + '<span class="skr-badge badge-' + (l.pathway || 'general') + '">' + (l.pathway || 'general') + '</span>'
+              + '</a>';
+          }).join('');
+        }
 
-    var cached = sessionStorage.getItem('skr_member');
-    var member = null;
-    if (cached) {
-      try { member = JSON.parse(cached); } catch(e) { sessionStorage.removeItem('skr_member'); }
-    }
-
-    if (!member) {
-      member = await SKR_AUTH.lookupTeamMember(sb, data.session.user);
-      if (!member) {
-        window.location.href = '/admin/portal/';
-        return;
+        var actContainer = document.getElementById('dash-activity');
+        if (!stats.activity || stats.activity.length === 0) {
+          actContainer.innerHTML = '<p class="skr-empty">No activity recorded yet.</p>';
+        } else {
+          actContainer.innerHTML = stats.activity.slice(0, 10).map(function(a) {
+            return '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:12px">'
+              + '<span style="color:#C9B99A">' + formatAction(a.action) + '</span>'
+              + '<span style="color:#7A6E60;margin-left:8px">' + timeAgo(a.created_at) + '</span>'
+              + '</div>';
+          }).join('');
+        }
+      } catch (err) {
+        console.warn('[SKR Dashboard] Stats load failed, falling back to direct queries:', err.message);
+        loadStatsDirect();
       }
-      member = SKR_AUTH.formatMember(member);
-      sessionStorage.setItem('skr_member', JSON.stringify(member));
-    }
-
-    var userRole = member.role_name || 'agent';
-    var userLevel = member.permission_level || 40;
-    var displayName = (member.first_name + ' ' + (member.last_name || '')).trim();
-
-    window.SKR_USER = {
-      id: member.id,
-      role: userRole,
-      permissionLevel: userLevel,
-      displayName: displayName
-    };
-
-    if (userLevel < 60) {
-      document.querySelectorAll('[data-min-role="admin"]').forEach(function(el) { el.style.display = 'none'; });
-    }
-    if (userLevel < 50) {
-      document.querySelectorAll('[data-min-role="broker"]').forEach(function(el) { el.style.display = 'none'; });
-    }
-    if (userLevel < 40) {
-      document.querySelectorAll('[data-min-role="agent"]').forEach(function(el) { el.style.display = 'none'; });
-    }
-
-    document.getElementById('navBadge').textContent = userRole.toUpperCase();
-    document.getElementById('navBadge').className = 'role-badge ' + userRole;
-    document.getElementById('navUser').textContent = displayName;
-
-    loading.style.display = 'none';
-    container.style.display = 'block';
-
-    document.getElementById('signOut').addEventListener('click', async function () {
-      sessionStorage.removeItem('skr_member');
-      await sb.auth.signOut();
-      window.location.href = '/admin/';
     });
 
-    function timeAgo(dateStr) {
-      var diff = Date.now() - new Date(dateStr).getTime();
-      var min = Math.floor(diff / 60000);
-      if (min < 1) return 'Just now';
-      if (min < 60) return min + ' min ago';
-      var hrs = Math.floor(min / 60);
-      if (hrs < 24) return hrs + ' hr' + (hrs > 1 ? 's' : '') + ' ago';
-      var days = Math.floor(hrs / 24);
-      return days + ' day' + (days > 1 ? 's' : '') + ' ago';
-    }
+    async function loadStatsDirect() {
+      var sb = window.SKR_SUPA;
+      var cards = document.getElementById('dash-stats').children;
 
-    async function safeStat(table, filter, el) {
       try {
-        var q = sb.from(table).select('*',{count:'exact',head:true});
-        if (filter.eq) q = q.eq(filter.eq[0], filter.eq[1]);
-        if (filter.in_) q = q.in(filter.in_[0], filter.in_[1]);
-        var r = await q;
-        document.getElementById(el).textContent = (r.count != null) ? r.count : '0';
-      } catch(e) { document.getElementById(el).textContent = '—'; }
-    }
-    await safeStat('skr_leads', {eq:['status','new']}, 'sLeads');
-    await safeStat('skr_consultations', {in_:['status',['scheduled','confirmed']]}, 'sConsult');
-    await safeStat('skr_deals', {in_:['status',['active','under_contract','pending']]}, 'sDeals');
-    await safeStat('skr_properties', {eq:['status','active']}, 'sProps');
-    await safeStat('skr_team_members', {eq:['is_active',true]}, 'sTeam');
+        var results = await Promise.all([
+          sb.from('skr_leads').select('id', { count: 'exact', head: true }),
+          sb.from('skr_deals').select('id', { count: 'exact', head: true }).in('status', ['active','under_contract','pending']),
+          sb.from('skr_properties').select('id', { count: 'exact', head: true }),
+          sb.from('skr_team_members').select('id', { count: 'exact', head: true }).eq('is_active', true),
+        ]);
 
-    try {
-      var leadResult = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').eq('archived',false).order('created_at',{ascending:false}).limit(20);
-      var leads = leadResult.data;
-      if (leadResult.error) {
-        var fallback = await sb.from('skr_leads').select('id, status, pathway, created_at, lead_score').order('created_at',{ascending:false}).limit(20);
-        leads = fallback.data;
-      }
-      if (leads && leads.length > 0) {
-        document.getElementById('feedCount').textContent = leads.length + ' Lead' + (leads.length !== 1 ? 's' : '');
-        var h = '';
-        leads.forEach(function(l){
-          var pw = l.pathway || 'general';
-          h += '<div class="feed-item" data-lead-id="' + l.id + '" onclick="window.location.href=\'/admin/leads/detail.html?id=' + l.id + '\'"><div class="fi-left"><div class="fi-name">Lead #' + l.id.substring(0,8) + '</div><div class="fi-detail">' + pw.charAt(0).toUpperCase()+pw.slice(1) + ' inquiry — Score: ' + (l.lead_score||0) + '</div></div><div class="fi-right"><span class="fi-pathway ' + pw + '">' + pw.toUpperCase() + '</span><div class="fi-time">' + timeAgo(l.created_at) + '</div></div></div>';
+        var colors = ['#3A9464', '#C9B99A', '#a78bfa', '#F0EBE3'];
+        results.forEach(function(r, i) {
+          cards[i].querySelector('div:last-child').textContent = r.count || 0;
+          cards[i].querySelector('div:last-child').style.color = colors[i];
         });
-        document.getElementById('feedList').innerHTML = h;
-      }
-    } catch(e){ console.warn('[SKR] Leads:',e); }
+      } catch (e) { console.warn('[SKR] Direct stats failed:', e); }
 
-    try {
-      var actResult = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, resource_type, resource_id, created_at').order('created_at',{ascending:false}).limit(15);
-      var acts = actResult.data;
-      if (actResult.error) {
-        var evResult = await sb.from('skr_events').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
-        acts = evResult.data;
-      }
-      if (acts && acts.length > 0) {
-        var icons = {data_modify:'📝',data_access:'👁',auth:'🔑',security:'🔒',export:'📋',notification:'⚡',system:'⚙️'};
-        var h = '';
-        acts.forEach(function(a){
-          var ic = icons[a.event_type]||'📋';
-          var entity = (a.entity_type||'system').replace(/_/g,' ');
-          var action = (a.action||'').replace(/_/g,' ');
-          var actUrl = '';
-          if (a.resource_type === 'deal' && a.resource_id) actUrl = '/admin/deals/detail.html?id=' + a.resource_id;
-          else if (a.resource_type === 'lead' && a.resource_id) actUrl = '/admin/leads/detail.html?id=' + a.resource_id;
-          else if (a.resource_type === 'property' && a.resource_id) actUrl = '/admin/properties/detail.html?id=' + a.resource_id;
-          var clickAttr = actUrl ? ' style="cursor:pointer" onclick="window.location.href=\'' + actUrl + '\'"' : '';
-          h += '<div class="act-item"' + clickAttr + '><div class="act-text"><span class="act-icon">'+ic+'</span> <strong>'+entity+'</strong> — '+action+'</div><div class="act-time">'+timeAgo(a.created_at)+'</div></div>';
-        });
-        document.getElementById('activityList').innerHTML = h;
-      }
-    } catch(e){ console.warn('[SKR] Activity:',e); }
-
-    if (userLevel >= 50) {
       try {
-        var teamResult = await sb.from('skr_team_members')
-          .select('id, first_name, last_name, email, role_id, is_active')
-          .eq('is_active', true)
-          .order('first_name');
-        var teamMembers = teamResult.data;
-        if (teamMembers && teamMembers.length > 0) {
-          var rolesResult = await sb.from('skr_roles').select('id, role_name');
-          var roleMap = {};
-          if (rolesResult.data) rolesResult.data.forEach(function(r){ roleMap[r.id] = r.role_name; });
-          var h = '';
-          teamMembers.forEach(function(m){
-            var sc = m.is_active?'active':'inactive', st = m.is_active?'Active':'Inactive';
-            var roleName = roleMap[m.role_id] || 'agent';
-            var mName = ((m.first_name||'') + ' ' + (m.last_name||'')).trim() || 'Unnamed';
-            h += '<div class="team-row"><div><div class="t-name">'+mName+'</div><div class="t-email">'+(m.email||'')+'</div></div><div><span class="t-role '+roleName+'">'+roleName+'</span></div><div><span class="t-status '+sc+'">'+st+'</span></div><div class="t-leads">—</div><div><button class="t-action" data-id="'+m.id+'">Edit</button></div></div>';
-          });
-          document.getElementById('teamList').innerHTML = h;
+        var leadResult = await sb.from('skr_leads').select('id, first_name, last_name, pathway, created_at').order('created_at', { ascending: false }).limit(8);
+        var leadsContainer = document.getElementById('dash-leads');
+        if (leadResult.data && leadResult.data.length > 0) {
+          leadsContainer.innerHTML = leadResult.data.map(function(l) {
+            return '<a href="/admin/leads/" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);text-decoration:none">'
+              + '<div><div style="color:#F0EBE3;font-size:13px;font-weight:400">' + (l.first_name || '') + ' ' + (l.last_name || '') + '</div>'
+              + '<div style="font-size:11px;color:#7A6E60;margin-top:2px">' + timeAgo(l.created_at) + '</div></div>'
+              + '<span class="skr-badge badge-' + (l.pathway || 'general') + '">' + (l.pathway || 'general') + '</span></a>';
+          }).join('');
+        } else {
+          leadsContainer.innerHTML = '<p class="skr-empty">No leads yet.</p>';
         }
-      } catch(e){ console.warn('[SKR] Team:',e); }
+      } catch (e) { console.warn('[SKR] Leads fallback failed:', e); }
 
-      document.getElementById('addEmployee').addEventListener('click', function(){ window.location.href = '/admin/team/'; });
+      try {
+        var actResult = await sb.from('skr_audit_log').select('action, created_at').order('created_at', { ascending: false }).limit(10);
+        var actContainer = document.getElementById('dash-activity');
+        if (actResult.data && actResult.data.length > 0) {
+          actContainer.innerHTML = actResult.data.map(function(a) {
+            return '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:12px">'
+              + '<span style="color:#C9B99A">' + formatAction(a.action) + '</span>'
+              + '<span style="color:#7A6E60;margin-left:8px">' + timeAgo(a.created_at) + '</span></div>';
+          }).join('');
+        } else {
+          actContainer.innerHTML = '<p class="skr-empty">No activity recorded yet.</p>';
+        }
+      } catch (e) { console.warn('[SKR] Activity fallback failed:', e); }
     }
 
-    if (userLevel >= 50) {
-      var permLink = document.getElementById('navPermLink');
-      if (permLink) permLink.style.display = 'inline';
+    function formatAction(a) {
+      var map = { lead_created:'New lead received', deal_created:'Deal created', team_member_added:'Team member added', login_success:'Successful login', permission_changed:'Permission updated', mailbox_provisioned:'Mailbox provisioned' };
+      return map[a] || (a || '').replace(/_/g, ' ');
     }
 
-    if (window.SKR_USER) {
-      sb.rpc('skr_get_unread_count', { p_team_member_id: window.SKR_USER.id })
-        .then(function(result) {
-          if (result.data && result.data > 0) {
-            var badge = document.getElementById('dashNotifBadge');
-            if (badge) { badge.textContent = result.data; badge.style.display = 'block'; }
-          }
-        });
+    function timeAgo(ts) {
+      var d = Date.now() - new Date(ts).getTime();
+      var m = Math.floor(d / 60000);
+      if (m < 1) return 'just now';
+      if (m < 60) return m + 'm ago';
+      var h = Math.floor(m / 60);
+      if (h < 24) return h + 'h ago';
+      return Math.floor(h / 24) + 'd ago';
     }
-  })();
   </script>
 </body>
 </html>
