@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deal Pipeline — Silver Key Realty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/base.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/nav.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/responsive.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/admin.css?v=2">
+  <style>
+    :root{--bg:#111;--card-bg:rgba(255,255,255,0.015);--card-border:rgba(255,255,255,0.04);--row-hover:rgba(58,148,100,0.04);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif;--cream:#F0EBE3;--champagne:#C9B99A;--silver:#8A8178;--skr-green:#3A9464;--skr-green-light:#3A9464}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+    .admin-layout{display:flex;min-height:100vh}
+    .sidebar{width:220px;background:#0D0D0D;position:fixed;top:0;left:0;bottom:0;padding:80px 0 24px;z-index:100;border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
+    .sidebar-nav{flex:1;padding:16px 0}
+    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-family:var(--sans);font-size:13px;font-weight:300;color:#8A8178;text-decoration:none;transition:all 0.2s;border-left:2px solid transparent}
+    .sidebar-item:hover{color:var(--cream);background:rgba(255,255,255,0.02)}
+    .sidebar-item.active{color:var(--cream);border-left-color:#3A9464;background:rgba(58,148,100,0.04)}
+    .sidebar-icon{font-size:14px;width:20px;text-align:center}
+    .sidebar-user{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
+    .sidebar-user-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
+    .sidebar-user-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:2px}
+    .main-content{margin-left:220px;flex:1;padding:32px;padding-top:96px}
+
+    .loading-state{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .breadcrumb{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
+    .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .page-title{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--cream);line-height:1.2;margin-top:4px}
+    .page-title em{color:var(--champagne);font-style:italic}
+    .btn-new{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s var(--ease-out);white-space:nowrap}
+    .btn-new:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+    .stat-card{padding:22px 20px;background:var(--card-bg);border:1px solid var(--card-border);transition:all .5s var(--ease-out)}
+    .stat-card:hover{border-color:rgba(58,148,100,.12);background:rgba(58,148,100,.03)}
+    .stat-number{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--cream);margin-bottom:2px}
+    .stat-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);display:flex;align-items:center;gap:8px}
+    .stat-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .dot-green{background:var(--skr-green);animation:pulse 2s ease-in-out infinite}
+    .dot-champagne{background:var(--champagne)}
+    .dot-purple{background:#a78bfa}
+    .dot-gold{background:#d4a017}
+
+    .search-bar{width:100%;padding:12px 16px;font-family:var(--sans);font-size:14px;font-weight:300;color:var(--cream);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);outline:none;transition:border-color .3s;margin-bottom:16px}
+    .search-bar::placeholder{color:rgba(255,255,255,.15);font-weight:200}
+    .search-bar:focus{border-color:rgba(58,148,100,.3)}
+
+    .filter-tabs{display:flex;gap:0;margin-bottom:20px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.04)}
+    .filter-tab{font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .filter-tab:hover{color:var(--cream)}
+    .filter-tab.active{color:var(--bg);background:var(--cream);border-bottom-color:var(--cream);font-weight:400}
+
+    .deals-table{width:100%;border-collapse:collapse;background:var(--card-bg);border:1px solid var(--card-border)}
+    .deals-table thead th{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--champagne);padding:14px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+    .deals-table tbody tr{border-bottom:1px solid rgba(255,255,255,.02);transition:background .2s}
+    .deals-table tbody tr:hover{background:var(--row-hover)}
+    .deals-table tbody tr:last-child{border-bottom:none}
+    .deals-table td{font-family:var(--sans);font-size:14px;font-weight:300;color:var(--cream);padding:14px 16px;vertical-align:middle}
+    .deal-link{color:var(--cream);text-decoration:none;font-weight:400;transition:color .2s}
+    .deal-link:hover{color:var(--skr-green)}
+
+    .badge{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;display:inline-block;white-space:nowrap}
+    .badge-green{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
+    .badge-champagne{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
+    .badge-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+    .badge-silver{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
+    .badge-gold{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
+    .badge-red{background:rgba(192,57,43,.08);color:#e74c3c;border:1px solid rgba(192,57,43,.2)}
+
+    .currency{font-family:var(--serif);font-weight:400;color:var(--champagne)}
+    .agents-cell{font-size:12px;font-weight:200;color:var(--silver)}
+    .date-cell{font-size:12px;font-weight:200;color:var(--silver)}
+
+    .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:16px 0}
+    .pagination-info{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .pagination-btns{display:flex;gap:8px}
+    .pagination-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);background:none;border:1px solid rgba(255,255,255,.06);padding:8px 16px;cursor:pointer;transition:all .3s}
+    .pagination-btn:hover:not(:disabled){color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .pagination-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    .empty-state{padding:60px 24px;text-align:center;background:var(--card-bg);border:1px solid var(--card-border)}
+    .empty-icon{font-size:36px;margin-bottom:14px;opacity:.3}
+    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
+
+    .error-state{padding:40px 24px;text-align:center}
+    .error-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#c0392b;line-height:1.7}
+
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:24px}
+    .modal-overlay.active{display:flex}
+    .modal{width:100%;max-width:480px;background:#1A1A1A;border:1px solid rgba(255,255,255,.06);padding:40px;position:relative}
+    .modal::after{content:'';position:absolute;bottom:0;left:15%;width:70%;height:1px;background:var(--skr-green);filter:blur(4px);opacity:.3}
+    .modal-title{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--cream);margin-bottom:8px}
+    .modal-desc{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-bottom:28px}
+    .form-group{margin-bottom:18px}
+    .form-label{display:block;font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-bottom:8px}
+    .form-input,.form-select{width:100%;font-family:var(--sans);font-weight:300;font-size:14px;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:12px 16px;outline:none;transition:border-color .3s}
+    .form-input:focus,.form-select:focus{border-color:rgba(58,148,100,.3)}
+    .form-input::placeholder{color:rgba(255,255,255,.15);font-weight:200}
+    .form-select{appearance:none;cursor:pointer}
+    .form-select option{background:#1A1A1A;color:var(--cream)}
+    .modal-actions{display:flex;gap:12px;margin-top:28px}
+    .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-secondary{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s}
+    .btn-secondary:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .modal-feedback{font-family:var(--sans);font-weight:300;font-size:13px;min-height:20px;margin-top:12px}
+    .modal-feedback.success{color:var(--skr-green)}
+    .modal-feedback.error{color:#c0392b}
+
+    @media(max-width:1100px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){
+      .sidebar{display:none}
+      .main-content{margin-left:0;padding:20px;padding-top:80px}
+      .stats-row{grid-template-columns:repeat(2,1fr)}
+      .page-header{flex-direction:column;gap:16px}
+      .deals-table{display:block;overflow-x:auto}
+    }
+    @media(max-width:480px){.stats-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <div id="skr-sidebar" class="sidebar"></div>
+
+    <div class="main-content" id="mainContent" style="display:none">
+      <div class="breadcrumb">Silver Key Realty</div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Deal <em>Pipeline</em></h1>
+        </div>
+        <button class="btn-new" id="newDealBtn">+ New Deal</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number" id="statOpen">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-green"></span> Open Deals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statContract">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-champagne"></span> Under Contract</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statPending">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-purple"></span> Pending Close</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statClosed">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-gold"></span> Closed YTD</div>
+        </div>
+      </div>
+
+      <input type="text" class="search-bar" id="searchInput" placeholder="Search deals...">
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="new">New</button>
+        <button class="filter-tab" data-filter="active">Active</button>
+        <button class="filter-tab" data-filter="under_contract">Under Contract</button>
+        <button class="filter-tab" data-filter="pending_close">Pending Close</button>
+        <button class="filter-tab" data-filter="closed_won">Closed Won</button>
+        <button class="filter-tab" data-filter="closed_lost">Closed Lost</button>
+      </div>
+
+      <div id="tableContainer">
+        <table class="deals-table">
+          <thead>
+            <tr>
+              <th>Deal Name</th>
+              <th>Type</th>
+              <th>Value</th>
+              <th>Stage</th>
+              <th>Agents</th>
+              <th>Expected Close</th>
+            </tr>
+          </thead>
+          <tbody id="dealsBody">
+            <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--silver)"><div class="spinner" style="margin:0 auto"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" style="display:none">
+        <div class="empty-state">
+          <div class="empty-icon">&#x2B21;</div>
+          <div class="empty-msg">No deals found.<br>Adjust your filters or create a new deal to get started.</div>
+        </div>
+      </div>
+
+      <div id="errorState" style="display:none">
+        <div class="error-state">
+          <div class="error-msg" id="errorMsg">Something went wrong loading deals.</div>
+        </div>
+      </div>
+
+      <div class="pagination" id="pagination" style="display:none">
+        <div class="pagination-info" id="paginationInfo">Page 1</div>
+        <div class="pagination-btns">
+          <button class="pagination-btn" id="prevBtn" disabled>Previous</button>
+          <button class="pagination-btn" id="nextBtn">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" id="loadingState"><div class="spinner"></div></div>
+
+  <!-- New Deal Modal -->
+  <div class="modal-overlay" id="newDealModal">
+    <div class="modal">
+      <div class="modal-title">New Deal</div>
+      <div class="modal-desc">Create a new deal in the pipeline. You can add property and agent details later.</div>
+      <div class="form-group">
+        <label class="form-label" for="dealName">Deal Name</label>
+        <input class="form-input" type="text" id="dealName" placeholder="e.g. 742 Evergreen Terrace Sale">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="dealType">Type</label>
+        <select class="form-select" id="dealType">
+          <option value="purchase">Purchase</option>
+          <option value="sale">Sale</option>
+          <option value="lease">Lease</option>
+          <option value="investment">Investment</option>
+          <option value="development">Development</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="dealValue">Value</label>
+        <input class="form-input" type="number" id="dealValue" placeholder="500000" step="1000" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="dealClose">Expected Close</label>
+        <input class="form-input" type="date" id="dealClose">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="createDealBtn">Create Deal</button>
+        <button class="btn-secondary" id="cancelDealBtn">Cancel</button>
+      </div>
+      <div class="modal-feedback" id="dealFeedback"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/auth-router.js"></script>
+  <script src="/admin/components/sidebar.js"></script>
+  <script>
+  (async function() {
+    var loadingEl = document.getElementById('loadingState');
+    var mainEl = document.getElementById('mainContent');
+    var tableContainer = document.getElementById('tableContainer');
+    var emptyState = document.getElementById('emptyState');
+    var errorState = document.getElementById('errorState');
+    var paginationEl = document.getElementById('pagination');
+
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+      loadingEl.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session) { window.location.href = '/admin/'; return; }
+
+    var memberCheck = await sb.from('skr_team_members')
+      .select('id, role_id, display_name')
+      .eq('auth_user_id', session.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (!memberCheck.data) { window.location.href = '/admin/portal/'; return; }
+
+    var roleCheck = await sb.from('skr_roles')
+      .select('role_name, permission_level')
+      .eq('id', memberCheck.data.role_id)
+      .single();
+
+    window.SKR_USER = {
+      id: memberCheck.data.id,
+      role: roleCheck.data ? roleCheck.data.role_name : 'agent',
+      permissionLevel: roleCheck.data ? roleCheck.data.permission_level : 0,
+      displayName: memberCheck.data.display_name
+    };
+
+    loadingEl.style.display = 'none';
+    mainEl.style.display = 'block';
+
+    // Re-init sidebar after SKR_USER is set
+    if (typeof window.initSidebar === 'function') window.initSidebar();
+
+    var currentPage = 1;
+    var pageSize = 20;
+    var currentFilter = 'all';
+    var searchQuery = '';
+    var token = session.access_token;
+
+    function formatCurrency(val) {
+      if (!val && val !== 0) return '—';
+      return '$' + Number(val).toLocaleString('en-US', { minimumFractionDigits: 0 });
+    }
+
+    function formatDate(d) {
+      if (!d) return '—';
+      return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function stageBadge(stage) {
+      var map = {
+        new: 'badge-silver',
+        active: 'badge-green',
+        under_contract: 'badge-champagne',
+        pending_close: 'badge-purple',
+        closed_won: 'badge-gold',
+        closed_lost: 'badge-red'
+      };
+      var cls = map[stage] || 'badge-silver';
+      var label = (stage || 'unknown').replace(/_/g, ' ');
+      return '<span class="badge ' + cls + '">' + label + '</span>';
+    }
+
+    function typeBadge(type) {
+      var map = {
+        purchase: 'badge-green',
+        sale: 'badge-champagne',
+        lease: 'badge-silver',
+        investment: 'badge-gold',
+        development: 'badge-purple'
+      };
+      var cls = map[type] || 'badge-silver';
+      return '<span class="badge ' + cls + '">' + (type || 'unknown') + '</span>';
+    }
+
+    async function loadDeals() {
+      tableContainer.style.display = 'block';
+      emptyState.style.display = 'none';
+      errorState.style.display = 'none';
+      paginationEl.style.display = 'none';
+
+      var tbody = document.getElementById('dealsBody');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--silver)"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+
+      try {
+        var url = '/api/deals/list?page=' + currentPage + '&limit=' + pageSize;
+        if (currentFilter !== 'all') url += '&status=' + encodeURIComponent(currentFilter);
+        if (searchQuery) url += '&search=' + encodeURIComponent(searchQuery);
+
+        var resp = await fetch(url, {
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+        });
+
+        if (!resp.ok) throw new Error('API returned ' + resp.status);
+
+        var data = await resp.json();
+        var deals = data.deals || data.data || [];
+        var total = data.total || deals.length;
+
+        updateStats(data.stats || null);
+
+        if (deals.length === 0) {
+          tableContainer.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        var html = '';
+        deals.forEach(function(deal) {
+          var agentNames = [];
+          if (deal.listing_agent_name) agentNames.push(deal.listing_agent_name);
+          if (deal.buying_agent_name) agentNames.push(deal.buying_agent_name);
+          var agents = agentNames.length > 0 ? agentNames.join(', ') : '—';
+
+          html += '<tr>'
+            + '<td><a class="deal-link" href="detail.html?id=' + deal.id + '">' + escapeHtml(deal.deal_name || deal.name || 'Untitled') + '</a></td>'
+            + '<td>' + typeBadge(deal.deal_type || deal.type) + '</td>'
+            + '<td class="currency">' + formatCurrency(deal.deal_value || deal.value) + '</td>'
+            + '<td>' + stageBadge(deal.status || deal.stage) + '</td>'
+            + '<td class="agents-cell">' + escapeHtml(agents) + '</td>'
+            + '<td class="date-cell">' + formatDate(deal.expected_close_date || deal.expected_close) + '</td>'
+            + '</tr>';
+        });
+        tbody.innerHTML = html;
+
+        var totalPages = Math.ceil(total / pageSize);
+        if (totalPages > 1) {
+          paginationEl.style.display = 'flex';
+          document.getElementById('paginationInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + total + ' deals)';
+          document.getElementById('prevBtn').disabled = currentPage <= 1;
+          document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+      } catch (err) {
+        console.warn('[SKR] Deals load error:', err);
+
+        // Fallback: try loading directly from Supabase
+        try {
+          var q = sb.from('skr_deals').select('*', { count: 'exact' });
+          if (currentFilter !== 'all') q = q.eq('status', currentFilter);
+          if (searchQuery) q = q.ilike('deal_name', '%' + searchQuery + '%');
+          q = q.order('created_at', { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+
+          var result = await q;
+          if (result.error) throw result.error;
+
+          var deals = result.data || [];
+          var total = result.count || deals.length;
+
+          if (deals.length === 0) {
+            tableContainer.style.display = 'none';
+            emptyState.style.display = 'block';
+            return;
+          }
+
+          var html = '';
+          deals.forEach(function(deal) {
+            html += '<tr>'
+              + '<td><a class="deal-link" href="detail.html?id=' + deal.id + '">' + escapeHtml(deal.deal_name || 'Untitled') + '</a></td>'
+              + '<td>' + typeBadge(deal.deal_type) + '</td>'
+              + '<td class="currency">' + formatCurrency(deal.deal_value) + '</td>'
+              + '<td>' + stageBadge(deal.status) + '</td>'
+              + '<td class="agents-cell">&mdash;</td>'
+              + '<td class="date-cell">' + formatDate(deal.expected_close_date) + '</td>'
+              + '</tr>';
+          });
+          tbody.innerHTML = html;
+
+          var totalPages = Math.ceil(total / pageSize);
+          if (totalPages > 1) {
+            paginationEl.style.display = 'flex';
+            document.getElementById('paginationInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + total + ' deals)';
+            document.getElementById('prevBtn').disabled = currentPage <= 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+          }
+
+          loadStatsFromSupabase();
+        } catch (sbErr) {
+          console.warn('[SKR] Supabase fallback failed:', sbErr);
+          tableContainer.style.display = 'none';
+          emptyState.style.display = 'block';
+        }
+      }
+    }
+
+    function updateStats(stats) {
+      if (!stats) return;
+      if (stats.open != null) document.getElementById('statOpen').textContent = stats.open;
+      if (stats.under_contract != null) document.getElementById('statContract').textContent = stats.under_contract;
+      if (stats.pending_close != null) document.getElementById('statPending').textContent = stats.pending_close;
+      if (stats.closed_ytd != null) document.getElementById('statClosed').textContent = stats.closed_ytd;
+    }
+
+    async function loadStatsFromSupabase() {
+      try {
+        var openR = await sb.from('skr_deals').select('*', { count: 'exact', head: true }).in('status', ['new', 'active']);
+        document.getElementById('statOpen').textContent = openR.count || 0;
+
+        var contractR = await sb.from('skr_deals').select('*', { count: 'exact', head: true }).eq('status', 'under_contract');
+        document.getElementById('statContract').textContent = contractR.count || 0;
+
+        var pendingR = await sb.from('skr_deals').select('*', { count: 'exact', head: true }).eq('status', 'pending_close');
+        document.getElementById('statPending').textContent = pendingR.count || 0;
+
+        var ytdStart = new Date(new Date().getFullYear(), 0, 1).toISOString();
+        var closedR = await sb.from('skr_deals').select('*', { count: 'exact', head: true }).eq('status', 'closed_won').gte('updated_at', ytdStart);
+        document.getElementById('statClosed').textContent = closedR.count || 0;
+      } catch (e) { console.warn('[SKR] Stats:', e); }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Filter tabs
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      var tab = e.target.closest('.filter-tab');
+      if (!tab) return;
+      document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      currentPage = 1;
+      loadDeals();
+    });
+
+    // Search
+    var searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      var val = this.value.trim();
+      searchTimeout = setTimeout(function() {
+        searchQuery = val;
+        currentPage = 1;
+        loadDeals();
+      }, 350);
+    });
+
+    // Pagination
+    document.getElementById('prevBtn').addEventListener('click', function() {
+      if (currentPage > 1) { currentPage--; loadDeals(); }
+    });
+    document.getElementById('nextBtn').addEventListener('click', function() {
+      currentPage++;
+      loadDeals();
+    });
+
+    // New Deal Modal
+    var modal = document.getElementById('newDealModal');
+    document.getElementById('newDealBtn').addEventListener('click', function() { modal.classList.add('active'); });
+    document.getElementById('cancelDealBtn').addEventListener('click', function() { closeNewDealModal(); });
+    modal.addEventListener('click', function(e) { if (e.target === modal) closeNewDealModal(); });
+
+    function closeNewDealModal() {
+      modal.classList.remove('active');
+      document.getElementById('dealName').value = '';
+      document.getElementById('dealValue').value = '';
+      document.getElementById('dealClose').value = '';
+      document.getElementById('dealFeedback').textContent = '';
+      document.getElementById('dealFeedback').className = 'modal-feedback';
+    }
+
+    document.getElementById('createDealBtn').addEventListener('click', async function() {
+      var btn = this;
+      var name = document.getElementById('dealName').value.trim();
+      var type = document.getElementById('dealType').value;
+      var value = document.getElementById('dealValue').value;
+      var close = document.getElementById('dealClose').value;
+      var fb = document.getElementById('dealFeedback');
+
+      if (!name) { fb.textContent = 'Deal name is required.'; fb.className = 'modal-feedback error'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Creating...';
+
+      try {
+        var resp = await fetch('/api/deals/create', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            deal_name: name,
+            deal_type: type,
+            deal_value: value ? Number(value) : null,
+            expected_close_date: close || null
+          })
+        });
+
+        if (!resp.ok) {
+          var errData = await resp.json().catch(function() { return {}; });
+          throw new Error(errData.error || 'Failed to create deal');
+        }
+
+        fb.textContent = 'Deal created successfully.';
+        fb.className = 'modal-feedback success';
+        setTimeout(function() { closeNewDealModal(); loadDeals(); }, 800);
+      } catch (err) {
+        // Fallback: insert directly via Supabase
+        try {
+          var insertResult = await sb.from('skr_deals').insert({
+            deal_name: name,
+            deal_type: type,
+            deal_value: value ? Number(value) : null,
+            expected_close_date: close || null,
+            status: 'new',
+            created_by: window.SKR_USER.id
+          }).select().single();
+
+          if (insertResult.error) throw insertResult.error;
+
+          fb.textContent = 'Deal created successfully.';
+          fb.className = 'modal-feedback success';
+          setTimeout(function() { closeNewDealModal(); loadDeals(); }, 800);
+        } catch (sbErr) {
+          fb.textContent = sbErr.message || 'Failed to create deal.';
+          fb.className = 'modal-feedback error';
+        }
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Create Deal';
+    });
+
+    loadDeals();
+  })();
+  </script>
+</body>
+</html>

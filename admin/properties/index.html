@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Properties — Silver Key Realty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/base.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/nav.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/responsive.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/admin.css?v=2">
+  <style>
+    :root{--bg:#111;--card-bg:rgba(255,255,255,0.015);--card-border:rgba(255,255,255,0.04);--row-hover:rgba(58,148,100,0.04);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif;--cream:#F0EBE3;--champagne:#C9B99A;--silver:#8A8178;--skr-green:#3A9464;--skr-green-light:#3A9464}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+    .admin-layout{display:flex;min-height:100vh}
+    .sidebar{width:220px;background:#0D0D0D;position:fixed;top:0;left:0;bottom:0;padding:80px 0 24px;z-index:100;border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
+    .sidebar-nav{flex:1;padding:16px 0}
+    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-family:var(--sans);font-size:13px;font-weight:300;color:#8A8178;text-decoration:none;transition:all 0.2s;border-left:2px solid transparent}
+    .sidebar-item:hover{color:var(--cream);background:rgba(255,255,255,0.02)}
+    .sidebar-item.active{color:var(--cream);border-left-color:#3A9464;background:rgba(58,148,100,0.04)}
+    .sidebar-icon{font-size:14px;width:20px;text-align:center}
+    .sidebar-user{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
+    .sidebar-user-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
+    .sidebar-user-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:2px}
+    .main-content{margin-left:220px;flex:1;padding:32px;padding-top:96px}
+
+    .loading-state{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+    .breadcrumb{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
+    .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .page-title{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--cream);line-height:1.2;margin-top:4px}
+    .page-title em{color:var(--champagne);font-style:italic}
+    .btn-new{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s var(--ease-out);white-space:nowrap;text-decoration:none;display:inline-block}
+    .btn-new:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+    .stat-card{padding:22px 20px;background:var(--card-bg);border:1px solid var(--card-border);transition:all .5s var(--ease-out)}
+    .stat-card:hover{border-color:rgba(58,148,100,.12);background:rgba(58,148,100,.03)}
+    .stat-number{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--cream);margin-bottom:2px}
+    .stat-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);display:flex;align-items:center;gap:8px}
+    .stat-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .dot-green{background:var(--skr-green);animation:pulse 2s ease-in-out infinite}
+    .dot-champagne{background:var(--champagne)}
+    .dot-purple{background:#a78bfa}
+    .dot-gold{background:#d4a017}
+
+    .search-filter-row{display:flex;gap:12px;margin-bottom:16px}
+    .search-bar{flex:1;padding:12px 16px;font-family:var(--sans);font-size:14px;font-weight:300;color:var(--cream);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);outline:none;transition:border-color .3s}
+    .search-bar::placeholder{color:rgba(255,255,255,.15);font-weight:200}
+    .search-bar:focus{border-color:rgba(58,148,100,.3)}
+    .type-filter{font-family:var(--sans);font-size:13px;font-weight:300;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);padding:12px 16px;outline:none;appearance:none;cursor:pointer;min-width:160px}
+    .type-filter option{background:#1A1A1A;color:var(--cream)}
+    .type-filter:focus{border-color:rgba(58,148,100,.3)}
+
+    .property-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+    .property-card{background:var(--card-bg);border:1px solid var(--card-border);transition:all .5s var(--ease-out);cursor:pointer;text-decoration:none;color:inherit;display:block}
+    .property-card:hover{border-color:rgba(58,148,100,.12);background:rgba(58,148,100,.03);transform:translateY(-2px)}
+    .property-photo{height:180px;background:#1A1A1A;display:flex;align-items:center;justify-content:center;font-size:42px;opacity:.2;border-bottom:1px solid rgba(255,255,255,.02)}
+    .property-body{padding:16px 18px}
+    .property-address{font-family:var(--sans);font-size:15px;font-weight:500;color:#F0EBE3;margin-bottom:2px}
+    .property-city{font-family:var(--sans);font-size:12px;font-weight:300;color:#9A8E80;margin-bottom:10px}
+    .property-price{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--champagne);margin-bottom:8px}
+    .property-specs{font-family:var(--sans);font-size:12px;font-weight:300;color:#A89888;margin-bottom:10px}
+    .property-footer{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+    .badge{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;display:inline-block;white-space:nowrap}
+    .badge-green{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
+    .badge-champagne{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
+    .badge-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+    .badge-silver{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
+    .badge-gold{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
+    .badge-red{background:rgba(192,57,43,.08);color:#e74c3c;border:1px solid rgba(192,57,43,.2)}
+
+    .readiness{display:flex;align-items:center;gap:8px;flex:1}
+    .readiness-bar{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+    .readiness-fill{height:100%;background:var(--skr-green);border-radius:2px;transition:width .4s}
+    .readiness-label{font-family:var(--sans);font-size:10px;font-weight:300;color:var(--silver);white-space:nowrap}
+
+    .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:16px 0}
+    .pagination-info{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
+    .pagination-btns{display:flex;gap:8px}
+    .pagination-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);background:none;border:1px solid rgba(255,255,255,.06);padding:8px 16px;cursor:pointer;transition:all .3s}
+    .pagination-btn:hover:not(:disabled){color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .pagination-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    .empty-state{padding:60px 24px;text-align:center;background:var(--card-bg);border:1px solid var(--card-border)}
+    .empty-icon{font-size:36px;margin-bottom:14px;opacity:.3}
+    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
+
+    .error-state{padding:40px 24px;text-align:center}
+    .error-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#c0392b;line-height:1.7}
+
+    @media(max-width:1100px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){
+      .sidebar{display:none}
+      .main-content{margin-left:0;padding:20px;padding-top:80px}
+      .stats-row{grid-template-columns:repeat(2,1fr)}
+      .page-header{flex-direction:column;gap:16px}
+      .search-filter-row{flex-direction:column}
+      .type-filter{min-width:0}
+    }
+    @media(max-width:480px){.stats-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <div id="skr-sidebar" class="sidebar"></div>
+
+    <div class="main-content" id="mainContent" style="display:none">
+      <div class="breadcrumb">Silver Key Realty</div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Property <em>Inventory</em></h1>
+        </div>
+        <a href="/admin/properties/add.html" class="btn-new">+ Add Property</a>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number" id="statActive">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-green"></span> Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statDraft">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-champagne"></span> Draft</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statPending">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-purple"></span> Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statSold">&mdash;</div>
+          <div class="stat-label"><span class="stat-dot dot-gold"></span> Sold</div>
+        </div>
+      </div>
+
+      <div class="search-filter-row">
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search properties...">
+        <select class="type-filter" id="typeFilter">
+          <option value="">All Types</option>
+          <option value="single_family">Single Family</option>
+          <option value="condo">Condo</option>
+          <option value="multi_family">Multi-Family</option>
+          <option value="land">Land</option>
+          <option value="commercial">Commercial</option>
+        </select>
+      </div>
+
+      <div id="gridContainer">
+        <div class="property-grid" id="propertyGrid">
+          <div style="grid-column:1/-1;text-align:center;padding:60px"><div class="spinner" style="margin:0 auto"></div></div>
+        </div>
+      </div>
+
+      <div id="emptyState" style="display:none">
+        <div class="empty-state">
+          <div class="empty-icon">&#127968;</div>
+          <div class="empty-msg">No properties found.<br>Adjust your filters or add a new property to get started.</div>
+        </div>
+      </div>
+
+      <div id="errorState" style="display:none">
+        <div class="error-state">
+          <div class="error-msg" id="errorMsg">Something went wrong loading properties.</div>
+        </div>
+      </div>
+
+      <div class="pagination" id="pagination" style="display:none">
+        <div class="pagination-info" id="paginationInfo">Page 1</div>
+        <div class="pagination-btns">
+          <button class="pagination-btn" id="prevBtn" disabled>Previous</button>
+          <button class="pagination-btn" id="nextBtn">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" id="loadingState"><div class="spinner"></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/auth-router.js"></script>
+  <script src="/admin/components/sidebar.js"></script>
+  <script>
+  (async function() {
+    var loadingEl = document.getElementById('loadingState');
+    var mainEl = document.getElementById('mainContent');
+    var gridContainer = document.getElementById('gridContainer');
+    var emptyState = document.getElementById('emptyState');
+    var errorState = document.getElementById('errorState');
+    var paginationEl = document.getElementById('pagination');
+
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+      loadingEl.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session) { window.location.href = '/admin/'; return; }
+
+    var memberCheck = await sb.from('skr_team_members')
+      .select('id, role_id, display_name')
+      .eq('auth_user_id', session.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (!memberCheck.data) { window.location.href = '/admin/portal/'; return; }
+
+    var roleCheck = await sb.from('skr_roles')
+      .select('role_name, permission_level')
+      .eq('id', memberCheck.data.role_id)
+      .single();
+
+    window.SKR_USER = {
+      id: memberCheck.data.id,
+      role: roleCheck.data ? roleCheck.data.role_name : 'agent',
+      permissionLevel: roleCheck.data ? roleCheck.data.permission_level : 0,
+      displayName: memberCheck.data.display_name
+    };
+
+    loadingEl.style.display = 'none';
+    mainEl.style.display = 'block';
+
+    if (typeof window.initSidebar === 'function') window.initSidebar();
+
+    var currentPage = 1;
+    var pageSize = 20;
+    var currentType = '';
+    var searchQuery = '';
+    var token = session.access_token;
+
+    function formatCurrency(val) {
+      if (!val && val !== 0) return '—';
+      return '$' + Number(val).toLocaleString('en-US', { minimumFractionDigits: 0 });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function statusBadge(status) {
+      var map = {
+        active: 'badge-green',
+        draft: 'badge-champagne',
+        pending: 'badge-purple',
+        sold: 'badge-gold',
+        withdrawn: 'badge-red',
+        off_market: 'badge-silver'
+      };
+      var cls = map[status] || 'badge-silver';
+      var label = (status || 'unknown').replace(/_/g, ' ');
+      return '<span class="badge ' + cls + '">' + label + '</span>';
+    }
+
+    function buildSpecs(prop) {
+      var parts = [];
+      if (prop.bedrooms) parts.push(prop.bedrooms + 'bd');
+      if (prop.bathrooms) parts.push(prop.bathrooms + 'ba');
+      if (prop.square_feet) parts.push(Number(prop.square_feet).toLocaleString() + ' sf');
+      return parts.length ? parts.join(' &middot; ') : '';
+    }
+
+    function renderCard(prop) {
+      var address = prop.address || prop.street_address || prop.address_line1 || 'Address unavailable';
+      var city = [prop.city, prop.state].filter(Boolean).join(', ');
+      var specs = buildSpecs(prop);
+      var readiness = prop.readiness_score != null ? prop.readiness_score : 0;
+      var readinessWidth = Math.min(Math.max(readiness, 0), 10) * 10;
+
+      return '<a class="property-card" href="detail.html?id=' + prop.id + '">'
+        + '<div class="property-photo">&#127968;</div>'
+        + '<div class="property-body">'
+        + '<div class="property-address">' + escapeHtml(address) + '</div>'
+        + '<div class="property-city">' + escapeHtml(city) + '</div>'
+        + '<div class="property-price">' + formatCurrency(prop.list_price || prop.price) + '</div>'
+        + (specs ? '<div class="property-specs">' + specs + '</div>' : '')
+        + '<div class="property-footer">'
+        + statusBadge(prop.status)
+        + '<div class="readiness">'
+        + '<div class="readiness-bar"><div class="readiness-fill" style="width:' + readinessWidth + '%"></div></div>'
+        + '<span class="readiness-label">' + readiness + '/10</span>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
+        + '</a>';
+    }
+
+    async function loadProperties() {
+      gridContainer.style.display = 'block';
+      emptyState.style.display = 'none';
+      errorState.style.display = 'none';
+      paginationEl.style.display = 'none';
+
+      var grid = document.getElementById('propertyGrid');
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px"><div class="spinner" style="margin:0 auto"></div></div>';
+
+      try {
+        var url = '/api/properties/list?page=' + currentPage + '&limit=' + pageSize;
+        if (currentType) url += '&type=' + encodeURIComponent(currentType);
+        if (searchQuery) url += '&search=' + encodeURIComponent(searchQuery);
+
+        var resp = await fetch(url, {
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+        });
+
+        if (!resp.ok) throw new Error('API returned ' + resp.status);
+
+        var data = await resp.json();
+        var properties = data.properties || data.data || [];
+        var total = data.total || properties.length;
+
+        updateStats(data.stats || null);
+
+        if (properties.length === 0) {
+          gridContainer.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        grid.innerHTML = properties.map(renderCard).join('');
+
+        var totalPages = Math.ceil(total / pageSize);
+        if (totalPages > 1) {
+          paginationEl.style.display = 'flex';
+          document.getElementById('paginationInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + total + ' properties)';
+          document.getElementById('prevBtn').disabled = currentPage <= 1;
+          document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+      } catch (err) {
+        console.warn('[SKR] Properties load error:', err);
+
+        try {
+          var q = sb.from('skr_properties').select('*', { count: 'exact' });
+          if (currentType) q = q.eq('property_type', currentType);
+          if (searchQuery) q = q.or('address_line1.ilike.%' + searchQuery + '%,city.ilike.%' + searchQuery + '%');
+          q = q.order('created_at', { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+
+          var result = await q;
+          if (result.error) throw result.error;
+
+          var properties = result.data || [];
+          var total = result.count || properties.length;
+
+          if (properties.length === 0) {
+            gridContainer.style.display = 'none';
+            emptyState.style.display = 'block';
+            return;
+          }
+
+          grid.innerHTML = properties.map(renderCard).join('');
+
+          var totalPages = Math.ceil(total / pageSize);
+          if (totalPages > 1) {
+            paginationEl.style.display = 'flex';
+            document.getElementById('paginationInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages + ' (' + total + ' properties)';
+            document.getElementById('prevBtn').disabled = currentPage <= 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+          }
+
+          loadStatsFromSupabase();
+        } catch (sbErr) {
+          console.warn('[SKR] Supabase fallback failed:', sbErr);
+          gridContainer.style.display = 'none';
+          emptyState.style.display = 'block';
+        }
+      }
+    }
+
+    function updateStats(stats) {
+      if (!stats) return;
+      if (stats.active != null) document.getElementById('statActive').textContent = stats.active;
+      if (stats.draft != null) document.getElementById('statDraft').textContent = stats.draft;
+      if (stats.pending != null) document.getElementById('statPending').textContent = stats.pending;
+      if (stats.sold != null) document.getElementById('statSold').textContent = stats.sold;
+    }
+
+    async function loadStatsFromSupabase() {
+      try {
+        var activeR = await sb.from('skr_properties').select('*', { count: 'exact', head: true }).eq('status', 'active');
+        document.getElementById('statActive').textContent = activeR.count || 0;
+
+        var draftR = await sb.from('skr_properties').select('*', { count: 'exact', head: true }).eq('status', 'draft');
+        document.getElementById('statDraft').textContent = draftR.count || 0;
+
+        var pendingR = await sb.from('skr_properties').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+        document.getElementById('statPending').textContent = pendingR.count || 0;
+
+        var soldR = await sb.from('skr_properties').select('*', { count: 'exact', head: true }).eq('status', 'sold');
+        document.getElementById('statSold').textContent = soldR.count || 0;
+      } catch (e) { console.warn('[SKR] Stats:', e); }
+    }
+
+    // Search (debounced)
+    var searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      var val = this.value.trim();
+      searchTimeout = setTimeout(function() {
+        searchQuery = val;
+        currentPage = 1;
+        loadProperties();
+      }, 350);
+    });
+
+    // Type filter
+    document.getElementById('typeFilter').addEventListener('change', function() {
+      currentType = this.value;
+      currentPage = 1;
+      loadProperties();
+    });
+
+    // Pagination
+    document.getElementById('prevBtn').addEventListener('click', function() {
+      if (currentPage > 1) { currentPage--; loadProperties(); }
+    });
+    document.getElementById('nextBtn').addEventListener('click', function() {
+      currentPage++;
+      loadProperties();
+    });
+
+    loadProperties();
+  })();
+  </script>
+</body>
+</html>

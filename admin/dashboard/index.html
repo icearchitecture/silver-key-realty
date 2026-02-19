@@ -174,12 +174,12 @@
 
     <div class="sec-label">Management</div>
     <div class="mgmt">
-      <div class="mgmt-card"><div class="mgmt-icon">📥</div><h3>Lead Pipeline</h3><p>View, assign, and manage all incoming inquiries. Filter by pathway, status, score, and agent.</p><div class="mgmt-arrow">Open Pipeline <span class="arrow">→</span></div></div>
-      <div class="mgmt-card"><div class="mgmt-icon">📅</div><h3>Consultations</h3><p>Scheduled meetings, video links, follow-ups. Calendar view with pathway color coding.</p><div class="mgmt-arrow">View Schedule <span class="arrow">→</span></div></div>
-      <div class="mgmt-card"><div class="mgmt-icon">🏠</div><h3>Properties</h3><p>Active listings, three-pillar assessments, staging coordination, and buyer matching status.</p><div class="mgmt-arrow">Manage Listings <span class="arrow">→</span></div></div>
-      <div class="mgmt-card"><div class="mgmt-icon">💰</div><h3>Deals</h3><p>Active transactions from offer to close. Contract status, escrow tracking, milestone alerts.</p><div class="mgmt-arrow">Track Deals <span class="arrow">→</span></div></div>
-      <div class="mgmt-card"><div class="mgmt-icon">📋</div><h3>Documents</h3><p>Encrypted vault. Contracts, disclosures, inspection reports. Version-controlled and audit-logged.</p><div class="mgmt-arrow">Open Vault <span class="arrow">→</span></div></div>
-      <div class="mgmt-card" data-min-role="broker"><div class="mgmt-icon">🔒</div><h3>Audit Log</h3><p>Immutable forensic trail. Every action timestamped, IP-hashed, and tamper-proof. Exportable.</p><div class="mgmt-arrow">View Log <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" onclick="window.location.href='/admin/leads/'"><div class="mgmt-icon">📥</div><h3>Lead Pipeline</h3><p>View, assign, and manage all incoming inquiries. Filter by pathway, status, score, and agent.</p><div class="mgmt-arrow">Open Pipeline <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" onclick="window.location.href='/admin/meetings/'"><div class="mgmt-icon">📅</div><h3>Consultations</h3><p>Scheduled meetings, video links, follow-ups. Calendar view with pathway color coding.</p><div class="mgmt-arrow">View Schedule <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" onclick="window.location.href='/admin/properties/'"><div class="mgmt-icon">🏠</div><h3>Properties</h3><p>Active listings, three-pillar assessments, staging coordination, and buyer matching status.</p><div class="mgmt-arrow">Manage Listings <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" onclick="window.location.href='/admin/deals/'"><div class="mgmt-icon">💰</div><h3>Deals</h3><p>Active transactions from offer to close. Contract status, escrow tracking, milestone alerts.</p><div class="mgmt-arrow">Track Deals <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" onclick="window.location.href='/admin/source-drive/'"><div class="mgmt-icon">📋</div><h3>Source Drive</h3><p>Search across leads, deals, properties, documents, notes, and files. Everything in one place.</p><div class="mgmt-arrow">Open Drive <span class="arrow">→</span></div></div>
+      <div class="mgmt-card" data-min-role="broker" onclick="window.location.href='/admin/security/'"><div class="mgmt-icon">🔒</div><h3>Audit Log</h3><p>Immutable forensic trail. Every action timestamped, IP-hashed, and tamper-proof. Exportable.</p><div class="mgmt-arrow">View Log <span class="arrow">→</span></div></div>
     </div>
 
     <div class="sec-label" data-min-role="broker">Team Management</div>
@@ -309,7 +309,7 @@
         var h = '';
         leads.forEach(function(l){
           var pw = l.pathway || 'general';
-          h += '<div class="feed-item"><div class="fi-left"><div class="fi-name">Lead #' + l.id.substring(0,8) + '</div><div class="fi-detail">' + pw.charAt(0).toUpperCase()+pw.slice(1) + ' inquiry — Score: ' + (l.lead_score||0) + '</div></div><div class="fi-right"><span class="fi-pathway ' + pw + '">' + pw.toUpperCase() + '</span><div class="fi-time">' + timeAgo(l.created_at) + '</div></div></div>';
+          h += '<div class="feed-item" data-lead-id="' + l.id + '" onclick="window.location.href=\'/admin/leads/detail.html?id=' + l.id + '\'"><div class="fi-left"><div class="fi-name">Lead #' + l.id.substring(0,8) + '</div><div class="fi-detail">' + pw.charAt(0).toUpperCase()+pw.slice(1) + ' inquiry — Score: ' + (l.lead_score||0) + '</div></div><div class="fi-right"><span class="fi-pathway ' + pw + '">' + pw.toUpperCase() + '</span><div class="fi-time">' + timeAgo(l.created_at) + '</div></div></div>';
         });
         document.getElementById('feedList').innerHTML = h;
       }
@@ -317,7 +317,7 @@
 
     // Activity (tries skr_audit_log, falls back to skr_events)
     try {
-      var actResult = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, created_at').order('created_at',{ascending:false}).limit(15);
+      var actResult = await sb.from('skr_audit_log').select('id, event_type, action, entity_type, resource_type, resource_id, created_at').order('created_at',{ascending:false}).limit(15);
       var acts = actResult.data;
       // If audit_log doesn't exist, try skr_events
       if (actResult.error) {
@@ -331,7 +331,12 @@
           var ic = icons[a.event_type]||'📋';
           var entity = (a.entity_type||'system').replace(/_/g,' ');
           var action = (a.action||'').replace(/_/g,' ');
-          h += '<div class="act-item"><div class="act-text"><span class="act-icon">'+ic+'</span> <strong>'+entity+'</strong> — '+action+'</div><div class="act-time">'+timeAgo(a.created_at)+'</div></div>';
+          var actUrl = '';
+          if (a.resource_type === 'deal' && a.resource_id) actUrl = '/admin/deals/detail.html?id=' + a.resource_id;
+          else if (a.resource_type === 'lead' && a.resource_id) actUrl = '/admin/leads/detail.html?id=' + a.resource_id;
+          else if (a.resource_type === 'property' && a.resource_id) actUrl = '/admin/properties/detail.html?id=' + a.resource_id;
+          var clickAttr = actUrl ? ' style="cursor:pointer" onclick="window.location.href=\'' + actUrl + '\'"' : '';
+          h += '<div class="act-item"' + clickAttr + '><div class="act-text"><span class="act-icon">'+ic+'</span> <strong>'+entity+'</strong> — '+action+'</div><div class="act-time">'+timeAgo(a.created_at)+'</div></div>';
         });
         document.getElementById('activityList').innerHTML = h;
       }

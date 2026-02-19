@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deal Detail — Silver Key Realty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/base.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/nav.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/responsive.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/admin.css?v=2">
+  <style>
+    :root{--bg:#111;--card-bg:rgba(255,255,255,0.015);--card-border:rgba(255,255,255,0.04);--row-hover:rgba(58,148,100,0.04);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif;--cream:#F0EBE3;--champagne:#C9B99A;--silver:#8A8178;--skr-green:#3A9464;--skr-green-light:#3A9464}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+    .admin-layout{display:flex;min-height:100vh}
+    .sidebar{width:220px;background:#0D0D0D;position:fixed;top:0;left:0;bottom:0;padding:80px 0 24px;z-index:100;border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
+    .sidebar-nav{flex:1;padding:16px 0}
+    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-family:var(--sans);font-size:13px;font-weight:300;color:#8A8178;text-decoration:none;transition:all 0.2s;border-left:2px solid transparent}
+    .sidebar-item:hover{color:var(--cream);background:rgba(255,255,255,0.02)}
+    .sidebar-item.active{color:var(--cream);border-left-color:#3A9464;background:rgba(58,148,100,0.04)}
+    .sidebar-icon{font-size:14px;width:20px;text-align:center}
+    .sidebar-user{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
+    .sidebar-user-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
+    .sidebar-user-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:2px}
+    .main-content{margin-left:220px;flex:1;padding:32px;padding-top:96px}
+
+    .loading-state{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse-ring{0%{transform:scale(.8);opacity:.6}50%{transform:scale(1.3);opacity:0}100%{transform:scale(.8);opacity:0}}
+
+    .breadcrumb{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
+    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.25);text-decoration:none;transition:color .3s;display:inline-block;margin-bottom:12px}
+    .back-link:hover{color:var(--cream)}
+
+    .deal-header{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.04)}
+    .deal-title{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--cream);line-height:1.2}
+    .deal-badges{display:flex;gap:8px;margin-top:6px}
+
+    .badge{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;display:inline-block;white-space:nowrap}
+    .badge-green{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
+    .badge-champagne{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
+    .badge-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+    .badge-silver{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
+    .badge-gold{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
+    .badge-red{background:rgba(192,57,43,.08);color:#e74c3c;border:1px solid rgba(192,57,43,.2)}
+
+    .two-col{display:grid;grid-template-columns:3fr 2fr;gap:20px}
+
+    .card{background:var(--card-bg);border:1px solid var(--card-border);margin-bottom:20px}
+    .card-header{padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
+    .card-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream)}
+    .card-body{padding:22px}
+
+    .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.02)}
+    .info-row:last-child{border-bottom:none}
+    .info-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver)}
+    .info-value{font-family:var(--sans);font-size:14px;font-weight:300;color:var(--cream);text-align:right}
+    .info-value.currency{font-family:var(--serif);font-weight:400;color:var(--champagne);font-size:18px}
+
+    /* Property card */
+    .property-link{font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--skr-green);text-decoration:none;transition:color .3s;display:inline-flex;align-items:center;gap:4px;margin-top:12px}
+    .property-link:hover{color:var(--cream)}
+    .property-specs{font-family:var(--sans);font-size:12px;font-weight:200;color:var(--silver);margin-top:4px}
+    .property-address{font-family:var(--sans);font-size:14px;font-weight:400;color:var(--cream)}
+    .property-price{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--champagne);margin-top:8px}
+
+    /* Milestone tracker */
+    .milestones{padding:22px}
+    .milestone{display:flex;gap:16px;position:relative;padding-bottom:28px}
+    .milestone:last-child{padding-bottom:0}
+    .milestone:last-child .milestone-line{display:none}
+    .milestone-track{display:flex;flex-direction:column;align-items:center;position:relative;width:24px;flex-shrink:0}
+    .milestone-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;position:relative;z-index:2;flex-shrink:0}
+    .milestone-dot.completed{background:var(--skr-green);color:#fff}
+    .milestone-dot.current{background:transparent;border:2px solid var(--skr-green);color:var(--skr-green)}
+    .milestone-dot.current::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--skr-green);opacity:.3;animation:pulse-ring 2s ease-out infinite}
+    .milestone-dot.pending{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:transparent}
+    .milestone-line{position:absolute;top:22px;left:50%;width:2px;bottom:0;transform:translateX(-50%)}
+    .milestone-line.completed{background:var(--skr-green)}
+    .milestone-line.pending{background:rgba(255,255,255,.06)}
+    .milestone-content{flex:1;padding-top:1px}
+    .milestone-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
+    .milestone-name.dim{color:var(--silver);font-weight:300}
+    .milestone-date{font-family:var(--sans);font-size:11px;font-weight:200;color:var(--silver);margin-top:2px}
+
+    /* Agents card */
+    .agent-block{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.02)}
+    .agent-block:last-child{border-bottom:none}
+    .agent-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-bottom:4px}
+    .agent-name{font-family:var(--sans);font-size:14px;font-weight:400;color:var(--cream)}
+    .agent-email{font-family:var(--sans);font-size:12px;font-weight:200;color:var(--silver);margin-top:1px}
+    .agent-empty{font-family:var(--sans);font-size:12px;font-weight:200;color:rgba(255,255,255,.15);font-style:italic}
+
+    /* Activity timeline */
+    .timeline{padding:22px}
+    .timeline-item{display:flex;gap:14px;padding-bottom:20px;position:relative}
+    .timeline-item:last-child{padding-bottom:0}
+    .timeline-dot-track{display:flex;flex-direction:column;align-items:center;position:relative;width:12px;flex-shrink:0}
+    .timeline-dot{width:8px;height:8px;border-radius:50%;background:var(--skr-green);flex-shrink:0;position:relative;z-index:2}
+    .timeline-connector{position:absolute;top:10px;left:50%;width:1px;bottom:0;transform:translateX(-50%);background:rgba(58,148,100,.15)}
+    .timeline-item:last-child .timeline-connector{display:none}
+    .timeline-content{flex:1}
+    .timeline-action{font-family:var(--sans);font-size:13px;font-weight:300;color:var(--cream);line-height:1.5}
+    .timeline-action strong{font-weight:400}
+    .timeline-time{font-family:var(--sans);font-size:11px;font-weight:200;color:var(--silver);margin-top:2px}
+
+    /* Actions panel */
+    .actions-panel{padding:22px}
+    .advance-group{display:flex;gap:8px}
+    .advance-select{flex:1;font-family:var(--sans);font-weight:300;font-size:13px;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:10px 14px;outline:none;appearance:none;cursor:pointer}
+    .advance-select option{background:#1A1A1A;color:var(--cream)}
+    .advance-select:focus{border-color:rgba(58,148,100,.3)}
+    .advance-btn{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--skr-green);padding:10px 20px;border:none;cursor:pointer;transition:all .4s;white-space:nowrap}
+    .advance-btn:hover{background:#2E7D52;transform:translateY(-1px)}
+    .advance-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .advance-feedback{font-family:var(--sans);font-weight:300;font-size:12px;margin-top:10px;min-height:18px}
+    .advance-feedback.success{color:var(--skr-green)}
+    .advance-feedback.error{color:#c0392b}
+
+    .empty-card{padding:32px 22px;text-align:center}
+    .empty-card-msg{font-family:var(--sans);font-weight:300;font-size:13px;color:rgba(255,255,255,.2);line-height:1.6}
+
+    .error-state{min-height:60vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+    .error-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#c0392b;text-align:center}
+    .error-back{font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);text-decoration:none;padding:8px 18px;border:1px solid rgba(255,255,255,.06);transition:all .3s}
+    .error-back:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+
+    @media(max-width:900px){
+      .sidebar{display:none}
+      .main-content{margin-left:0;padding:20px;padding-top:80px}
+      .two-col{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <div id="skr-sidebar" class="sidebar"></div>
+
+    <div class="main-content" id="mainContent" style="display:none">
+      <div class="breadcrumb">Silver Key Realty</div>
+      <a href="/admin/deals/" class="back-link">&larr; Back to Pipeline</a>
+
+      <div class="deal-header" id="dealHeader">
+        <div>
+          <h1 class="deal-title" id="dealTitle">Loading...</h1>
+          <div class="deal-badges" id="dealBadges"></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- LEFT COLUMN -->
+        <div class="col-left">
+          <!-- Deal Info -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Deal Information</span></div>
+            <div class="card-body" id="dealInfo">
+              <div style="text-align:center;padding:20px"><div class="spinner" style="margin:0 auto"></div></div>
+            </div>
+          </div>
+
+          <!-- Property -->
+          <div class="card" id="propertyCard" style="display:none">
+            <div class="card-header"><span class="card-title">Linked Property</span></div>
+            <div class="card-body" id="propertyInfo"></div>
+          </div>
+
+          <!-- Milestones -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Milestones</span></div>
+            <div class="milestones" id="milestonesList">
+              <div class="empty-card"><div class="empty-card-msg">No milestones recorded yet.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col-right">
+          <!-- Agents -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Agents</span></div>
+            <div class="card-body" id="agentsInfo">
+              <div class="empty-card"><div class="empty-card-msg">No agents assigned.</div></div>
+            </div>
+          </div>
+
+          <!-- Activity -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Activity</span></div>
+            <div class="timeline" id="activityTimeline">
+              <div class="empty-card"><div class="empty-card-msg">No activity recorded.</div></div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Actions</span></div>
+            <div class="actions-panel">
+              <div class="advance-group">
+                <select class="advance-select" id="advanceStage">
+                  <option value="">Advance Stage...</option>
+                  <option value="new">New</option>
+                  <option value="active">Active</option>
+                  <option value="under_contract">Under Contract</option>
+                  <option value="pending_close">Pending Close</option>
+                  <option value="closed_won">Closed Won</option>
+                  <option value="closed_lost">Closed Lost</option>
+                </select>
+                <button class="advance-btn" id="advanceBtn">Update</button>
+              </div>
+              <div class="advance-feedback" id="advanceFeedback"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" id="loadingState"><div class="spinner"></div></div>
+
+  <div class="error-state" id="errorState" style="display:none">
+    <div class="error-msg" id="errorMsg">Could not load this deal.</div>
+    <a href="/admin/deals/" class="error-back">Back to Pipeline</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/auth-router.js"></script>
+  <script src="/admin/components/sidebar.js"></script>
+  <script>
+  (async function() {
+    var loadingEl = document.getElementById('loadingState');
+    var mainEl = document.getElementById('mainContent');
+    var errorStateEl = document.getElementById('errorState');
+
+    var params = new URLSearchParams(window.location.search);
+    var dealId = params.get('id');
+
+    if (!dealId) {
+      loadingEl.style.display = 'none';
+      errorStateEl.style.display = 'flex';
+      document.getElementById('errorMsg').textContent = 'No deal ID provided.';
+      return;
+    }
+
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+      loadingEl.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session) { window.location.href = '/admin/'; return; }
+
+    var memberCheck = await sb.from('skr_team_members')
+      .select('id, role_id, display_name')
+      .eq('auth_user_id', session.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (!memberCheck.data) { window.location.href = '/admin/portal/'; return; }
+
+    var roleCheck = await sb.from('skr_roles')
+      .select('role_name, permission_level')
+      .eq('id', memberCheck.data.role_id)
+      .single();
+
+    window.SKR_USER = {
+      id: memberCheck.data.id,
+      role: roleCheck.data ? roleCheck.data.role_name : 'agent',
+      permissionLevel: roleCheck.data ? roleCheck.data.permission_level : 0,
+      displayName: memberCheck.data.display_name
+    };
+
+    var token = session.access_token;
+
+    function formatCurrency(val) {
+      if (!val && val !== 0) return '—';
+      return '$' + Number(val).toLocaleString('en-US', { minimumFractionDigits: 0 });
+    }
+
+    function formatDate(d) {
+      if (!d) return '—';
+      return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatDateShort(d) {
+      if (!d) return '';
+      return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function timeAgo(dateStr) {
+      var diff = Date.now() - new Date(dateStr).getTime();
+      var min = Math.floor(diff / 60000);
+      if (min < 1) return 'Just now';
+      if (min < 60) return min + ' min ago';
+      var hrs = Math.floor(min / 60);
+      if (hrs < 24) return hrs + ' hr' + (hrs > 1 ? 's' : '') + ' ago';
+      var days = Math.floor(hrs / 24);
+      if (days < 30) return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+      return formatDateShort(dateStr);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function stageBadgeClass(stage) {
+      var map = { new:'badge-silver', active:'badge-green', under_contract:'badge-champagne', pending_close:'badge-purple', closed_won:'badge-gold', closed_lost:'badge-red' };
+      return map[stage] || 'badge-silver';
+    }
+
+    function typeBadgeClass(type) {
+      var map = { purchase:'badge-green', sale:'badge-champagne', lease:'badge-silver', investment:'badge-gold', development:'badge-purple' };
+      return map[type] || 'badge-silver';
+    }
+
+    // Load deal data
+    try {
+      var deal, milestones, activity;
+
+      try {
+        var resp = await fetch('/api/deals/detail?id=' + encodeURIComponent(dealId), {
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+        });
+        if (!resp.ok) throw new Error('API ' + resp.status);
+        var apiData = await resp.json();
+        deal = apiData.deal || apiData;
+        milestones = apiData.milestones || [];
+        activity = apiData.activity || [];
+      } catch (apiErr) {
+        // Fallback: load directly from Supabase
+        var dealResult = await sb.from('skr_deals').select('*').eq('id', dealId).maybeSingle();
+        if (!dealResult.data) throw new Error('Deal not found');
+        deal = dealResult.data;
+
+        var msResult = await sb.from('skr_deal_milestones').select('*').eq('deal_id', dealId).order('sort_order', { ascending: true });
+        milestones = msResult.data || [];
+
+        var actResult = await sb.from('skr_deal_activity').select('*').eq('deal_id', dealId).order('created_at', { ascending: false }).limit(25);
+        activity = actResult.data || [];
+      }
+
+      loadingEl.style.display = 'none';
+      mainEl.style.display = 'block';
+
+      if (typeof window.initSidebar === 'function') window.initSidebar();
+
+      // Title and badges
+      document.title = (deal.deal_name || 'Deal') + ' — Silver Key Realty';
+      document.getElementById('dealTitle').textContent = deal.deal_name || 'Untitled Deal';
+
+      var typeLabel = (deal.deal_type || 'unknown');
+      var stageLabel = (deal.status || 'unknown').replace(/_/g, ' ');
+      document.getElementById('dealBadges').innerHTML =
+        '<span class="badge ' + typeBadgeClass(deal.deal_type) + '">' + typeLabel + '</span>' +
+        '<span class="badge ' + stageBadgeClass(deal.status) + '">' + stageLabel + '</span>';
+
+      // Deal info card
+      document.getElementById('dealInfo').innerHTML =
+        '<div class="info-row"><span class="info-label">Type</span><span class="info-value">' + escapeHtml(typeLabel) + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Value</span><span class="info-value currency">' + formatCurrency(deal.deal_value) + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Stage</span><span class="info-value"><span class="badge ' + stageBadgeClass(deal.status) + '">' + stageLabel + '</span></span></div>' +
+        '<div class="info-row"><span class="info-label">Expected Close</span><span class="info-value">' + formatDate(deal.expected_close_date) + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Created</span><span class="info-value">' + formatDate(deal.created_at) + '</span></div>';
+
+      // Set current stage in advance dropdown
+      if (deal.status) {
+        document.getElementById('advanceStage').value = deal.status;
+      }
+
+      // Property card
+      if (deal.property_id) {
+        try {
+          var propResult = await sb.from('skr_properties').select('*').eq('id', deal.property_id).maybeSingle();
+          if (propResult.data) {
+            var prop = propResult.data;
+            var specs = [];
+            if (prop.bedrooms) specs.push(prop.bedrooms + ' bd');
+            if (prop.bathrooms) specs.push(prop.bathrooms + ' ba');
+            if (prop.square_feet) specs.push(Number(prop.square_feet).toLocaleString() + ' sf');
+
+            document.getElementById('propertyCard').style.display = 'block';
+            document.getElementById('propertyInfo').innerHTML =
+              '<div class="property-address">' + escapeHtml(prop.address || prop.street_address || 'Address unavailable') + '</div>' +
+              (specs.length ? '<div class="property-specs">' + specs.join(' &middot; ') + '</div>' : '') +
+              '<div class="property-price">' + formatCurrency(prop.list_price || prop.price) + '</div>' +
+              '<a href="/admin/properties/detail.html?id=' + prop.id + '" class="property-link">View Property &rarr;</a>';
+          }
+        } catch (e) { /* Property lookup optional */ }
+      }
+
+      // Milestones
+      if (milestones.length > 0) {
+        var currentFound = false;
+        var msHtml = '';
+        milestones.forEach(function(ms) {
+          var isCompleted = ms.completed_at || ms.status === 'completed';
+          var isCurrent = !isCompleted && !currentFound && ms.status !== 'skipped';
+          if (isCurrent) currentFound = true;
+          var isPending = !isCompleted && !isCurrent;
+
+          var dotClass = isCompleted ? 'completed' : (isCurrent ? 'current' : 'pending');
+          var lineClass = isCompleted ? 'completed' : 'pending';
+          var dotContent = isCompleted ? '&#10003;' : (isCurrent ? '&#9679;' : '');
+          var nameClass = isPending ? ' dim' : '';
+          var dateStr = isCompleted && ms.completed_at ? formatDateShort(ms.completed_at) : (isCurrent ? 'In Progress' : '');
+
+          msHtml += '<div class="milestone">'
+            + '<div class="milestone-track">'
+            + '<div class="milestone-dot ' + dotClass + '">' + dotContent + '</div>'
+            + '<div class="milestone-line ' + lineClass + '"></div>'
+            + '</div>'
+            + '<div class="milestone-content">'
+            + '<div class="milestone-name' + nameClass + '">' + escapeHtml(ms.milestone_name || ms.name) + '</div>'
+            + (dateStr ? '<div class="milestone-date">' + dateStr + '</div>' : '')
+            + '</div></div>';
+        });
+        document.getElementById('milestonesList').innerHTML = msHtml;
+      }
+
+      // Agents
+      var agentsHtml = '';
+      var hasAgent = false;
+
+      if (deal.listing_agent_name || deal.listing_agent_id) {
+        hasAgent = true;
+        agentsHtml += '<div class="agent-block">'
+          + '<div class="agent-role">Listing Agent</div>'
+          + '<div class="agent-name">' + escapeHtml(deal.listing_agent_name || 'Assigned') + '</div>'
+          + (deal.listing_agent_email ? '<div class="agent-email">' + escapeHtml(deal.listing_agent_email) + '</div>' : '')
+          + '</div>';
+      }
+
+      if (deal.buying_agent_name || deal.buying_agent_id) {
+        hasAgent = true;
+        agentsHtml += '<div class="agent-block">'
+          + '<div class="agent-role">Buying Agent</div>'
+          + '<div class="agent-name">' + escapeHtml(deal.buying_agent_name || 'Assigned') + '</div>'
+          + (deal.buying_agent_email ? '<div class="agent-email">' + escapeHtml(deal.buying_agent_email) + '</div>' : '')
+          + '</div>';
+      }
+
+      // Fallback: try fetching agents from deal_agents join table
+      if (!hasAgent) {
+        try {
+          var agentsResult = await sb.from('skr_deal_agents')
+            .select('role, team_member:skr_team_members(display_name, email)')
+            .eq('deal_id', dealId);
+          if (agentsResult.data && agentsResult.data.length > 0) {
+            agentsResult.data.forEach(function(a) {
+              var tm = a.team_member || {};
+              agentsHtml += '<div class="agent-block">'
+                + '<div class="agent-role">' + escapeHtml((a.role || 'agent').replace(/_/g, ' ')) + '</div>'
+                + '<div class="agent-name">' + escapeHtml(tm.display_name || 'Team Member') + '</div>'
+                + (tm.email ? '<div class="agent-email">' + escapeHtml(tm.email) + '</div>' : '')
+                + '</div>';
+            });
+            hasAgent = true;
+          }
+        } catch (e) { /* Optional lookup */ }
+      }
+
+      if (hasAgent) {
+        document.getElementById('agentsInfo').innerHTML = agentsHtml;
+      }
+
+      // Activity timeline
+      if (activity.length > 0) {
+        var actHtml = '';
+        activity.forEach(function(a) {
+          var actionText = escapeHtml(a.action || a.description || a.event_type || 'Activity');
+          if (a.performed_by_name) actionText = '<strong>' + escapeHtml(a.performed_by_name) + '</strong> ' + actionText;
+          actHtml += '<div class="timeline-item">'
+            + '<div class="timeline-dot-track"><div class="timeline-dot"></div><div class="timeline-connector"></div></div>'
+            + '<div class="timeline-content">'
+            + '<div class="timeline-action">' + actionText + '</div>'
+            + '<div class="timeline-time">' + timeAgo(a.created_at) + '</div>'
+            + '</div></div>';
+        });
+        document.getElementById('activityTimeline').innerHTML = actHtml;
+      }
+
+      // Advance stage action
+      document.getElementById('advanceBtn').addEventListener('click', async function() {
+        var btn = this;
+        var newStage = document.getElementById('advanceStage').value;
+        var fb = document.getElementById('advanceFeedback');
+
+        if (!newStage) {
+          fb.textContent = 'Select a stage first.';
+          fb.className = 'advance-feedback error';
+          return;
+        }
+
+        if (newStage === deal.status) {
+          fb.textContent = 'Deal is already at this stage.';
+          fb.className = 'advance-feedback error';
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+        fb.textContent = '';
+
+        try {
+          var updateResult = await sb.from('skr_deals')
+            .update({ status: newStage, updated_at: new Date().toISOString() })
+            .eq('id', dealId);
+
+          if (updateResult.error) throw updateResult.error;
+
+          // Log activity
+          try {
+            await sb.from('skr_deal_activity').insert({
+              deal_id: dealId,
+              action: 'Stage changed to ' + newStage.replace(/_/g, ' '),
+              performed_by: window.SKR_USER.id,
+              performed_by_name: window.SKR_USER.displayName
+            });
+          } catch (logErr) { /* Non-critical */ }
+
+          deal.status = newStage;
+          var newLabel = newStage.replace(/_/g, ' ');
+          document.getElementById('dealBadges').innerHTML =
+            '<span class="badge ' + typeBadgeClass(deal.deal_type) + '">' + (deal.deal_type || 'unknown') + '</span>' +
+            '<span class="badge ' + stageBadgeClass(newStage) + '">' + newLabel + '</span>';
+
+          document.getElementById('dealInfo').querySelector('.info-row:nth-child(3) .info-value').innerHTML =
+            '<span class="badge ' + stageBadgeClass(newStage) + '">' + newLabel + '</span>';
+
+          fb.textContent = 'Stage updated successfully.';
+          fb.className = 'advance-feedback success';
+        } catch (err) {
+          fb.textContent = err.message || 'Failed to update stage.';
+          fb.className = 'advance-feedback error';
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Update';
+      });
+
+    } catch (err) {
+      console.warn('[SKR] Deal detail error:', err);
+      loadingEl.style.display = 'none';
+      errorStateEl.style.display = 'flex';
+      document.getElementById('errorMsg').textContent = err.message || 'Could not load this deal.';
+    }
+  })();
+  </script>
+</body>
+</html>

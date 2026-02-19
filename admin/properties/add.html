@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Property — Silver Key Realty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/base.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/nav.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/responsive.css?v=2">
+  <link rel="stylesheet" href="../../assets/css/admin.css?v=2">
+  <style>
+    :root{--bg:#111;--card-bg:rgba(255,255,255,0.015);--card-border:rgba(255,255,255,0.04);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif;--cream:#F0EBE3;--champagne:#C9B99A;--silver:#8A8178;--skr-green:#3A9464}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+    .admin-layout{display:flex;min-height:100vh}
+    .sidebar{width:220px;background:#0D0D0D;position:fixed;top:0;left:0;bottom:0;padding:80px 0 24px;z-index:100;border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
+    .sidebar-nav{flex:1;padding:16px 0}
+    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-family:var(--sans);font-size:13px;font-weight:300;color:#8A8178;text-decoration:none;transition:all 0.2s;border-left:2px solid transparent}
+    .sidebar-item:hover{color:var(--cream);background:rgba(255,255,255,0.02)}
+    .sidebar-item.active{color:var(--cream);border-left-color:#3A9464;background:rgba(58,148,100,0.04)}
+    .sidebar-icon{font-size:14px;width:20px;text-align:center}
+    .sidebar-user{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
+    .sidebar-user-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
+    .sidebar-user-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:2px}
+    .main-content{margin-left:220px;flex:1;padding:32px;padding-top:96px}
+
+    .loading-state{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .breadcrumb{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
+    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.25);text-decoration:none;transition:color .3s;display:inline-block;margin-bottom:12px}
+    .back-link:hover{color:var(--cream)}
+    .page-title{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--cream);line-height:1.2;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .page-title em{color:var(--champagne);font-style:italic}
+
+    .form-card{max-width:720px;margin:0 auto;background:var(--card-bg);border:1px solid var(--card-border);padding:32px}
+    .form-section{margin-bottom:32px}
+    .form-section:last-child{margin-bottom:0}
+    .section-title{font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--champagne);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.04)}
+
+    .form-group{margin-bottom:18px}
+    .form-label{display:block;font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
+    .form-label .required{color:var(--skr-green);margin-left:2px}
+    .form-input,.form-select,.form-textarea{width:100%;font-family:var(--sans);font-weight:300;font-size:14px;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);padding:12px 16px;outline:none;transition:border-color .3s}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(58,148,100,.3)}
+    .form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,.15);font-weight:200}
+    .form-select{appearance:none;cursor:pointer}
+    .form-select option{background:#1A1A1A;color:var(--cream)}
+    .form-textarea{min-height:120px;resize:vertical;line-height:1.7}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+    .currency-input{position:relative}
+    .currency-prefix{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-family:var(--serif);font-size:16px;color:var(--champagne);pointer-events:none}
+    .currency-input .form-input{padding-left:32px}
+
+    .radio-group{display:flex;flex-wrap:wrap;gap:10px}
+    .radio-option{position:relative}
+    .radio-option input{position:absolute;opacity:0;pointer-events:none}
+    .radio-option label{display:block;font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver);padding:8px 16px;border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .radio-option input:checked + label{color:var(--cream);border-color:rgba(58,148,100,.4);background:rgba(58,148,100,.06)}
+    .radio-option label:hover{color:var(--cream);border-color:rgba(255,255,255,.15)}
+
+    .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.04)}
+    .btn-cancel{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s;text-decoration:none;display:inline-flex;align-items:center}
+    .btn-cancel:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .btn-draft{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--cream);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:10px 22px;cursor:pointer;transition:all .4s}
+    .btn-draft:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+    .btn-draft:disabled,.btn-activate:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-activate{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
+    .btn-activate:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+
+    .form-feedback{font-family:var(--sans);font-weight:300;font-size:13px;min-height:20px;margin-top:12px;text-align:right}
+    .form-feedback.success{color:var(--skr-green)}
+    .form-feedback.error{color:#c0392b}
+
+    @media(max-width:900px){
+      .sidebar{display:none}
+      .main-content{margin-left:0;padding:20px;padding-top:80px}
+      .form-card{padding:24px 20px}
+      .form-row,.form-row-3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <div id="skr-sidebar" class="sidebar"></div>
+
+    <div class="main-content" id="mainContent" style="display:none">
+      <div class="breadcrumb">Silver Key Realty</div>
+      <a href="/admin/properties/" class="back-link">&larr; Back to Properties</a>
+
+      <h1 class="page-title">Add <em>Property</em></h1>
+
+      <div class="form-card">
+        <!-- ADDRESS -->
+        <div class="form-section">
+          <div class="section-title">Address</div>
+          <div class="form-group">
+            <label class="form-label">Address Line 1 <span class="required">*</span></label>
+            <input class="form-input" type="text" id="address1" placeholder="123 Main Street" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address Line 2</label>
+            <input class="form-input" type="text" id="address2" placeholder="Unit, Suite, Apt...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">City <span class="required">*</span></label>
+              <input class="form-input" type="text" id="city" placeholder="City" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">State <span class="required">*</span></label>
+              <select class="form-select" id="state">
+                <option value="MI" selected>Michigan</option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+                <option value="DC">District of Columbia</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="max-width:200px">
+            <label class="form-label">Zip Code <span class="required">*</span></label>
+            <input class="form-input" type="text" id="zip" placeholder="48201" maxlength="10" required>
+          </div>
+        </div>
+
+        <!-- DETAILS -->
+        <div class="form-section">
+          <div class="section-title">Details</div>
+          <div class="form-group">
+            <label class="form-label">Property Type</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" name="propertyType" id="typeSingle" value="single_family" checked>
+                <label for="typeSingle">Single Family</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="propertyType" id="typeCondo" value="condo">
+                <label for="typeCondo">Condo</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="propertyType" id="typeMulti" value="multi_family">
+                <label for="typeMulti">Multi-Family</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="propertyType" id="typeLand" value="land">
+                <label for="typeLand">Land</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="propertyType" id="typeCommercial" value="commercial">
+                <label for="typeCommercial">Commercial</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="max-width:280px">
+            <label class="form-label">List Price</label>
+            <div class="currency-input">
+              <span class="currency-prefix">$</span>
+              <input class="form-input" type="number" id="listPrice" placeholder="350,000" min="0" step="1000">
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label">Bedrooms</label>
+              <input class="form-input" type="number" id="bedrooms" placeholder="3" min="0" max="99">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bathrooms</label>
+              <input class="form-input" type="number" id="bathrooms" placeholder="2" min="0" max="99" step="0.5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Square Feet</label>
+              <input class="form-input" type="number" id="sqft" placeholder="1,850" min="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Lot Size (acres)</label>
+              <input class="form-input" type="number" id="lotSize" placeholder="0.25" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Year Built</label>
+              <input class="form-input" type="number" id="yearBuilt" placeholder="1995" min="1800" max="2030">
+            </div>
+          </div>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="form-section">
+          <div class="section-title">Description</div>
+          <div class="form-group">
+            <label class="form-label">Property Description</label>
+            <textarea class="form-textarea" id="description" placeholder="Describe the property features, condition, and notable details..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/admin/properties/" class="btn-cancel">Cancel</a>
+          <button class="btn-draft" id="saveDraftBtn">Save as Draft</button>
+          <button class="btn-activate" id="saveActiveBtn">Save &amp; Activate</button>
+        </div>
+        <div class="form-feedback" id="formFeedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-state" id="loadingState"><div class="spinner"></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script src="../../assets/js/admin-auth.js"></script>
+  <script src="../../assets/js/auth-router.js"></script>
+  <script src="/admin/components/sidebar.js"></script>
+  <script>
+  (async function() {
+    var loadingEl = document.getElementById('loadingState');
+    var mainEl = document.getElementById('mainContent');
+
+    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
+      loadingEl.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
+      return;
+    }
+
+    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session) { window.location.href = '/admin/'; return; }
+
+    var memberCheck = await sb.from('skr_team_members')
+      .select('id, role_id, display_name')
+      .eq('auth_user_id', session.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (!memberCheck.data) { window.location.href = '/admin/portal/'; return; }
+
+    var roleCheck = await sb.from('skr_roles')
+      .select('role_name, permission_level')
+      .eq('id', memberCheck.data.role_id)
+      .single();
+
+    window.SKR_USER = {
+      id: memberCheck.data.id,
+      role: roleCheck.data ? roleCheck.data.role_name : 'agent',
+      permissionLevel: roleCheck.data ? roleCheck.data.permission_level : 0,
+      displayName: memberCheck.data.display_name
+    };
+
+    loadingEl.style.display = 'none';
+    mainEl.style.display = 'block';
+
+    if (typeof window.initSidebar === 'function') window.initSidebar();
+
+    var token = session.access_token;
+    var fb = document.getElementById('formFeedback');
+
+    function getFormData() {
+      var selectedType = document.querySelector('input[name="propertyType"]:checked');
+      return {
+        address_line1: document.getElementById('address1').value.trim(),
+        address_line2: document.getElementById('address2').value.trim() || null,
+        city: document.getElementById('city').value.trim(),
+        state: document.getElementById('state').value,
+        zip_code: document.getElementById('zip').value.trim(),
+        property_type: selectedType ? selectedType.value : 'single_family',
+        list_price: document.getElementById('listPrice').value ? Number(document.getElementById('listPrice').value) : null,
+        bedrooms: document.getElementById('bedrooms').value ? Number(document.getElementById('bedrooms').value) : null,
+        bathrooms: document.getElementById('bathrooms').value ? Number(document.getElementById('bathrooms').value) : null,
+        square_feet: document.getElementById('sqft').value ? Number(document.getElementById('sqft').value) : null,
+        lot_size_acres: document.getElementById('lotSize').value ? Number(document.getElementById('lotSize').value) : null,
+        year_built: document.getElementById('yearBuilt').value ? Number(document.getElementById('yearBuilt').value) : null,
+        description: document.getElementById('description').value.trim() || null
+      };
+    }
+
+    function validate(data) {
+      if (!data.address_line1) return 'Address Line 1 is required.';
+      if (!data.city) return 'City is required.';
+      if (!data.state) return 'State is required.';
+      if (!data.zip_code) return 'Zip Code is required.';
+      return null;
+    }
+
+    async function submitProperty(status) {
+      var data = getFormData();
+      var error = validate(data);
+      if (error) {
+        fb.textContent = error;
+        fb.className = 'form-feedback error';
+        return;
+      }
+
+      data.status = status;
+      data.created_by = window.SKR_USER.id;
+
+      var draftBtn = document.getElementById('saveDraftBtn');
+      var activeBtn = document.getElementById('saveActiveBtn');
+      draftBtn.disabled = true;
+      activeBtn.disabled = true;
+      fb.textContent = '';
+
+      try {
+        var resp = await fetch('/api/properties/create', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!resp.ok) {
+          var errData = await resp.json().catch(function() { return {}; });
+          throw new Error(errData.error || 'Failed to create property');
+        }
+
+        fb.textContent = 'Property created successfully.';
+        fb.className = 'form-feedback success';
+        setTimeout(function() { window.location.href = '/admin/properties/'; }, 800);
+      } catch (err) {
+        try {
+          var insertResult = await sb.from('skr_properties').insert(data).select().single();
+          if (insertResult.error) throw insertResult.error;
+
+          fb.textContent = 'Property created successfully.';
+          fb.className = 'form-feedback success';
+          setTimeout(function() { window.location.href = '/admin/properties/'; }, 800);
+        } catch (sbErr) {
+          fb.textContent = sbErr.message || 'Failed to create property.';
+          fb.className = 'form-feedback error';
+        }
+      }
+
+      draftBtn.disabled = false;
+      activeBtn.disabled = false;
+    }
+
+    document.getElementById('saveDraftBtn').addEventListener('click', function() {
+      submitProperty('draft');
+    });
+
+    document.getElementById('saveActiveBtn').addEventListener('click', function() {
+      submitProperty('active');
+    });
+  })();
+  </script>
+</body>
+</html>
