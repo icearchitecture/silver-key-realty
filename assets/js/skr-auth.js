@@ -53,6 +53,8 @@
 
     renderSidebar();
 
+    if (window.SKR_AUTH) window.SKR_AUTH.supabase = sb;
+
     var loader = document.getElementById('skr-loader');
     var main = document.getElementById('skr-main');
     if (loader) loader.style.display = 'none';

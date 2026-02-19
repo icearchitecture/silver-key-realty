@@ -10,26 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/tokens.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/nav.css">
-  <link rel="stylesheet" href="../../assets/css/responsive.css">
   <link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    .page{display:none;padding:80px 40px 60px;max-width:900px;margin:0 auto}
-    .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
+    .skr-content .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
     .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
     .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
-
-    .nav-right-dash{display:flex;align-items:center;gap:20px}
-    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
-    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
-    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
-
-    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.2);text-decoration:none;transition:color .3s}
-    .back-link:hover{color:var(--cream)}
 
     .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
     .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
@@ -77,34 +62,22 @@
     .sso-feedback.success{color:var(--skr-green-light)}
     .sso-feedback.error{color:#c0392b}
 
+    .skr-content .page-hero,
+    .skr-content .sso-grid,
+    .skr-content .sso-form{max-width:900px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px}
     @media(max-width:768px){
-      .page{padding:80px 20px 40px}
+      .skr-content .page-hero,.skr-content .sso-grid,.skr-content .sso-form{padding-left:20px;padding-right:20px}
+      .page-hero{padding:24px 0 32px}
       .sso-grid{grid-template-columns:1fr}
       .form-row{grid-template-columns:1fr}
     }
   </style>
 </head>
-<body class="admin-dark">
+<body>
 
-  <nav id="nav">
-    <a class="nav-logo" href="../../"><img src="../../assets/images/logo-transparent.png" alt="Silver Key Realty"></a>
-    <div class="nav-links" id="navLinks">
-      <a href="../dashboard/">Dashboard</a>
-      <a href="../team/">Team</a>
-      <a href="../permissions/">Permissions</a>
-      <a href="../security/">Security</a>
-      <div class="nav-right-dash">
-        <span class="nav-user-name" id="navUser">Loading…</span>
-        <span class="role-badge" id="navBadge"></span>
-        <button class="nav-signout-btn" id="signOut">Sign Out</button>
-      </div>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  </nav>
+  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
 
-  <div class="dash-loading" id="pageLoading"><div class="dash-spinner"></div></div>
-
-  <div class="page" id="pageContainer">
+  <div id="skr-main" class="skr-shell" style="display:none"><aside id="skr-sidebar" class="skr-sidebar"></aside><main class="skr-content">
     <div class="page-hero">
       <a href="../security/" class="back-link">← Back to Security</a>
       <h1>Single Sign-On <em style="color:var(--champagne)">Configuration</em></h1>
@@ -176,36 +149,33 @@
       </div>
       <div class="sso-feedback" id="ssoFeedback"></div>
     </div>
-  </div>
+  </main></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/nav.js"></script>
-  <script src="../../assets/js/admin-auth.js"></script>
-  <script src="/admin/assets/js/skr-auth.js"></script>
+  <script src="../../assets/js/skr-auth.js"></script>
+  <script>
+    (function(){ if(window.SKR_SUPA){ window.SKR_AUTH=window.SKR_AUTH||{}; window.SKR_AUTH.supabase=window.SKR_SUPA; }})();
+  </script>
   <script src="../../assets/js/admin-permissions.js"></script>
   <script>
-  (async function () {
-    var loading = document.getElementById('pageLoading');
-    var container = document.getElementById('pageContainer');
+  window.addEventListener('skr-ready', async function () {
+    var u = window.SKR_USER;
+    if (!u) { window.location.href = '/admin/'; return; }
 
-    if (!window.SKR_AUTH) { loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>'; return; }
-    var member = await window.SKR_AUTH.getCurrentMember();
-    if (!member) { window.location.href = '/admin/'; return; }
-
-    var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
-    if (['admin', 'broker'].indexOf(roleSlug) === -1) {
-      loading.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;text-align:center;padding:100px 20px">SSO configuration requires Broker or Admin role.<br><a href="../dashboard/" style="color:var(--skr-green-light)">← Back to Dashboard</a></p>';
+    if (!window.SKR_AUTH || !window.SKR_AUTH.getRoles) {
+      document.body.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;padding:40px">Configuration error.</p>';
       return;
     }
 
-    document.getElementById('navBadge').textContent = (member.role_name || member.role || 'agent').toUpperCase();
-    document.getElementById('navBadge').className = 'role-badge ' + roleSlug;
-    document.getElementById('navUser').textContent = ((member.first_name || '') + ' ' + (member.last_name || '')).trim() || member.email || 'Unnamed';
-    document.getElementById('signOut').addEventListener('click', function () { window.SKR_AUTH.signOut(); });
-
-    loading.style.display = 'none';
-    container.style.display = 'block';
+    var roleSlug = ((u.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+    if (['admin', 'broker'].indexOf(roleSlug) === -1) {
+      var main = document.getElementById('skr-main');
+      main.style.display = 'none';
+      document.getElementById('skr-loader').style.display = 'flex';
+      document.getElementById('skr-loader').innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;text-align:center;padding:100px 20px">SSO configuration requires Broker or Admin role.<br><a href="../dashboard/" style="color:var(--skr-green-light)">← Back to Dashboard</a></p>';
+      return;
+    }
 
     var SA = window.SKR_AUTH;
 
@@ -296,7 +266,7 @@
         provider: provider,
         client_id: clientId,
         tenant_id: tenantId || null,
-        allowed_domains: domains,
+        domains: domains,
         auto_provision: autoProvision,
         default_role: defaultRole,
         is_active: isActive

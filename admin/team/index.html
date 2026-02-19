@@ -1,492 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Silver Key Realty — Team Management</title>
   <meta name="robots" content="noindex, nofollow">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/nav.css">
-  <link rel="stylesheet" href="../../assets/css/responsive.css">
-  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <link rel="stylesheet" href="../../assets/css/tokens.css"><link rel="stylesheet" href="../../assets/css/base.css"><link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    .dash-loading{min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .dash-spinner{width:24px;height:24px;border:2px solid rgba(46,125,82,.2);border-top-color:var(--skr-green-light);border-radius:50%;animation:spin .6s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+    .stat-card { text-align:center; position:relative; overflow:hidden; }
+    .stat-card::before {
+      content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+      background:radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
+      opacity:0.08; pointer-events:none;
+    }
+    .stat-card:hover::before { opacity:0.14; }
+    .stat-card .stat-num { font-family:'Cormorant Garamond',serif; font-size:36px; margin-top:8px; transition:transform .2s; }
+    .stat-card:hover .stat-num { transform:scale(1.05); }
+    .stat-label { font-size:10px; color:#9A8E80; text-transform:uppercase; letter-spacing:1.5px; font-weight:400; }
 
-    .page{display:none;padding:80px 40px 60px;max-width:1200px;margin:0 auto}
-    .page-hero{padding:32px 0 40px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
-    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
-    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+    .member-row { display:grid; grid-template-columns:2fr 1fr 80px 1fr 100px; align-items:center; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.03); transition:background .15s; }
+    .member-row:hover { background:rgba(58,148,100,.03); }
+    .member-name { font-weight:400; color:#F0EBE3; font-size:14px; }
+    .member-email { font-size:11px; color:#7A6E60; margin-top:2px; }
+    .member-role { font-size:12px; color:#C9B99A; }
+    .member-status { font-size:11px; }
+    .member-title { font-size:12px; color:#9A8E80; }
+    .status-active { color:#3A9464; } .status-inactive { color:#e74c3c; }
 
-    .nav-right-dash{display:flex;align-items:center;gap:20px}
-    .nav-user-name{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
-    .nav-signout-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.06);padding:6px 14px;cursor:pointer;transition:all .4s}
-    .nav-signout-btn:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
+    .add-modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:1000; }
+    .add-modal.open { display:flex; }
+    .add-form { background:#1A1A1A; border:1px solid rgba(255,255,255,.04); padding:32px; width:100%; max-width:480px; }
+    .add-form h2 { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:#F0EBE3; margin-bottom:24px; }
+    .add-form h2 em { color:#C9B99A; }
+    .form-row { margin-bottom:16px; }
+    .form-row label { display:block; font-size:10px; color:#9A8E80; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px; }
+    .form-row input, .form-row select { width:100%; padding:10px 14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:#F0EBE3; font-family:'Outfit',sans-serif; font-size:13px; outline:none; }
+    .form-row input:focus, .form-row select:focus { border-color:rgba(58,148,100,.4); }
+    .form-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:24px; }
+    .btn-cancel { padding:10px 20px; background:none; border:1px solid rgba(255,255,255,.08); color:#9A8E80; font-family:'Outfit',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
+    .btn-save { padding:10px 20px; background:#3A9464; border:none; color:#F0EBE3; font-family:'Outfit',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
+    .btn-save:disabled { opacity:.5; }
 
-    .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
-    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
-    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
-    .btn-secondary{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s}
-    .btn-secondary:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
-    .btn-danger{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#fff;background:rgba(192,57,43,.8);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
-    .btn-danger:hover{background:rgba(192,57,43,1)}
-
-    .back-link{font-family:var(--sans);font-size:11px;font-weight:300;color:rgba(255,255,255,.2);text-decoration:none;transition:color .3s}
-    .back-link:hover{color:var(--cream)}
-
-    /* Stats */
-    .team-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
-    .team-stat{padding:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);text-align:center}
-    .team-stat-val{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--cream)}
-    .team-stat-label{font-family:var(--sans);font-size:9px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-top:4px}
-
-    /* Invitations */
-    .invite-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:24px}
-    .invite-header{padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
-    .invite-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream)}
-    .invite-row{padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.02);display:flex;justify-content:space-between;align-items:center}
-    .invite-row:last-child{border-bottom:none}
-    .invite-email{font-family:var(--sans);font-size:13px;color:var(--cream)}
-    .invite-meta{font-family:var(--sans);font-size:11px;color:var(--silver)}
-    .invite-status{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px}
-    .invite-status.pending{background:rgba(212,160,23,.1);color:#d4a017;border:1px solid rgba(212,160,23,.2)}
-    .invite-status.accepted{background:rgba(46,125,82,.12);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
-
-    /* Team table */
-    .team-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:32px}
-    .team-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center}
-    .team-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream)}
-    .team-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.02);align-items:center;transition:background .3s}
-    .team-row:hover{background:rgba(46,125,82,.02)}
-    .team-row:last-child{border-bottom:none}
-    .team-row.header{border-bottom:1px solid rgba(255,255,255,.04)}
-    .team-row.header span{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#8A8178}
-    .t-name{font-family:var(--sans);font-weight:400;font-size:14px;color:var(--cream)}
-    .t-email{font-family:var(--sans);font-weight:200;font-size:12px;color:#8A8178;margin-top:1px}
-    .t-title{font-family:var(--sans);font-weight:200;font-size:11px;color:var(--silver);margin-top:1px}
-    .t-role{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px;display:inline-block}
-    .t-role.admin{background:rgba(46,125,82,.15);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
-    .t-role.broker{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
-    .t-role.agent{background:rgba(240,235,227,.08);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
-    .t-role.assistant{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
-    .t-status{font-family:var(--sans);font-size:11px;font-weight:300}
-    .t-status.active{color:var(--skr-green-light)}.t-status.active::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--skr-green-light);margin-right:6px}
-    .t-status.inactive{color:#8A8178}.t-status.inactive::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#8A8178;margin-right:6px}
-    .t-actions{display:flex;gap:8px}
-    .t-action{font-family:var(--sans);font-size:9px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.2);background:none;border:1px solid rgba(255,255,255,.04);padding:5px 12px;cursor:pointer;transition:all .3s}
-    .t-action:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
-    .t-action.danger:hover{color:#e74c3c;border-color:rgba(231,76,60,.3)}
-
-    /* Modal */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:24px}
-    .modal-overlay.active{display:flex}
-    .modal{width:100%;max-width:480px;background:var(--charcoal);border:1px solid rgba(255,255,255,.06);padding:40px;position:relative}
-    .modal::after{content:'';position:absolute;bottom:0;left:15%;width:70%;height:1px;background:var(--skr-green);filter:blur(4px);opacity:.3}
-    .modal-title{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--cream);margin-bottom:8px}
-    .modal-desc{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-bottom:28px}
-    .modal .form-group{margin-bottom:18px}
-    .modal .form-label{display:block;font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-bottom:8px}
-    .modal .form-input,.modal .form-select{width:100%;font-family:var(--sans);font-weight:300;font-size:14px;color:var(--light-warm);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:12px 16px;outline:none;transition:border-color .3s}
-    .modal .form-input:focus,.modal .form-select:focus{border-color:var(--skr-green-line)}
-    .modal .form-select{appearance:none;cursor:pointer}
-    .modal .form-select option{background:var(--charcoal);color:var(--cream)}
-    .modal-actions{display:flex;gap:12px;margin-top:28px}
-    .modal-feedback{font-family:var(--sans);font-weight:300;font-size:13px;min-height:20px;margin-top:12px}
-    .modal-feedback.success{color:var(--skr-green-light)}
-    .modal-feedback.error{color:#c0392b}
-
-    .empty{padding:48px 24px;text-align:center}
-    .empty-icon{font-size:32px;margin-bottom:12px;opacity:.4}
-    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
-
-    @media(max-width:768px){
-      .page{padding:80px 20px 40px}
-      .team-stats{grid-template-columns:repeat(2,1fr)}
-      .team-row{grid-template-columns:1fr 1fr auto;gap:8px}
-      .team-row.header span:nth-child(3),.team-row.header span:nth-child(4),.team-row span:nth-child(3),.team-row span:nth-child(4){display:none}
+    @media(max-width:900px) {
+      .member-row { grid-template-columns:1fr 1fr; gap:8px; }
     }
   </style>
 </head>
-<body class="admin-dark">
-
-  <!-- NAV -->
-  <nav id="nav">
-    <a class="nav-logo" href="../../">
-      <img src="../../assets/images/logo-transparent.png" alt="Silver Key Realty">
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="../dashboard/">Dashboard</a>
-      <a href="./" class="active">Team</a>
-      <a href="../permissions/">Permissions</a>
-      <a href="../security/">Security</a>
-      <div class="nav-right-dash">
-        <span class="nav-user-name" id="navUser">Loading…</span>
-        <span class="role-badge" id="navBadge"></span>
-        <button class="nav-signout-btn" id="signOut">Sign Out</button>
+<body>
+  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
+  <div id="skr-main" class="skr-shell" style="display:none">
+    <aside id="skr-sidebar" class="skr-sidebar"></aside>
+    <main class="skr-content">
+      <div class="skr-page-header" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h1 class="skr-page-title">Team <em>Management</em></h1>
+          <p class="skr-page-sub">Add, edit, and manage your team members</p>
+        </div>
+        <button class="skr-btn skr-btn-primary" onclick="document.getElementById('add-modal').classList.add('open')">+ Add Employee</button>
       </div>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
 
-  <!-- Loading -->
-  <div class="dash-loading" id="pageLoading">
-    <div class="dash-spinner"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">
+        <div class="skr-card stat-card" style="--glow:#a78bfa"><div class="stat-label">Total Members</div><div class="stat-num" id="stat-total" style="color:#a78bfa">&mdash;</div></div>
+        <div class="skr-card stat-card" style="--glow:#E8854A"><div class="stat-label">Active</div><div class="stat-num" id="stat-active" style="color:#E8854A">&mdash;</div></div>
+        <div class="skr-card stat-card" style="--glow:#e74c3c"><div class="stat-label">Inactive</div><div class="stat-num" id="stat-inactive" style="color:#e74c3c">&mdash;</div></div>
+        <div class="skr-card stat-card" style="--glow:#3b82f6"><div class="stat-label">Pending Invites</div><div class="stat-num" id="stat-pending" style="color:#3b82f6">&mdash;</div></div>
+      </div>
+
+      <div class="skr-card" style="padding:0;overflow-x:auto">
+        <div class="member-row" style="border-bottom:1px solid rgba(255,255,255,.06);padding:10px 16px">
+          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Name</div>
+          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Role</div>
+          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Status</div>
+          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Title</div>
+          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Actions</div>
+        </div>
+        <div id="team-list"><div style="padding:40px;text-align:center;color:#7A6E60;font-size:13px">Loading team members...</div></div>
+      </div>
+    </main>
   </div>
 
-  <!-- Page -->
-  <div class="page" id="pageContainer">
-    <div class="page-hero">
-      <div>
-        <a href="../dashboard/" class="back-link">← Back to Dashboard</a>
-        <h1>Team <em style="color:var(--champagne)">Management</em></h1>
-        <p>Add, edit, and manage your team members and invitations.</p>
+  <div id="add-modal" class="add-modal">
+    <div class="add-form">
+      <h2>Add <em>Employee</em></h2>
+      <div class="form-row"><label>First Name</label><input id="af-first" placeholder="Dana"></div>
+      <div class="form-row"><label>Last Name</label><input id="af-last" placeholder="Williams"></div>
+      <div class="form-row"><label>Email</label><input id="af-email" type="email" placeholder="dana@silverkeyrealty.llc"></div>
+      <div class="form-row"><label>Title</label><input id="af-title" placeholder="Managing Broker"></div>
+      <div class="form-row"><label>Role</label>
+        <select id="af-role">
+          <option value="">&#8212; Select Role &#8212;</option>
+        </select>
       </div>
-      <button class="btn-primary" id="addEmployeeBtn">+ Add Employee</button>
-    </div>
-
-    <!-- Stats -->
-    <div class="team-stats">
-      <div class="team-stat"><div class="team-stat-val" id="statTotal">—</div><div class="team-stat-label">Total Members</div></div>
-      <div class="team-stat"><div class="team-stat-val" id="statActive">—</div><div class="team-stat-label">Active</div></div>
-      <div class="team-stat"><div class="team-stat-val" id="statInactive">—</div><div class="team-stat-label">Inactive</div></div>
-      <div class="team-stat"><div class="team-stat-val" id="statPending">—</div><div class="team-stat-label">Pending Invites</div></div>
-    </div>
-
-    <!-- Pending Invitations -->
-    <div class="invite-section" id="inviteSection" style="display:none">
-      <div class="invite-header">
-        <span class="invite-title">Pending Invitations</span>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="document.getElementById('add-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-save" id="af-btn" onclick="addEmployee()">Add Employee</button>
       </div>
-      <div id="inviteList"></div>
-    </div>
-
-    <!-- Team Table -->
-    <div class="team-section">
-      <div class="team-header">
-        <span class="team-title">Team Members</span>
-      </div>
-      <div class="team-row header">
-        <span>Name</span>
-        <span>Role</span>
-        <span>Status</span>
-        <span>Title</span>
-        <span>Actions</span>
-      </div>
-      <div id="teamList">
-        <div class="empty"><div class="empty-icon">👥</div><div class="empty-msg">Loading team members…</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Employee Modal -->
-  <div class="modal-overlay" id="addModal">
-    <div class="modal">
-      <div class="modal-title">Add Employee</div>
-      <div class="modal-desc">Send an invitation to join Silver Key Realty. They'll receive an email with next steps.</div>
-      <div class="form-group">
-        <label class="form-label" for="addFirstName">First Name</label>
-        <input class="form-input" type="text" id="addFirstName" placeholder="First name">
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="addLastName">Last Name</label>
-        <input class="form-input" type="text" id="addLastName" placeholder="Last name">
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="addEmail">Email</label>
-        <input class="form-input" type="email" id="addEmail" placeholder="agent@email.com">
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="addRole">Role</label>
-        <select class="form-select" id="addRole"></select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="addTitle">Title (Optional)</label>
-        <input class="form-input" type="text" id="addTitle" placeholder="e.g. Senior Agent">
-      </div>
-      <div class="modal-actions">
-        <button class="btn-primary" id="addSubmit">Send Invitation</button>
-        <button class="btn-secondary" id="addCancel">Cancel</button>
-      </div>
-      <div class="modal-feedback" id="addFeedback"></div>
-    </div>
-  </div>
-
-  <!-- Edit Employee Modal -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal">
-      <div class="modal-title">Edit Employee</div>
-      <div class="modal-desc" id="editDesc">Update role, title, or status.</div>
-      <input type="hidden" id="editMemberId">
-      <div class="form-group">
-        <label class="form-label" for="editRole">Role</label>
-        <select class="form-select" id="editRole"></select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="editTitle">Title</label>
-        <input class="form-input" type="text" id="editTitle" placeholder="e.g. Senior Agent">
-      </div>
-      <div class="modal-actions">
-        <button class="btn-primary" id="editSubmit">Save Changes</button>
-        <button class="btn-secondary" id="editCancel">Cancel</button>
-      </div>
-      <div class="modal-feedback" id="editFeedback"></div>
-    </div>
-  </div>
-
-  <!-- Deactivate Confirmation Modal -->
-  <div class="modal-overlay" id="deactivateModal">
-    <div class="modal">
-      <div class="modal-title">Deactivate Employee</div>
-      <div class="modal-desc" id="deactivateDesc">This will prevent them from logging in. You can reactivate them later.</div>
-      <input type="hidden" id="deactivateMemberId">
-      <div class="modal-actions">
-        <button class="btn-danger" id="deactivateSubmit">Deactivate</button>
-        <button class="btn-secondary" id="deactivateCancel">Cancel</button>
-      </div>
-      <div class="modal-feedback" id="deactivateFeedback"></div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/nav.js"></script>
-  <script src="../../assets/js/admin-auth.js"></script>
-  <script src="/admin/assets/js/skr-auth.js"></script>
-  <script src="../../assets/js/admin-permissions.js"></script>
+  <script src="../../assets/js/skr-auth.js"></script>
   <script>
-  if (!window.SKR_AUTH) {
-    document.getElementById('pageLoading').innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
-  } else {
-    window.SKR_AUTH.guard(function (member, sb) {
-      var loading = document.getElementById('pageLoading');
-      var container = document.getElementById('pageContainer');
-      var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+    window.addEventListener('skr-ready', async function() {
+      await loadRoles();
+      await loadTeam();
+    });
 
-      document.getElementById('navBadge').textContent = (member.role_name || member.role || 'agent').toUpperCase();
-      document.getElementById('navBadge').className = 'role-badge ' + roleSlug;
-      document.getElementById('navUser').textContent = (window.SKR_AUTH.displayName ? window.SKR_AUTH.displayName(member) : ((member.first_name || '') + ' ' + (member.last_name || '')).trim() || member.email || '');
-      document.getElementById('signOut').addEventListener('click', function () { (window.SKR_AUTH.signOut || function () { window.sb && window.sb.auth.signOut(); sessionStorage.removeItem('skr_member'); window.location.href = '/admin/'; })(); });
+    var roles = [];
 
-      loading.style.display = 'none';
-      container.style.display = 'block';
+    async function loadRoles() {
+      var sb = window.SKR_SUPA;
+      var result = await sb.from('skr_roles').select('id, role_name, permission_level').order('permission_level', { ascending: false });
+      roles = result.data || [];
+      var sel = document.getElementById('af-role');
+      sel.innerHTML = '<option value="">&#8212; Select Role &#8212;</option>' + roles.map(function(r) {
+        return '<option value="' + r.id + '">' + r.role_name + ' (Level ' + r.permission_level + ')</option>';
+      }).join('');
+    }
 
-      var SA = window.SKR_AUTH;
-      var roles = [];
-
-    // ── LOAD ROLES FOR DROPDOWNS ──
-    (async function () {
-    try {
-      var rolesRes = await sb.from('skr_roles').select('id, role_name, slug, permission_level');
-      roles = (rolesRes.data || []).map(function (r) {
-        return { id: r.id, name: r.role_name || r.slug || 'agent', slug: (r.slug || r.role_name || 'agent').toLowerCase(), hierarchy_level: r.permission_level || 0 };
-      });
-      var addSel = document.getElementById('addRole');
-      var editSel = document.getElementById('editRole');
-      roles.forEach(function (r) {
-        if (r.hierarchy_level <= 0) return; // skip public
-        var slug = r.slug || (r.name || '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
-        var o1 = document.createElement('option'); o1.value = slug; o1.textContent = r.name; addSel.appendChild(o1);
-        var o2 = document.createElement('option'); o2.value = slug; o2.textContent = r.name; editSel.appendChild(o2);
-      });
-    } catch (e) { console.warn('[SKR] Roles load:', e); }
-
-    // ── LOAD TEAM ──
     async function loadTeam() {
+      var sb = window.SKR_SUPA;
+      var u = window.SKR_USER;
+
+      var result = await sb
+        .from('skr_team_members')
+        .select('id, first_name, last_name, email, title, is_active, role_id, skr_roles!inner(role_name, permission_level)')
+        .eq('tenant_id', u.tenantId)
+        .order('last_name');
+
+      if (result.error) {
+        document.getElementById('team-list').innerHTML = '<div style="padding:20px;color:#e74c3c;font-size:13px">Error loading team: ' + result.error.message + '</div>';
+        return;
+      }
+
+      var members = result.data || [];
+      var total = members.length;
+      var active = members.filter(function(m) { return m.is_active; }).length;
+      var inactive = total - active;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-active').textContent = active;
+      document.getElementById('stat-inactive').textContent = inactive;
+
       try {
-        var teamRes = await sb.from('skr_team_members')
-          .select('id, first_name, last_name, email, role_id, title, is_active, skr_roles(role_name, slug)')
-          .order('first_name', { ascending: true });
-        var members = (teamRes.data || []).map(function (m) {
-          var roleLabel = (m.skr_roles && m.skr_roles.role_name) || 'agent';
-          var roleSlug = ((m.skr_roles && m.skr_roles.slug) || roleLabel).toLowerCase().replace(/[^a-z]/g, '') || 'agent';
-          return {
-            id: m.id,
-            first_name: m.first_name,
-            last_name: m.last_name,
-            email: m.email,
-            title: m.title,
-            is_active: m.is_active,
-            role: roleLabel,
-            role_slug: roleSlug,
-            displayName: ((m.first_name || '') + ' ' + (m.last_name || '')).trim() || m.email || 'Unnamed'
-          };
-        });
-        var active = 0, inactive = 0;
-        if (members && members.length > 0) {
-          var h = '';
-          members.forEach(function (m) {
-            if (m.is_active) active++; else inactive++;
-            var sc = m.is_active ? 'active' : 'inactive', st = m.is_active ? 'Active' : 'Inactive';
-            h += '<div class="team-row">' +
-              '<div><div class="t-name">' + m.displayName + '</div><div class="t-email">' + (m.email || '') + '</div>' + (m.title ? '<div class="t-title">' + m.title + '</div>' : '') + '</div>' +
-              '<div><span class="t-role ' + m.role_slug + '">' + m.role + '</span></div>' +
-              '<div><span class="t-status ' + sc + '">' + st + '</span></div>' +
-              '<div class="t-title-col" style="font-family:var(--sans);font-size:12px;color:var(--silver)">' + (m.title || '—') + '</div>' +
-              '<div class="t-actions">' +
-                '<button class="t-action edit-btn" data-id="' + m.id + '" data-role="' + m.role_slug + '" data-title="' + (m.title || '') + '" data-name="' + m.displayName + '">Edit</button>' +
-                (m.is_active ? '<button class="t-action danger deactivate-btn" data-id="' + m.id + '" data-name="' + m.displayName + '">Deactivate</button>'
-                  : '<button class="t-action reactivate-btn" data-id="' + m.id + '">Reactivate</button>') +
-              '</div></div>';
-          });
-          document.getElementById('teamList').innerHTML = h;
-          bindTeamActions();
-        }
-        document.getElementById('statTotal').textContent = members.length;
-        document.getElementById('statActive').textContent = active;
-        document.getElementById('statInactive').textContent = inactive;
-      } catch (e) { console.warn('[SKR] Team load:', e); }
-    }
-
-    // ── LOAD INVITATIONS ──
-    async function loadInvitations() {
-      try {
-        var invites = await SA.listInvitations();
-        var pending = invites.filter(function (i) { return i.status === 'pending'; });
-        document.getElementById('statPending').textContent = pending.length;
-        if (pending.length > 0) {
-          document.getElementById('inviteSection').style.display = 'block';
-          var h = '';
-          pending.forEach(function (inv) {
-            var d = new Date(inv.created_at).toLocaleDateString();
-            h += '<div class="invite-row"><div><div class="invite-email">' + inv.email + '</div><div class="invite-meta">Sent ' + d + ' · Role: ' + (inv.role_slug || 'agent') + '</div></div><span class="invite-status pending">Pending</span></div>';
-          });
-          document.getElementById('inviteList').innerHTML = h;
-        }
-      } catch (e) { document.getElementById('statPending').textContent = '0'; }
-    }
-
-    await loadTeam();
-    await loadInvitations();
-    })();
-
-    // ── MODAL HELPERS ──
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); clearFeedback(id); }
-    function clearFeedback(modalId) {
-      var fb = document.querySelector('#' + modalId + ' .modal-feedback');
-      if (fb) { fb.textContent = ''; fb.className = 'modal-feedback'; }
-    }
-    function showModalFeedback(modalId, msg, type) {
-      var fb = document.querySelector('#' + modalId + ' .modal-feedback');
-      if (fb) { fb.textContent = msg; fb.className = 'modal-feedback ' + type; }
-    }
-
-    // ── ADD EMPLOYEE ──
-    document.getElementById('addEmployeeBtn').addEventListener('click', function () { openModal('addModal'); });
-    document.getElementById('addCancel').addEventListener('click', function () { closeModal('addModal'); });
-    document.getElementById('addModal').addEventListener('click', function (e) { if (e.target === this) closeModal('addModal'); });
-
-    document.getElementById('addSubmit').addEventListener('click', async function () {
-      var btn = this;
-      var email = document.getElementById('addEmail').value.trim();
-      var firstName = document.getElementById('addFirstName').value.trim();
-      var lastName = document.getElementById('addLastName').value.trim();
-      var roleSlug = document.getElementById('addRole').value;
-      var title = document.getElementById('addTitle').value.trim();
-
-      if (!email) { showModalFeedback('addModal', 'Email is required.', 'error'); return; }
-      if (!firstName) { showModalFeedback('addModal', 'First name is required.', 'error'); return; }
-
-      btn.disabled = true;
-      btn.textContent = 'Sending…';
-
-      var result = await SA.addEmployee({ email: email, first_name: firstName, last_name: lastName, role_slug: roleSlug, title: title });
-
-      if (result.success) {
-        showModalFeedback('addModal', 'Invitation sent to ' + email, 'success');
-        document.getElementById('addEmail').value = '';
-        document.getElementById('addFirstName').value = '';
-        document.getElementById('addLastName').value = '';
-        document.getElementById('addTitle').value = '';
-        setTimeout(function () { closeModal('addModal'); loadTeam(); loadInvitations(); }, 1200);
-      } else {
-        showModalFeedback('addModal', result.error || 'Failed to add employee.', 'error');
+        var invResult = await sb.from('skr_invitations').select('id', { count: 'exact', head: true }).eq('tenant_id', u.tenantId).eq('status', 'pending');
+        document.getElementById('stat-pending').textContent = invResult.count || 0;
+      } catch (e) {
+        document.getElementById('stat-pending').textContent = '0';
       }
-      btn.disabled = false;
-      btn.textContent = 'Send Invitation';
-    });
 
-    // ── EDIT EMPLOYEE ──
-    function bindTeamActions() {
-      document.querySelectorAll('.edit-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          document.getElementById('editMemberId').value = this.dataset.id;
-          document.getElementById('editDesc').textContent = 'Editing ' + this.dataset.name;
-          document.getElementById('editRole').value = this.dataset.role;
-          document.getElementById('editTitle').value = this.dataset.title;
-          openModal('editModal');
-        });
-      });
-      document.querySelectorAll('.deactivate-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          document.getElementById('deactivateMemberId').value = this.dataset.id;
-          document.getElementById('deactivateDesc').textContent = 'Deactivate ' + this.dataset.name + '? This will prevent them from logging in. You can reactivate them later.';
-          openModal('deactivateModal');
-        });
-      });
-      document.querySelectorAll('.reactivate-btn').forEach(function (btn) {
-        btn.addEventListener('click', async function () {
-          this.textContent = '…';
-          await SA.reactivateEmployee(this.dataset.id);
-          loadTeam();
-        });
-      });
+      if (members.length === 0) {
+        document.getElementById('team-list').innerHTML = '<div style="padding:40px;text-align:center;color:#7A6E60;font-size:13px">No team members found. Add your first employee.</div>';
+        return;
+      }
+
+      document.getElementById('team-list').innerHTML = members.map(function(m) {
+        var roleName = m.skr_roles ? m.skr_roles.role_name : 'Unknown';
+        var fullName = (m.first_name || '') + ' ' + (m.last_name || '');
+        return '<div class="member-row">'
+          + '<div><div class="member-name">' + fullName + '</div><div class="member-email">' + (m.email || '') + '</div></div>'
+          + '<div class="member-role">' + roleName + '</div>'
+          + '<div class="member-status ' + (m.is_active ? 'status-active' : 'status-inactive') + '">' + (m.is_active ? '&#9679; Active' : '&#9675; Inactive') + '</div>'
+          + '<div class="member-title">' + (m.title || '&#8212;') + '</div>'
+          + '<div><button onclick="toggleActive(\'' + m.id + '\',' + (!m.is_active) + ')" style="padding:4px 10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(255,255,255,.08);background:none;color:#9A8E80;cursor:pointer;font-family:\'Outfit\',sans-serif">'
+          + (m.is_active ? 'Deactivate' : 'Activate') + '</button></div>'
+          + '</div>';
+      }).join('');
     }
 
-    document.getElementById('editCancel').addEventListener('click', function () { closeModal('editModal'); });
-    document.getElementById('editModal').addEventListener('click', function (e) { if (e.target === this) closeModal('editModal'); });
+    async function addEmployee() {
+      var first = document.getElementById('af-first').value.trim();
+      var last = document.getElementById('af-last').value.trim();
+      var email = document.getElementById('af-email').value.trim();
+      var title = document.getElementById('af-title').value.trim();
+      var roleId = document.getElementById('af-role').value;
 
-    document.getElementById('editSubmit').addEventListener('click', async function () {
-      var btn = this;
-      var memberId = document.getElementById('editMemberId').value;
-      var roleSlug = document.getElementById('editRole').value;
-      var title = document.getElementById('editTitle').value.trim();
+      if (!first || !email || !roleId) { alert('First name, email, and role are required.'); return; }
 
-      btn.disabled = true;
-      btn.textContent = 'Saving…';
+      var btn = document.getElementById('af-btn');
+      btn.textContent = 'Adding...'; btn.disabled = true;
 
-      var result = await SA.editEmployee({ team_member_id: memberId, role_slug: roleSlug, title: title });
+      var sb = window.SKR_SUPA;
+      var u = window.SKR_USER;
 
-      if (result.success) {
-        showModalFeedback('editModal', 'Changes saved.', 'success');
-        setTimeout(function () { closeModal('editModal'); loadTeam(); }, 800);
-      } else {
-        showModalFeedback('editModal', result.error || 'Failed to update.', 'error');
+      var result = await sb.from('skr_team_members').insert({
+        tenant_id: u.tenantId,
+        first_name: first,
+        last_name: last,
+        email: email,
+        title: title || null,
+        role_id: roleId,
+        is_active: true,
+      });
+
+      if (result.error) {
+        alert('Error: ' + result.error.message);
+        btn.textContent = 'Add Employee'; btn.disabled = false;
+        return;
       }
-      btn.disabled = false;
-      btn.textContent = 'Save Changes';
-    });
 
-    // ── DEACTIVATE ──
-    document.getElementById('deactivateCancel').addEventListener('click', function () { closeModal('deactivateModal'); });
-    document.getElementById('deactivateModal').addEventListener('click', function (e) { if (e.target === this) closeModal('deactivateModal'); });
+      document.getElementById('add-modal').classList.remove('open');
+      btn.textContent = 'Add Employee'; btn.disabled = false;
+      document.getElementById('af-first').value = '';
+      document.getElementById('af-last').value = '';
+      document.getElementById('af-email').value = '';
+      document.getElementById('af-title').value = '';
+      document.getElementById('af-role').value = '';
+      await loadTeam();
+    }
 
-    document.getElementById('deactivateSubmit').addEventListener('click', async function () {
-      var btn = this;
-      var memberId = document.getElementById('deactivateMemberId').value;
-      btn.disabled = true;
-      btn.textContent = 'Deactivating…';
-
-      var result = await SA.deactivateEmployee(memberId);
-      if (result.success) {
-        showModalFeedback('deactivateModal', 'Employee deactivated.', 'success');
-        setTimeout(function () { closeModal('deactivateModal'); loadTeam(); }, 800);
-      } else {
-        showModalFeedback('deactivateModal', result.error || 'Failed to deactivate.', 'error');
-      }
-      btn.disabled = false;
-      btn.textContent = 'Deactivate';
-    });
-    });
-  }
+    async function toggleActive(id, newState) {
+      var sb = window.SKR_SUPA;
+      await sb.from('skr_team_members').update({ is_active: newState }).eq('id', id);
+      await loadTeam();
+    }
   </script>
 </body>
 </html>

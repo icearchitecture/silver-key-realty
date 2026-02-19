@@ -1,722 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workspace — Silver Key Realty</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Key Realty — Workspace</title>
   <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/tokens.css"><link rel="stylesheet" href="../../assets/css/base.css"><link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    :root{--bg:#111;--card:#1A1A1A;--cream:#F0EBE3;--silver:#8A8178;--muted:#5A5550;--green:#3A9464;--green-hover:#2E7D52;--gold:#C9B99A;--border:rgba(255,255,255,.06);--border-light:rgba(255,255,255,.08);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh}
+    .ws-main { display:flex; flex:1; overflow:hidden; }
 
-    /* Top nav bar */
-    .ws-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border)}
-    .ws-nav-left{display:flex;align-items:center;gap:16px}
-    .ws-logo{font-family:var(--serif);font-size:20px;color:var(--gold);letter-spacing:2px;text-decoration:none}
-    .ws-logo .k{color:var(--green)}
-    .ws-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream)}
-    .ws-nav-right{display:flex;align-items:center;gap:12px}
-    .ws-back{font-size:11px;color:var(--silver);text-decoration:none;letter-spacing:1px;text-transform:uppercase;padding:8px 16px;border:1px solid var(--border);transition:all .2s}
-    .ws-back:hover{color:var(--cream);border-color:var(--border-light)}
-    .ws-notif-badge{position:relative;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);cursor:pointer;font-size:14px}
-    .ws-notif-badge .count{position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
+    .ws-canvas { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .ws-canvas-scroll { flex:1; overflow-y:auto; padding:40px 24px 24px; display:flex; justify-content:center; }
+    .ws-canvas-inner { width:100%; max-width:680px; }
 
-    /* Tab bar */
-    .ws-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 24px}
-    .ws-tab{padding:14px 24px;font-size:12px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
-    .ws-tab:hover{color:var(--silver)}
-    .ws-tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:400}
-    .ws-tab .badge{font-size:9px;background:rgba(255,255,255,.04);padding:1px 6px;margin-left:6px;color:var(--muted)}
+    .ws-welcome { text-align:center; padding:80px 0; }
+    .ws-welcome-title { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:rgba(255,255,255,.5); letter-spacing:-0.5px; }
+    .ws-welcome-title strong { font-weight:600; color:#F0EBE3; }
+    .ws-welcome-sub { font-size:13px; color:rgba(255,255,255,.2); font-style:italic; margin-top:20px; transition:opacity .4s; }
 
-    /* Main content area */
-    .ws-main{padding:24px;max-width:1200px;margin:0 auto}
-    .ws-panel{display:none}
-    .ws-panel.active{display:block}
+    .ws-tabs { display:flex; gap:2px; background:rgba(255,255,255,.02); border-radius:6px; padding:2px; }
+    .ws-tab { padding:5px 14px; border-radius:4px; font-size:11px; font-weight:500; color:rgba(255,255,255,.3); cursor:pointer; background:none; border:none; font-family:'Outfit',sans-serif; transition:all .12s; }
+    .ws-tab:hover { color:rgba(255,255,255,.6); }
+    .ws-tab.active { background:rgba(255,255,255,.06); color:#F0EBE3; }
 
-    /* Toolbar */
-    .ws-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
-    .ws-search{flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--cream);font-family:var(--sans);font-size:13px;outline:none}
-    .ws-search:focus{border-color:rgba(58,148,100,.3)}
-    .ws-search::placeholder{color:var(--muted)}
-    .ws-btn{padding:10px 20px;font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;border:none}
-    .ws-btn-primary{background:var(--green);color:#fff}
-    .ws-btn-primary:hover{background:var(--green-hover)}
-    .ws-btn-secondary{background:rgba(255,255,255,.02);color:var(--silver);border:1px solid var(--border)}
-    .ws-btn-secondary:hover{color:var(--cream);border-color:var(--border-light)}
+    .ws-cmd { padding:12px 16px; border-top:1px solid rgba(255,255,255,.04); background:rgba(17,17,17,.9); backdrop-filter:blur(16px); display:flex; align-items:center; gap:8px; }
+    .ws-cmd-input { flex:1; padding:12px 48px 12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.05); background:rgba(26,26,26,.8); font-family:'Outfit',sans-serif; font-size:14px; color:#F0EBE3; outline:none; transition:all .2s; }
+    .ws-cmd-input:focus { border-color:rgba(58,148,100,.25); box-shadow:0 0 0 3px rgba(58,148,100,.05); background:#1A1A1A; }
+    .ws-cmd-input::placeholder { color:rgba(255,255,255,.2); }
+    .ws-cmd-send { width:34px; height:34px; border-radius:8px; border:none; cursor:pointer; background:linear-gradient(135deg,#3A9464,#C9B99A); display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .ws-cmd-send:hover { filter:brightness(1.1); transform:scale(1.05); }
+    .ws-cmd-send svg { width:14px; height:14px; }
 
-    /* Notes list */
-    .ws-notes-list{display:flex;flex-direction:column;gap:8px}
-    .ws-note{padding:18px 20px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .15s}
-    .ws-note:hover{border-color:var(--border-light);background:#1E1E1E}
-    .ws-note-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-    .ws-note-title{font-size:14px;font-weight:400;color:var(--cream)}
-    .ws-note-meta{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:8px}
-    .ws-note-preview{font-size:12px;font-weight:300;color:var(--silver);line-height:1.5;max-height:40px;overflow:hidden}
-    .ws-note-tags{display:flex;gap:4px;margin-top:8px}
-    .ws-tag{font-size:9px;padding:2px 8px;background:rgba(58,148,100,.06);border:1px solid rgba(58,148,100,.15);color:var(--green);letter-spacing:.5px}
-    .ws-entity-badge{font-size:9px;padding:2px 8px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.15);color:#a78bfa;letter-spacing:.5px;text-transform:uppercase}
-    .ws-pin{color:var(--gold);font-size:12px}
+    .ws-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:24px; }
+    .ws-chip { padding:6px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.05); background:rgba(26,26,26,.5); font-size:12px; color:rgba(255,255,255,.35); cursor:pointer; font-family:'Outfit',sans-serif; transition:all .12s; }
+    .ws-chip:hover { border-color:rgba(255,255,255,.12); color:rgba(255,255,255,.6); background:#1A1A1A; }
 
-    /* Files grid */
-    .ws-files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-    .ws-file{padding:20px 16px;background:var(--card);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .15s}
-    .ws-file:hover{border-color:var(--border-light)}
-    .ws-file-icon{font-size:32px;margin-bottom:8px}
-    .ws-file-name{font-size:12px;font-weight:400;color:var(--cream);margin-bottom:4px;word-break:break-all}
-    .ws-file-meta{font-size:10px;color:var(--muted)}
+    .ws-right { width:0; background:rgba(17,17,17,.9); backdrop-filter:blur(12px); border-left:1px solid rgba(255,255,255,.04); overflow:hidden; transition:width .25s cubic-bezier(.23,1,.32,1); flex-shrink:0; display:flex; flex-direction:column; }
+    .ws-right.open { width:260px; }
+    .ws-right-header { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.04); display:flex; justify-content:space-between; align-items:center; white-space:nowrap; }
+    .ws-right-title { font-size:11px; font-weight:500; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:1.5px; }
+    .ws-right-close { width:22px; height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none; background:none; color:rgba(255,255,255,.25); font-size:12px; }
+    .ws-right-body { flex:1; overflow-y:auto; padding:10px; }
+    .ws-rp-card { padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,.04); background:rgba(26,26,26,.5); margin-bottom:6px; cursor:pointer; transition:all .12s; }
+    .ws-rp-card:hover { border-color:rgba(255,255,255,.08); background:#1A1A1A; }
+    .ws-rp-type { font-size:9px; color:rgba(255,255,255,.2); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+    .ws-rp-name { font-size:12px; font-weight:500; color:rgba(255,255,255,.6); margin-bottom:2px; }
+    .ws-rp-desc { font-size:10.5px; color:rgba(255,255,255,.25); line-height:1.4; }
 
-    /* Artifacts list */
-    .ws-artifact{padding:18px 20px;background:var(--card);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;transition:all .15s;cursor:pointer}
-    .ws-artifact:hover{border-color:var(--border-light)}
-    .ws-artifact-info{flex:1}
-    .ws-artifact-title{font-size:14px;font-weight:400;color:var(--cream);margin-bottom:4px}
-    .ws-artifact-desc{font-size:11px;color:var(--silver)}
-    .ws-artifact-status{font-size:8px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px}
-    .ws-status-draft{color:#d4a017;background:rgba(212,160,23,.08);border:1px solid rgba(212,160,23,.2)}
-    .ws-status-review{color:#3b82f6;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)}
-    .ws-status-approved{color:#3A9464;background:rgba(58,148,100,.08);border:1px solid rgba(58,148,100,.2)}
-    .ws-status-published{color:#a78bfa;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2)}
+    .ws-doc { display:none; }
+    .ws-doc.visible { display:block; }
+    .ws-doc h1 { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300; color:#F0EBE3; line-height:1.3; margin-bottom:8px; }
+    .ws-doc h2 { font-size:16px; font-weight:500; color:#C9B99A; margin-top:28px; margin-bottom:10px; }
+    .ws-doc p { font-size:14px; color:rgba(255,255,255,.6); line-height:1.8; margin-bottom:14px; }
+    .ws-doc .sub { font-size:12px; color:rgba(255,255,255,.3); font-style:italic; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,.04); }
 
-    /* Empty state */
-    .ws-empty{text-align:center;padding:60px 20px}
-    .ws-empty-icon{font-size:48px;margin-bottom:16px;opacity:.3}
-    .ws-empty-title{font-family:var(--serif);font-size:22px;color:var(--cream);margin-bottom:8px}
-    .ws-empty-text{font-size:13px;color:var(--silver);line-height:1.6;margin-bottom:20px}
+    .ws-topbar { height:42px; display:flex; align-items:center; padding:0 16px; border-bottom:1px solid rgba(255,255,255,.04); background:rgba(17,17,17,.85); backdrop-filter:blur(16px); flex-shrink:0; gap:10px; }
+    .ws-topname { font-size:13px; font-weight:500; color:rgba(255,255,255,.6); cursor:pointer; padding:3px 8px; border-radius:4px; }
+    .ws-topname:hover { background:rgba(255,255,255,.04); }
+    .ws-topbar-spacer { flex:1; }
+    .ws-status { display:flex; align-items:center; gap:5px; font-size:11px; color:rgba(255,255,255,.25); }
+    .ws-status-dot { width:5px; height:5px; border-radius:50%; background:#3A9464; box-shadow:0 0 4px rgba(58,148,100,.4); }
+    .ws-toggle-right { padding:5px 12px; border-radius:6px; font-size:11px; font-weight:500; cursor:pointer; border:1px solid rgba(255,255,255,.06); background:none; color:rgba(255,255,255,.4); font-family:'Outfit',sans-serif; transition:all .12s; }
+    .ws-toggle-right:hover { border-color:rgba(255,255,255,.12); color:rgba(255,255,255,.7); }
 
-    /* Modal */
-    .ws-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;align-items:center;justify-content:center;padding:20px}
-    .ws-modal.open{display:flex}
-    .ws-modal-backdrop{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
-    .ws-modal-card{position:relative;background:var(--card);border:1px solid var(--border);width:100%;max-width:640px;max-height:85vh;overflow-y:auto;padding:32px;z-index:1}
-    .ws-modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer}
-    .ws-modal-close:hover{color:var(--cream)}
-    .ws-modal-title{font-family:var(--serif);font-size:22px;color:var(--cream);margin-bottom:20px}
-    .ws-field{margin-bottom:16px}
-    .ws-field label{display:block;font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);margin-bottom:6px}
-    .ws-field input,.ws-field select,.ws-field textarea{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border-light);color:var(--cream);font-family:var(--sans);font-size:14px;outline:none}
-    .ws-field input:focus,.ws-field select:focus,.ws-field textarea:focus{border-color:rgba(58,148,100,.4)}
-    .ws-field textarea{min-height:200px;resize:vertical;line-height:1.7}
-    .ws-field select{cursor:pointer}
-    .ws-field-row{display:flex;gap:12px}
-    .ws-field-row .ws-field{flex:1}
-
-    /* Upload zone */
-    .ws-upload-zone{border:2px dashed var(--border);padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s}
-    .ws-upload-zone:hover,.ws-upload-zone.dragover{border-color:var(--green);background:rgba(58,148,100,.03)}
-    .ws-upload-zone-icon{font-size:36px;margin-bottom:8px;opacity:.4}
-    .ws-upload-zone-text{font-size:13px;color:var(--silver)}
-    .ws-upload-zone-hint{font-size:10px;color:var(--muted);margin-top:4px}
-
-    /* Loading */
-    .ws-loading{text-align:center;padding:40px}
-    .ws-spinner{width:20px;height:20px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--green);border-radius:50%;animation:wsSpin .6s linear infinite;margin:0 auto 12px}
-    @keyframes wsSpin{to{transform:rotate(360deg)}}
-
-    /* Responsive */
-    @media(max-width:768px){
-      .ws-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
-      .ws-tab{padding:12px 16px;font-size:11px;white-space:nowrap}
-      .ws-main{padding:16px}
-      .ws-toolbar{flex-direction:column}
-      .ws-search{width:100%}
-      .ws-files-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-      .ws-field-row{flex-direction:column}
-      .ws-modal-card{padding:24px 20px}
-    }
+    .ws-mesh { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+    .ws-orb { position:absolute; border-radius:50%; filter:blur(120px); animation:wsdrift 20s ease-in-out infinite; }
+    .wo1 { width:350px; height:350px; background:rgba(58,148,100,.03); top:-8%; left:-3%; }
+    .wo2 { width:280px; height:280px; background:rgba(201,185,154,.02); bottom:-5%; right:5%; animation-delay:-8s; animation-duration:24s; }
+    @keyframes wsdrift { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(15px,-10px) scale(1.03)} }
   </style>
 </head>
 <body>
-  <!-- NAV -->
-  <div class="ws-nav">
-    <div class="ws-nav-left">
-      <a href="/admin/dashboard/" class="ws-logo">S<span class="k">K</span>R</a>
-      <span class="ws-title">Workspace</span>
-    </div>
-    <div class="ws-nav-right">
-      <div class="ws-notif-badge" onclick="window.location.href='/admin/notifications/'" title="Notifications">
-        &#128276;<span class="count" id="notifCount" style="display:none">0</span>
-      </div>
-      <a href="/admin/dashboard/" class="ws-back">&larr; Dashboard</a>
-    </div>
-  </div>
+  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
+  <div id="skr-main" class="skr-shell" style="display:none">
+    <aside id="skr-sidebar" class="skr-sidebar"></aside>
 
-  <!-- TABS -->
-  <div class="ws-tabs">
-    <div class="ws-tab active" data-tab="notes" onclick="switchTab('notes')">&#128221; Notes <span class="badge" id="notesCount">0</span></div>
-    <div class="ws-tab" data-tab="files" onclick="switchTab('files')">&#128193; Files <span class="badge" id="filesCount">0</span></div>
-    <div class="ws-tab" data-tab="artifacts" onclick="switchTab('artifacts')">&#128196; Artifacts <span class="badge" id="artifactsCount">0</span></div>
-    <div class="ws-tab" data-tab="templates" onclick="switchTab('templates')">&#128203; Templates <span class="badge" id="templatesCount">0</span></div>
-  </div>
+    <div class="ws-main" style="position:relative">
+      <div class="ws-mesh"><div class="ws-orb wo1"></div><div class="ws-orb wo2"></div></div>
 
-  <!-- MAIN CONTENT -->
-  <div class="ws-main">
-
-    <!-- NOTES PANEL -->
-    <div class="ws-panel active" id="panelNotes">
-      <div class="ws-toolbar">
-        <input type="text" class="ws-search" id="notesSearch" placeholder="Search notes..." oninput="filterNotes()">
-        <button class="ws-btn ws-btn-primary" onclick="openNoteModal()">+ New Note</button>
-      </div>
-      <div id="notesList" class="ws-notes-list">
-        <div class="ws-loading"><div class="ws-spinner"></div><div style="font-size:12px;color:var(--silver)">Loading notes...</div></div>
-      </div>
-    </div>
-
-    <!-- FILES PANEL -->
-    <div class="ws-panel" id="panelFiles">
-      <div class="ws-toolbar">
-        <input type="text" class="ws-search" id="filesSearch" placeholder="Search files..." oninput="filterFiles()">
-        <button class="ws-btn ws-btn-primary" onclick="openUploadModal()">+ Upload File</button>
-      </div>
-      <div id="filesList" class="ws-files-grid">
-        <div class="ws-loading"><div class="ws-spinner"></div><div style="font-size:12px;color:var(--silver)">Loading files...</div></div>
-      </div>
-    </div>
-
-    <!-- ARTIFACTS PANEL -->
-    <div class="ws-panel" id="panelArtifacts">
-      <div class="ws-toolbar">
-        <input type="text" class="ws-search" id="artifactsSearch" placeholder="Search artifacts..." oninput="filterArtifacts()">
-        <button class="ws-btn ws-btn-primary" onclick="openArtifactModal()">+ New Artifact</button>
-      </div>
-      <div id="artifactsList">
-        <div class="ws-loading"><div class="ws-spinner"></div><div style="font-size:12px;color:var(--silver)">Loading artifacts...</div></div>
-      </div>
-    </div>
-
-    <!-- TEMPLATES PANEL -->
-    <div class="ws-panel" id="panelTemplates">
-      <div class="ws-toolbar">
-        <input type="text" class="ws-search" id="templatesSearch" placeholder="Search templates...">
-        <button class="ws-btn ws-btn-primary" onclick="openTemplateModal()">+ New Template</button>
-      </div>
-      <div id="templatesList">
-        <div class="ws-loading"><div class="ws-spinner"></div><div style="font-size:12px;color:var(--silver)">Loading templates...</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- NEW NOTE MODAL -->
-  <div class="ws-modal" id="noteModal">
-    <div class="ws-modal-backdrop" onclick="closeModal('noteModal')"></div>
-    <div class="ws-modal-card">
-      <button class="ws-modal-close" onclick="closeModal('noteModal')">&times;</button>
-      <div class="ws-modal-title" id="noteModalTitle">New Note</div>
-      <input type="hidden" id="noteEditId">
-      <div class="ws-field">
-        <label>Title</label>
-        <input type="text" id="noteTitle" placeholder="Note title...">
-      </div>
-      <div class="ws-field-row">
-        <div class="ws-field">
-          <label>Link to</label>
-          <select id="noteEntityType">
-            <option value="standalone">Standalone</option>
-            <option value="deal">Deal</option>
-            <option value="lead">Lead</option>
-            <option value="property">Property</option>
-            <option value="contact">Contact</option>
-            <option value="showing">Showing</option>
-          </select>
+      <div class="ws-canvas" style="position:relative;z-index:1">
+        <div class="ws-topbar">
+          <span class="ws-topname" id="ws-docname">Untitled</span>
+          <div class="ws-tabs">
+            <button class="ws-tab active">Document</button>
+            <button class="ws-tab">Note</button>
+            <button class="ws-tab">Template</button>
+          </div>
+          <div class="ws-topbar-spacer"></div>
+          <div class="ws-status"><span class="ws-status-dot"></span> Ready</div>
+          <button class="ws-toggle-right" onclick="document.getElementById('ws-right').classList.toggle('open')">&#9672; Drive</button>
         </div>
-        <div class="ws-field">
-          <label>Color</label>
-          <select id="noteColor">
-            <option value="">None</option>
-            <option value="red">&#128308; Red</option>
-            <option value="orange">&#128992; Orange</option>
-            <option value="yellow">&#128993; Yellow</option>
-            <option value="green">&#128994; Green</option>
-            <option value="blue">&#128309; Blue</option>
-            <option value="purple">&#128995; Purple</option>
-          </select>
+
+        <div class="ws-canvas-scroll" id="ws-scroll">
+          <div class="ws-canvas-inner">
+            <div id="ws-welcome" class="ws-welcome">
+              <div class="ws-welcome-title"><strong>Your workspace.</strong></div>
+              <div class="ws-welcome-sub" id="ws-affirmation">Build documents, send messages, manage your day.</div>
+
+              <div class="ws-chips" style="justify-content:center;margin-top:32px">
+                <button class="ws-chip" onclick="usePrompt('Draft a CMA report for a 3-bed in Pontiac')">&#128202; CMA Report</button>
+                <button class="ws-chip" onclick="usePrompt('Write a buyer consultation follow-up email')">&#9993; Follow-up Email</button>
+                <button class="ws-chip" onclick="usePrompt('Create a deal memo for a new listing')">&#128203; Deal Memo</button>
+                <button class="ws-chip" onclick="usePrompt('Draft a client welcome letter')">&#129309; Welcome Letter</button>
+                <button class="ws-chip" onclick="usePrompt('Summarize our active deals and next steps')">&#11041; Deal Summary</button>
+              </div>
+            </div>
+
+            <div id="ws-doc" class="ws-doc"></div>
+          </div>
+        </div>
+
+        <div class="ws-cmd">
+          <div style="flex:1;position:relative">
+            <input type="text" class="ws-cmd-input" id="ws-input" placeholder="Ask anything or describe what to create..." autocomplete="off">
+          </div>
+          <button class="ws-cmd-send" onclick="handleSend()">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
       </div>
-      <div class="ws-field">
-        <label>Content (Markdown)</label>
-        <textarea id="noteContent" placeholder="Write your note here... Markdown supported."></textarea>
-      </div>
-      <div class="ws-field-row">
-        <div class="ws-field" style="flex:0 0 auto">
-          <label>&nbsp;</label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--silver);text-transform:none;letter-spacing:0">
-            <input type="checkbox" id="notePinned"> Pin to top
-          </label>
+
+      <div class="ws-right" id="ws-right">
+        <div class="ws-right-header">
+          <div class="ws-right-title">Suggestions</div>
+          <button class="ws-right-close" onclick="document.getElementById('ws-right').classList.remove('open')">&#10005;</button>
         </div>
-        <div class="ws-field" style="flex:0 0 auto">
-          <label>&nbsp;</label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--silver);text-transform:none;letter-spacing:0">
-            <input type="checkbox" id="notePrivate"> Private (only you)
-          </label>
+        <div class="ws-right-body">
+          <div class="ws-rp-card">
+            <div class="ws-rp-type">Quick Action</div>
+            <div class="ws-rp-name">Draft Client Email</div>
+            <div class="ws-rp-desc">Compose a branded email to any lead or contact</div>
+          </div>
+          <div class="ws-rp-card">
+            <div class="ws-rp-type">Template</div>
+            <div class="ws-rp-name">Buyer Consultation Prep</div>
+            <div class="ws-rp-desc">Pre-meeting checklist and talking points</div>
+          </div>
+          <div class="ws-rp-card">
+            <div class="ws-rp-type">From Quam Drive</div>
+            <div class="ws-rp-name">Recent Uploads</div>
+            <div class="ws-rp-desc">View files uploaded in the last 7 days</div>
+          </div>
+          <div class="ws-rp-card">
+            <div class="ws-rp-type">Intelligence</div>
+            <div class="ws-rp-name">Deal Health Check</div>
+            <div class="ws-rp-desc">AI analysis of your active deals' completeness</div>
+          </div>
+          <div class="ws-rp-card">
+            <div class="ws-rp-type">Quick Action</div>
+            <div class="ws-rp-name">Schedule Showing</div>
+            <div class="ws-rp-desc">Set up a property viewing for a lead</div>
+          </div>
         </div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
-        <button class="ws-btn ws-btn-secondary" onclick="closeModal('noteModal')">Cancel</button>
-        <button class="ws-btn ws-btn-primary" id="noteSaveBtn" onclick="saveNote()">Save Note</button>
       </div>
     </div>
   </div>
 
-  <!-- UPLOAD FILE MODAL -->
-  <div class="ws-modal" id="uploadModal">
-    <div class="ws-modal-backdrop" onclick="closeModal('uploadModal')"></div>
-    <div class="ws-modal-card">
-      <button class="ws-modal-close" onclick="closeModal('uploadModal')">&times;</button>
-      <div class="ws-modal-title">Upload File</div>
-      <div class="ws-upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-        <div class="ws-upload-zone-icon">&#128228;</div>
-        <div class="ws-upload-zone-text">Click to select or drag files here</div>
-        <div class="ws-upload-zone-hint">PDF, DOCX, XLSX, JPG, PNG — up to 25MB</div>
-        <input type="file" id="fileInput" style="display:none" multiple onchange="handleFileSelect(event)">
-      </div>
-      <div id="uploadQueue" style="margin-top:16px"></div>
-      <div class="ws-field" style="margin-top:16px">
-        <label>Link to</label>
-        <select id="fileEntityType">
-          <option value="standalone">Standalone</option>
-          <option value="deal">Deal</option>
-          <option value="lead">Lead</option>
-          <option value="property">Property</option>
-        </select>
-      </div>
-      <div class="ws-field">
-        <label>Description (optional)</label>
-        <input type="text" id="fileDescription" placeholder="What is this file for?">
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
-        <button class="ws-btn ws-btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
-        <button class="ws-btn ws-btn-primary" id="uploadBtn" onclick="uploadFiles()" disabled>Upload</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- NEW ARTIFACT MODAL -->
-  <div class="ws-modal" id="artifactModal">
-    <div class="ws-modal-backdrop" onclick="closeModal('artifactModal')"></div>
-    <div class="ws-modal-card">
-      <button class="ws-modal-close" onclick="closeModal('artifactModal')">&times;</button>
-      <div class="ws-modal-title">New Artifact</div>
-      <div class="ws-field">
-        <label>Title</label>
-        <input type="text" id="artifactTitle" placeholder="Artifact title...">
-      </div>
-      <div class="ws-field-row">
-        <div class="ws-field">
-          <label>Type</label>
-          <select id="artifactType">
-            <option value="custom_report">Custom Report</option>
-            <option value="cma_report">CMA Report</option>
-            <option value="net_sheet">Net Sheet</option>
-            <option value="buyer_guide">Buyer Guide</option>
-            <option value="offer_letter">Offer Letter</option>
-            <option value="marketing_flyer">Marketing Flyer</option>
-            <option value="email_draft">Email Draft</option>
-            <option value="compliance_report">Compliance Report</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="ws-field">
-          <label>Link to</label>
-          <select id="artifactEntityType">
-            <option value="standalone">Standalone</option>
-            <option value="deal">Deal</option>
-            <option value="lead">Lead</option>
-            <option value="property">Property</option>
-          </select>
-        </div>
-      </div>
-      <div class="ws-field">
-        <label>Content (Markdown)</label>
-        <textarea id="artifactContent" placeholder="Write artifact content..."></textarea>
-      </div>
-      <div class="ws-field">
-        <label>Description</label>
-        <input type="text" id="artifactDescription" placeholder="Brief description...">
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
-        <button class="ws-btn ws-btn-secondary" onclick="closeModal('artifactModal')">Cancel</button>
-        <button class="ws-btn ws-btn-primary" onclick="saveArtifact()">Create Artifact</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SUPABASE + LOGIC -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../../assets/js/admin-config.js"></script>
+  <script src="../../assets/js/skr-auth.js"></script>
   <script>
-    // Pull config from existing admin-config.js or paste directly
-    var SUPABASE_URL = window.SKR_CONFIG?.SUPABASE_URL || 'https://onhwgirbmoxaquxpkfie.supabase.co';
-    var SUPABASE_ANON_KEY = window.SKR_CONFIG?.SUPABASE_ANON_KEY || '';
-    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var wsInput = document.getElementById('ws-input');
+    wsInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } });
 
-    var currentUser = null;
-    var allNotes = [];
-    var allFiles = [];
-    var allArtifacts = [];
-    var allTemplates = [];
-    var selectedFiles = [];
+    function usePrompt(t) { wsInput.value = t; wsInput.focus(); }
 
-    // ─── INIT ───
-    (async function init() {
-      var { data: { session } } = await sb.auth.getSession();
-      if (!session) { window.location.href = '/admin/'; return; }
+    var affirmations = [
+      "Build documents, send messages, manage your day.",
+      "Your command center for everything Silver Key.",
+      "Start typing to create something new.",
+      "Every great deal starts with clear communication.",
+      "Your workspace. Your workflow. Your way."
+    ];
+    var aIdx = 0;
+    setInterval(function() {
+      var el = document.getElementById('ws-affirmation');
+      if (!el) return;
+      el.style.opacity = 0;
+      setTimeout(function() { aIdx = (aIdx + 1) % affirmations.length; el.textContent = affirmations[aIdx]; el.style.opacity = 1; }, 350);
+    }, 5000);
 
-      // Get team member info
-      var { data: member } = await sb.from('skr_team_members')
-        .select('id, tenant_id, first_name, last_name, role_id')
-        .eq('auth_user_id', session.user.id)
-        .eq('is_active', true)
-        .maybeSingle();
+    async function handleSend() {
+      var prompt = wsInput.value.trim();
+      if (!prompt) return;
 
-      if (!member) { window.location.href = '/admin/portal/'; return; }
-      currentUser = member;
+      document.getElementById('ws-welcome').style.display = 'none';
+      var doc = document.getElementById('ws-doc');
+      doc.classList.add('visible');
+      document.getElementById('ws-docname').textContent = prompt.substring(0, 40) + (prompt.length > 40 ? '...' : '');
+      wsInput.value = '';
+      wsInput.placeholder = 'Continue editing — add a section, revise, expand...';
 
-      // Load notification count
-      var { data: unread } = await sb.rpc('skr_get_unread_count', { p_team_member_id: member.id });
-      if (unread && unread > 0) {
-        document.getElementById('notifCount').textContent = unread;
-        document.getElementById('notifCount').style.display = 'block';
-      }
+      doc.innerHTML = '<div style="text-align:center;padding:60px 0"><div style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(58,148,100,.15);border-top-color:#3A9464;animation:spin .8s linear infinite;margin:0 auto 16px"></div><div style="font-size:14px;color:rgba(255,255,255,.4)">Building your document...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>';
 
-      // Load all data
-      await Promise.all([loadNotes(), loadFiles(), loadArtifacts(), loadTemplates()]);
-    })();
+      await new Promise(function(r) { setTimeout(r, 2000); });
 
-    // ─── TAB SWITCHING ───
-    function switchTab(tab) {
-      document.querySelectorAll('.ws-tab').forEach(function(t) { t.classList.remove('active'); });
-      document.querySelectorAll('.ws-panel').forEach(function(p) { p.classList.remove('active'); });
-      document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
-      document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+      doc.innerHTML = '<h1>' + prompt + '</h1>'
+        + '<div class="sub">Generated document — Silver Key Realty Workspace</div>'
+        + '<p>This workspace will connect to the Anthropic API to generate real documents, emails, CMA reports, deal memos, and client communications. The AI will use context from your leads, deals, properties, and team data to produce accurate, branded content.</p>'
+        + '<h2>What This Will Do</h2>'
+        + '<p>When the API integration is live, typing a prompt like "' + prompt + '" will generate a complete, professionally formatted document using your actual Silver Key data. Every document is saved to Quam Drive with custody chain tracking.</p>'
+        + '<h2>Next Steps</h2>'
+        + '<p>Connect the Anthropic API key in Vercel environment variables (ANTHROPIC_API_KEY), and this workspace becomes a fully functional AI document generator with real-time data access.</p>';
+
+      document.getElementById('ws-scroll').scrollTop = 0;
+
+      setTimeout(function() { document.getElementById('ws-right').classList.add('open'); }, 800);
     }
 
-    // ─── MODALS ───
-    function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
-
-    function openNoteModal(note) {
-      document.getElementById('noteEditId').value = note ? note.id : '';
-      document.getElementById('noteModalTitle').textContent = note ? 'Edit Note' : 'New Note';
-      document.getElementById('noteTitle').value = note ? note.title || '' : '';
-      document.getElementById('noteContent').value = note ? note.content || '' : '';
-      document.getElementById('noteEntityType').value = note ? note.entity_type || 'standalone' : 'standalone';
-      document.getElementById('noteColor').value = note ? note.color_label || '' : '';
-      document.getElementById('notePinned').checked = note ? note.is_pinned : false;
-      document.getElementById('notePrivate').checked = note ? note.is_private : false;
-      openModal('noteModal');
-    }
-
-    function openUploadModal() { selectedFiles = []; document.getElementById('uploadQueue').innerHTML = ''; document.getElementById('uploadBtn').disabled = true; openModal('uploadModal'); }
-    function openArtifactModal() { openModal('artifactModal'); }
-    function openTemplateModal() { /* TODO */ }
-
-    // ─── LOAD NOTES ───
-    async function loadNotes() {
-      var { data, error } = await sb.from('skr_workspace_notes')
-        .select('*, author:skr_team_members!author_id(first_name, last_name)')
-        .eq('tenant_id', currentUser.tenant_id)
-        .order('is_pinned', { ascending: false })
-        .order('updated_at', { ascending: false })
-        .limit(100);
-
-      allNotes = data || [];
-      document.getElementById('notesCount').textContent = allNotes.length;
-      renderNotes(allNotes);
-    }
-
-    function renderNotes(notes) {
-      var el = document.getElementById('notesList');
-      if (!notes.length) {
-        el.innerHTML = '<div class="ws-empty"><div class="ws-empty-icon">&#128221;</div><div class="ws-empty-title">No notes yet</div><div class="ws-empty-text">Create your first note to get started. Notes can be linked to deals, leads, properties, or standalone.</div><button class="ws-btn ws-btn-primary" onclick="openNoteModal()">+ New Note</button></div>';
-        return;
-      }
-      el.innerHTML = notes.map(function(n) {
-        var authorName = n.author ? n.author.first_name + ' ' + (n.author.last_name || '') : 'Unknown';
-        var preview = (n.content || '').substring(0, 120).replace(/[#*_`]/g, '');
-        var timeAgo = getTimeAgo(n.updated_at);
-        return '<div class="ws-note" onclick="openNoteModal(' + JSON.stringify(n).replace(/"/g, '&quot;') + ')">'
-          + '<div class="ws-note-header">'
-          + '<div class="ws-note-title">' + (n.is_pinned ? '<span class="ws-pin">&#128204; </span>' : '') + escapeHtml(n.title || 'Untitled') + '</div>'
-          + '<div class="ws-note-meta">' + (n.entity_type && n.entity_type !== 'standalone' ? '<span class="ws-entity-badge">' + n.entity_type + '</span>' : '') + '<span>' + timeAgo + '</span></div>'
-          + '</div>'
-          + '<div class="ws-note-preview">' + escapeHtml(preview) + '</div>'
-          + '<div class="ws-note-meta" style="margin-top:6px">' + authorName + (n.word_count ? ' · ' + n.word_count + ' words' : '') + '</div>'
-          + '</div>';
-      }).join('');
-    }
-
-    function filterNotes() {
-      var q = document.getElementById('notesSearch').value.toLowerCase();
-      var filtered = q ? allNotes.filter(function(n) {
-        return (n.title || '').toLowerCase().includes(q) || (n.content || '').toLowerCase().includes(q);
-      }) : allNotes;
-      renderNotes(filtered);
-    }
-
-    // ─── SAVE NOTE ───
-    async function saveNote() {
-      var editId = document.getElementById('noteEditId').value;
-      var title = document.getElementById('noteTitle').value.trim();
-      var content = document.getElementById('noteContent').value.trim();
-      if (!content) { alert('Content is required.'); return; }
-
-      var noteData = {
-        tenant_id: currentUser.tenant_id,
-        author_id: currentUser.id,
-        title: title || null,
-        content: content,
-        entity_type: document.getElementById('noteEntityType').value,
-        color_label: document.getElementById('noteColor').value || null,
-        is_pinned: document.getElementById('notePinned').checked,
-        is_private: document.getElementById('notePrivate').checked,
-        word_count: content.split(/\s+/).length,
-        last_edited_by: currentUser.id,
-      };
-
-      var btn = document.getElementById('noteSaveBtn');
-      btn.disabled = true; btn.textContent = 'Saving...';
-
-      if (editId) {
-        var { error } = await sb.from('skr_workspace_notes').update(noteData).eq('id', editId);
-        if (error) { alert('Error: ' + error.message); btn.disabled = false; btn.textContent = 'Save Note'; return; }
-      } else {
-        var { error } = await sb.from('skr_workspace_notes').insert(noteData);
-        if (error) { alert('Error: ' + error.message); btn.disabled = false; btn.textContent = 'Save Note'; return; }
-      }
-
-      btn.disabled = false; btn.textContent = 'Save Note';
-      closeModal('noteModal');
-      await loadNotes();
-    }
-
-    // ─── LOAD FILES ───
-    async function loadFiles() {
-      var { data, error } = await sb.from('skr_workspace_files')
-        .select('*, uploader:skr_team_members!uploaded_by(first_name)')
-        .eq('tenant_id', currentUser.tenant_id)
-        .eq('is_archived', false)
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      allFiles = data || [];
-      document.getElementById('filesCount').textContent = allFiles.length;
-      renderFiles(allFiles);
-    }
-
-    function renderFiles(files) {
-      var el = document.getElementById('filesList');
-      if (!files.length) {
-        el.innerHTML = '<div class="ws-empty" style="grid-column:1/-1"><div class="ws-empty-icon">&#128193;</div><div class="ws-empty-title">No files uploaded</div><div class="ws-empty-text">Upload documents, photos, contracts, and more. All files are stored securely with tenant isolation.</div><button class="ws-btn ws-btn-primary" onclick="openUploadModal()">+ Upload File</button></div>';
-        return;
-      }
-      el.innerHTML = files.map(function(f) {
-        var icon = getFileIcon(f.file_extension);
-        var size = formatFileSize(f.file_size_bytes);
-        return '<div class="ws-file">'
-          + '<div class="ws-file-icon">' + icon + '</div>'
-          + '<div class="ws-file-name">' + escapeHtml(f.file_name) + '</div>'
-          + '<div class="ws-file-meta">' + size + ' · ' + getTimeAgo(f.created_at) + '</div>'
-          + '</div>';
-      }).join('');
-    }
-
-    function filterFiles() {
-      var q = document.getElementById('filesSearch').value.toLowerCase();
-      var filtered = q ? allFiles.filter(function(f) { return f.file_name.toLowerCase().includes(q); }) : allFiles;
-      renderFiles(filtered);
-    }
-
-    // ─── FILE UPLOAD ───
-    function handleFileSelect(event) {
-      selectedFiles = Array.from(event.target.files);
-      var queue = document.getElementById('uploadQueue');
-      queue.innerHTML = selectedFiles.map(function(f) {
-        return '<div style="padding:8px 0;font-size:12px;color:var(--silver);border-bottom:1px solid var(--border)">' + f.name + ' <span style="color:var(--muted)">(' + formatFileSize(f.size) + ')</span></div>';
-      }).join('');
-      document.getElementById('uploadBtn').disabled = selectedFiles.length === 0;
-    }
-
-    async function uploadFiles() {
-      if (!selectedFiles.length) return;
-      var btn = document.getElementById('uploadBtn');
-      btn.disabled = true; btn.textContent = 'Uploading...';
-
-      for (var i = 0; i < selectedFiles.length; i++) {
-        var file = selectedFiles[i];
-        var ext = file.name.split('.').pop().toLowerCase();
-        var bucket = 'documents';
-        if (['jpg','jpeg','png','gif','webp'].includes(ext)) bucket = 'property-photos';
-        if (['pdf'].includes(ext)) bucket = 'documents';
-
-        var path = currentUser.tenant_id + '/workspace/' + Date.now() + '-' + file.name;
-
-        var { error: uploadError } = await sb.storage.from(bucket).upload(path, file);
-        if (uploadError) { console.error('Upload error:', uploadError); continue; }
-
-        await sb.from('skr_workspace_files').insert({
-          tenant_id: currentUser.tenant_id,
-          uploaded_by: currentUser.id,
-          file_name: file.name,
-          file_extension: ext,
-          mime_type: file.type,
-          file_size_bytes: file.size,
-          storage_bucket: bucket,
-          storage_path: path,
-          entity_type: document.getElementById('fileEntityType').value,
-          description: document.getElementById('fileDescription').value || null,
-        });
-      }
-
-      btn.disabled = false; btn.textContent = 'Upload';
-      closeModal('uploadModal');
-      await loadFiles();
-    }
-
-    // Drag and drop
-    var uploadZone = document.getElementById('uploadZone');
-    if (uploadZone) {
-      uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); uploadZone.classList.add('dragover'); });
-      uploadZone.addEventListener('dragleave', function() { uploadZone.classList.remove('dragover'); });
-      uploadZone.addEventListener('drop', function(e) {
-        e.preventDefault(); uploadZone.classList.remove('dragover');
-        selectedFiles = Array.from(e.dataTransfer.files);
-        handleFileSelect({ target: { files: e.dataTransfer.files } });
-      });
-    }
-
-    // ─── LOAD ARTIFACTS ───
-    async function loadArtifacts() {
-      var { data, error } = await sb.from('skr_workspace_artifacts')
-        .select('*, creator:skr_team_members!created_by(first_name, last_name)')
-        .eq('tenant_id', currentUser.tenant_id)
-        .order('updated_at', { ascending: false })
-        .limit(100);
-
-      allArtifacts = data || [];
-      document.getElementById('artifactsCount').textContent = allArtifacts.length;
-      renderArtifacts(allArtifacts);
-    }
-
-    function renderArtifacts(artifacts) {
-      var el = document.getElementById('artifactsList');
-      if (!artifacts.length) {
-        el.innerHTML = '<div class="ws-empty"><div class="ws-empty-icon">&#128196;</div><div class="ws-empty-title">No artifacts yet</div><div class="ws-empty-text">Create CMA reports, net sheets, offer letters, and more. Artifacts have version history and approval workflows.</div><button class="ws-btn ws-btn-primary" onclick="openArtifactModal()">+ New Artifact</button></div>';
-        return;
-      }
-      el.innerHTML = artifacts.map(function(a) {
-        var statusClass = 'ws-status-' + a.status;
-        var creator = a.creator ? a.creator.first_name + ' ' + (a.creator.last_name || '') : '';
-        return '<div class="ws-artifact">'
-          + '<div class="ws-artifact-info">'
-          + '<div class="ws-artifact-title">' + escapeHtml(a.title) + '</div>'
-          + '<div class="ws-artifact-desc">' + escapeHtml(a.artifact_type.replace(/_/g, ' ')) + ' · v' + a.version_number + ' · ' + creator + ' · ' + getTimeAgo(a.updated_at) + '</div>'
-          + '</div>'
-          + '<span class="ws-artifact-status ' + statusClass + '">' + a.status + '</span>'
-          + '</div>';
-      }).join('');
-    }
-
-    function filterArtifacts() {
-      var q = document.getElementById('artifactsSearch').value.toLowerCase();
-      var filtered = q ? allArtifacts.filter(function(a) { return a.title.toLowerCase().includes(q); }) : allArtifacts;
-      renderArtifacts(filtered);
-    }
-
-    // ─── SAVE ARTIFACT ───
-    async function saveArtifact() {
-      var title = document.getElementById('artifactTitle').value.trim();
-      var content = document.getElementById('artifactContent').value.trim();
-      if (!title || !content) { alert('Title and content are required.'); return; }
-
-      var { data, error } = await sb.from('skr_workspace_artifacts').insert({
-        tenant_id: currentUser.tenant_id,
-        created_by: currentUser.id,
-        title: title,
-        artifact_type: document.getElementById('artifactType').value,
-        content: content,
-        entity_type: document.getElementById('artifactEntityType').value,
-        description: document.getElementById('artifactDescription').value || null,
-        status: 'draft',
-      }).select().single();
-
-      if (error) { alert('Error: ' + error.message); return; }
-
-      // Create initial version
-      if (data) {
-        await sb.from('skr_artifact_versions').insert({
-          artifact_id: data.id,
-          version_number: 1,
-          content: content,
-          change_summary: 'Initial creation',
-          changed_by: currentUser.id,
-          word_count: content.split(/\s+/).length,
-        });
-      }
-
-      closeModal('artifactModal');
-      await loadArtifacts();
-    }
-
-    // ─── LOAD TEMPLATES ───
-    async function loadTemplates() {
-      var { data, error } = await sb.from('skr_artifact_templates')
-        .select('*')
-        .or('tenant_id.eq.' + currentUser.tenant_id + ',tenant_id.is.null')
-        .eq('is_active', true)
-        .order('usage_count', { ascending: false });
-
-      allTemplates = data || [];
-      document.getElementById('templatesCount').textContent = allTemplates.length;
-      renderTemplates(allTemplates);
-    }
-
-    function renderTemplates(templates) {
-      var el = document.getElementById('templatesList');
-      if (!templates.length) {
-        el.innerHTML = '<div class="ws-empty"><div class="ws-empty-icon">&#128203;</div><div class="ws-empty-title">No templates yet</div><div class="ws-empty-text">Templates are reusable document patterns for offers, disclosures, marketing, and more.</div></div>';
-        return;
-      }
-      el.innerHTML = templates.map(function(t) {
-        return '<div class="ws-artifact">'
-          + '<div class="ws-artifact-info">'
-          + '<div class="ws-artifact-title">' + (t.is_system ? '&#128274; ' : '') + escapeHtml(t.name) + '</div>'
-          + '<div class="ws-artifact-desc">' + t.category.replace(/_/g, ' ') + ' · ' + t.output_format.toUpperCase() + ' · used ' + t.usage_count + ' times</div>'
-          + '</div>'
-          + '<span class="ws-artifact-status ws-status-published">template</span>'
-          + '</div>';
-      }).join('');
-    }
-
-    // ─── HELPERS ───
-    function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
-    function getTimeAgo(dateStr) {
-      if (!dateStr) return '';
-      var diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
-      if (diff < 60) return 'just now';
-      if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-      if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
-      return new Date(dateStr).toLocaleDateString();
-    }
-    function formatFileSize(bytes) {
-      if (!bytes) return '0 B';
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-    function getFileIcon(ext) {
-      var icons = { pdf:'&#128196;', doc:'&#128196;', docx:'&#128196;', xls:'&#128202;', xlsx:'&#128202;', jpg:'&#128247;', jpeg:'&#128247;', png:'&#128247;', gif:'&#128247;', zip:'&#128230;', csv:'&#128202;' };
-      return icons[(ext || '').toLowerCase()] || '&#128196;';
-    }
-
-    // Close on Escape
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.ws-modal.open').forEach(function(m) { m.classList.remove('open'); });
-        document.body.style.overflow = '';
-      }
+    window.addEventListener('skr-ready', function() {
+      // Workspace is ready
     });
   </script>
 </body>
