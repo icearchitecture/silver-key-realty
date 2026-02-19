@@ -9,13 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/tokens.css">
-  <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/nav.css">
-  <link rel="stylesheet" href="assets/css/hero.css">
-  <link rel="stylesheet" href="assets/css/sections.css">
-  <link rel="stylesheet" href="assets/css/responsive.css">
-  <link rel="stylesheet" href="assets/css/home-dark.css">
+  <link rel="stylesheet" href="assets/css/tokens.css?v=2">
+  <link rel="stylesheet" href="assets/css/base.css?v=2">
+  <link rel="stylesheet" href="assets/css/nav.css?v=2">
+  <link rel="stylesheet" href="assets/css/hero.css?v=2">
+  <link rel="stylesheet" href="assets/css/sections.css?v=2">
+  <link rel="stylesheet" href="assets/css/responsive.css?v=2">
+  <link rel="stylesheet" href="assets/css/home-dark.css?v=2">
 </head>
 <body class="home-dark">
 
@@ -178,7 +178,7 @@
   })();
 
   var selectedRole = null;
-  var _loginModalHTML = '<div class="login-modal-backdrop" onclick="closeLoginModal()"></div><div class="login-modal-card"><button class="login-modal-close" onclick="closeLoginModal()">&times;</button><div class="login-step active" id="loginStep1"><div class="login-modal-brand">SKR</div><div class="login-modal-title">How would you like to get started?</div><div class="login-modal-subtitle">Select your role and we\'ll personalize your experience.</div><div class="login-roles"><button class="login-role" onclick="selectRole(\'buyer\')"><span class="login-role-icon">&#127968;</span><span class="login-role-name">I\'m Buying</span><span class="login-role-desc">Find your next home</span></button><button class="login-role" onclick="selectRole(\'seller\')"><span class="login-role-icon">&#128196;</span><span class="login-role-name">I\'m Selling</span><span class="login-role-desc">List your property</span></button><button class="login-role" onclick="selectRole(\'investor\')"><span class="login-role-icon">&#128200;</span><span class="login-role-name">I\'m Investing</span><span class="login-role-desc">Acquire assets</span></button><button class="login-role" onclick="selectRole(\'renter\')"><span class="login-role-icon">&#128205;</span><span class="login-role-name">I\'m Renting</span><span class="login-role-desc">Find a space</span></button><button class="login-role" onclick="selectRole(\'agent\')"><span class="login-role-icon">&#127919;</span><span class="login-role-name">I\'m an Agent</span><span class="login-role-desc">Join the team</span></button><button class="login-role login-role-employee" onclick="window.location.href=\'/admin/\'"><span class="login-role-icon">&#128274;</span><span class="login-role-name">Employee Portal</span><span class="login-role-desc">Team sign in</span></button></div></div><div class="login-step" id="loginStep2"><button class="login-back" onclick="showLoginStep(1)">&larr; Back</button><div class="login-modal-title" id="loginStep2Title">Sign in to continue</div><div class="login-modal-subtitle">Choose how you\'d like to sign in.</div><div class="login-auth-options"><button class="login-auth-btn" onclick="signInWithGoogle()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg><span>Continue with Google</span></button><button class="login-auth-btn" onclick="signInWithMicrosoft()"><svg width="20" height="20" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg><span>Continue with Microsoft</span></button><div class="login-auth-divider"><span>or</span></div><button class="login-auth-btn" onclick="showEmailForm()"><span>&#9993;</span><span>Sign in with Email</span></button></div><div class="login-email-form" id="loginEmailForm" style="display:none"><input type="email" id="loginEmailInput" placeholder="Enter your email" class="login-input"><button class="login-submit-btn" onclick="sendMagicLink()">Send Magic Link</button><div class="login-email-note">We\'ll email you a secure link to sign in — no password needed.</div></div><div class="login-auth-footer">By continuing, you agree to Silver Key Realty\'s terms of service.</div></div><div class="login-step" id="loginStep3"><div style="text-align:center; padding: 20px 0;"><div style="font-size:40px; margin-bottom:16px;">&#9993;&#65039;</div><div class="login-modal-title">Check your inbox</div><div class="login-modal-subtitle" id="loginSentEmail">We sent a link to your email.</div><div style="margin-top:24px;"><button class="login-back" onclick="showLoginStep(2)">Try a different method</button></div></div></div></div>';
+  var _loginModalHTML = '<div class="login-modal-backdrop" onclick="closeLoginModal()"></div><div class="login-modal-card"><button class="login-modal-close" onclick="closeLoginModal()">&times;</button><div class="login-step active" id="loginStep1"><div class="login-modal-brand">SKR</div><div class="login-modal-title">How would you like to get started?</div><div class="login-modal-subtitle">Select your role and we\'ll personalize your experience.</div><div class="login-roles"><button class="login-role" onclick="selectRole(\'buyer\')"><span class="login-role-icon">&#127968;</span><span class="login-role-name">I\'m Buying</span><span class="login-role-desc">Find your next home</span></button><button class="login-role" onclick="selectRole(\'seller\')"><span class="login-role-icon">&#128196;</span><span class="login-role-name">I\'m Selling</span><span class="login-role-desc">List your property</span></button><button class="login-role" onclick="selectRole(\'investor\')"><span class="login-role-icon">&#128200;</span><span class="login-role-name">I\'m Investing</span><span class="login-role-desc">Acquire assets</span></button><button class="login-role" onclick="selectRole(\'renter\')"><span class="login-role-icon">&#128205;</span><span class="login-role-name">I\'m Renting</span><span class="login-role-desc">Find a space</span></button><button class="login-role" onclick="selectRole(\'agent\')"><span class="login-role-icon">&#127919;</span><span class="login-role-name">I\'m an Agent</span><span class="login-role-desc">Join the team</span></button><button class="login-role login-role-employee" onclick="selectRole(\'employee\')"><span class="login-role-icon">&#128274;</span><span class="login-role-name">Employee Portal</span><span class="login-role-desc">Team sign in</span></button></div></div><div class="login-step" id="loginStep2"><button class="login-back" onclick="showLoginStep(1)">&larr; Back</button><div class="login-modal-title" id="loginStep2Title">Sign in to continue</div><div class="login-modal-subtitle">Choose how you\'d like to sign in.</div><div class="login-auth-options"><button class="login-auth-btn login-auth-entra" id="entraBtn" style="display:none;" onclick="signInWithEntraID()"><svg width="20" height="20" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg><span>Sign in with Entra ID (SSO)</span></button><button class="login-auth-btn" onclick="signInWithGoogle()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg><span>Continue with Google</span></button><button class="login-auth-btn" onclick="signInWithMicrosoft()"><svg width="20" height="20" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#F25022"/><rect x="11" y="1" width="9" height="9" fill="#7FBA00"/><rect x="1" y="11" width="9" height="9" fill="#00A4EF"/><rect x="11" y="11" width="9" height="9" fill="#FFB900"/></svg><span>Continue with Microsoft</span></button><div class="login-auth-divider"><span>or</span></div><button class="login-auth-btn" onclick="showEmailForm()"><span>&#9993;</span><span>Sign in with Email</span></button></div><div class="login-email-form" id="loginEmailForm" style="display:none"><input type="email" id="loginEmailInput" placeholder="Enter your email" class="login-input"><button class="login-submit-btn" onclick="sendMagicLink()">Send Magic Link</button><div class="login-email-note">We\'ll email you a secure link to sign in — no password needed.</div></div><div class="login-auth-footer">By continuing, you agree to Silver Key Realty\'s terms of service.</div></div><div class="login-step" id="loginStep3"><div style="text-align:center; padding: 20px 0;"><div style="font-size:40px; margin-bottom:16px;">&#9993;&#65039;</div><div class="login-modal-title">Check your inbox</div><div class="login-modal-subtitle" id="loginSentEmail">We sent a link to your email.</div><div style="margin-top:24px;"><button class="login-back" onclick="showLoginStep(2)">Try a different method</button></div></div></div></div>';
 
   function openLoginModal() {
     var existing = document.getElementById('loginModal');
@@ -222,11 +222,16 @@
       seller: 'Sign in as a Seller',
       investor: 'Sign in as an Investor',
       renter: 'Sign in as a Renter',
-      agent: 'Sign in as an Agent'
+      agent: 'Sign in as an Agent',
+      employee: 'Employee Sign In'
     };
     var el = document.getElementById('loginStep2Title');
     if (el) el.textContent = titles[role] || 'Sign in to continue';
     showLoginStep(2);
+    var entraBtn = document.getElementById('entraBtn');
+    if (entraBtn) {
+      entraBtn.style.display = (role === 'employee' || role === 'agent') ? 'flex' : 'none';
+    }
   }
 
   function showEmailForm() {
@@ -248,6 +253,17 @@
     var { error } = await sb.auth.signInWithOAuth({
       provider: 'azure',
       options: { redirectTo: window.location.origin + '/admin/' }
+    });
+    if (error) alert('Sign in failed: ' + error.message);
+  }
+
+  async function signInWithEntraID() {
+    var { error } = await sb.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        redirectTo: window.location.origin + '/admin/',
+        scopes: 'email openid profile'
+      }
     });
     if (error) alert('Sign in failed: ' + error.message);
   }
