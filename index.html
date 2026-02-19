@@ -204,7 +204,7 @@
   </footer>
 
   <!-- Login Modal -->
-  <div class="login-modal" id="loginModal">
+  <div class="login-modal" id="loginModal" style="display:none !important;">
     <div class="login-modal-backdrop" onclick="closeLoginModal()"></div>
     <div class="login-modal-card">
       <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
@@ -302,14 +302,22 @@
   var selectedRole = null;
 
   function openLoginModal() {
-    document.getElementById('loginModal').classList.add('open');
+    var modal = document.getElementById('loginModal');
+    if (modal) {
+      modal.style.cssText = 'display:flex !important; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.85); align-items:center; justify-content:center;';
+      modal.classList.add('open');
+    }
     document.body.classList.add('modal-open');
     showLoginStep(1);
     if (typeof closeMobileMenu === 'function') closeMobileMenu();
   }
 
   function closeLoginModal() {
-    document.getElementById('loginModal').classList.remove('open');
+    var modal = document.getElementById('loginModal');
+    if (modal) {
+      modal.style.cssText = 'display:none !important;';
+      modal.classList.remove('open');
+    }
     document.body.classList.remove('modal-open');
   }
 
