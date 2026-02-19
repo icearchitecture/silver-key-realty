@@ -154,8 +154,9 @@ nav.scrolled .nav-logo img {
 }
 
 /* ── MOBILE MENU OVERLAY ── */
+/* Default: ALWAYS hidden. JS toggles style.display directly. */
 .mobile-menu {
-  display: none !important;
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -163,27 +164,26 @@ nav.scrolled .nav-logo img {
   height: 100%;
   background: #111;
   z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  flex-direction: column;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 768px) {
-  .mobile-menu.open {
-    display: flex !important;
-    opacity: 1;
-    visibility: visible;
-  }
+/* When open class is added AND display:flex is set by JS */
+.mobile-menu.open {
+  opacity: 1;
+  visibility: visible;
 }
 
+/* DESKTOP: Force hidden no matter what */
 @media (min-width: 769px) {
   .mobile-menu,
-  .mobile-menu.open {
+  .mobile-menu.open,
+  #mobileMenu {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
+    pointer-events: none !important;
   }
 }
 

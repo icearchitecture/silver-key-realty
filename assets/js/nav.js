@@ -27,6 +27,7 @@
       if (isOpen) {
         closeMobileMenu();
       } else {
+        mobileMenu.style.display = 'flex';
         mobileMenu.classList.add('open');
         toggle.classList.add('active');
         document.body.classList.add('menu-open');
@@ -57,7 +58,10 @@
 function closeMobileMenu() {
   var mobileMenu = document.getElementById('mobileMenu');
   var navToggle = document.getElementById('navToggle');
-  if (mobileMenu) mobileMenu.classList.remove('open');
+  if (mobileMenu) {
+    mobileMenu.style.display = 'none';
+    mobileMenu.classList.remove('open');
+  }
   if (navToggle) navToggle.classList.remove('active');
   document.body.classList.remove('menu-open');
 }
