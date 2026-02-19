@@ -268,9 +268,39 @@ Click into each template below, replace the Subject and Body.
 
 ---
 
+## STEP 3: Add Pathway Columns to skr_leads (if not already present)
+
+Run this SQL to add the new pathway intake columns:
+
+```sql
+ALTER TABLE skr_leads ADD COLUMN IF NOT EXISTS pathway TEXT DEFAULT 'general';
+ALTER TABLE skr_leads ADD COLUMN IF NOT EXISTS intake_data JSONB DEFAULT '{}';
+
+COMMENT ON COLUMN skr_leads.pathway IS 'Pathway type: buyer, seller, investor, renter, agent, general';
+COMMENT ON COLUMN skr_leads.intake_data IS 'Pathway-specific intake form data as JSON';
+
+SELECT 'PATHWAY COLUMNS ADDED' AS status;
+```
+
+---
+
+## STEP 4: Create documents-incoming Storage Bucket
+
+In Supabase Dashboard > Storage:
+
+1. Click "New bucket"
+2. Name: `documents-incoming`
+3. Public: **No** (private bucket)
+4. File size limit: 10MB
+5. Allowed MIME types: `application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png`
+
+---
+
 ## DONE CHECKLIST
 
 - [ ] Run notifications SQL in Supabase SQL Editor
+- [ ] Run pathway columns SQL in Supabase SQL Editor
+- [ ] Create documents-incoming storage bucket
 - [ ] Paste Magic Link template
 - [ ] Paste Confirm Sign Up template
 - [ ] Paste Reset Password template

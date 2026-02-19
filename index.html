@@ -58,28 +58,28 @@
       <h2>Tell us who you are. We'll show you <em>where you belong.</em></h2>
     </div>
     <div class="home-pw-grid">
-      <a class="home-pw reveal" href="buyer/">
+      <a class="home-pw reveal" href="/pathways/buyer/">
         <div class="home-pw-num">01</div>
         <div class="home-pw-label">I'm Buying</div>
         <h3>Purchasing <em>a Home</em></h3>
         <p>Your next chapter starts with understanding, not searching. Education first, then curation — matched to the life you're building.</p>
         <div class="home-pw-enter">Buyer Experience <span class="arrow">→</span></div>
       </a>
-      <a class="home-pw reveal" href="seller/">
+      <a class="home-pw reveal" href="/pathways/seller/">
         <div class="home-pw-num">02</div>
         <div class="home-pw-label">I'm Selling</div>
         <h3>Presenting <em>a Property</em></h3>
         <p>Your property deserves more than a listing. We position it within a curated network designed for maximum value and the right buyer.</p>
         <div class="home-pw-enter">Seller Experience <span class="arrow">→</span></div>
       </a>
-      <a class="home-pw reveal" href="investor/">
+      <a class="home-pw reveal" href="/pathways/investor/">
         <div class="home-pw-num">03</div>
         <div class="home-pw-label">I'm Investing</div>
         <h3>Acquiring <em>an Asset</em></h3>
         <p>Lifestyle-architected properties generate compound returns. Lots, investment properties, and partnerships — evaluated through three dimensions.</p>
         <div class="home-pw-enter">Investor Experience <span class="arrow">→</span></div>
       </a>
-      <a class="home-pw reveal" href="rentals/">
+      <a class="home-pw reveal" href="/pathways/renter/">
         <div class="home-pw-num">04</div>
         <div class="home-pw-label">I'm Exploring</div>
         <h3>Renting <em>a Space</em></h3>
@@ -217,6 +217,25 @@
   function selectRole(role) {
     selectedRole = role;
     localStorage.setItem('skr_selected_role', role);
+
+    var pathwayRoutes = {
+      buyer: '/pathways/buyer/',
+      seller: '/pathways/seller/',
+      investor: '/pathways/investor/',
+      renter: '/pathways/renter/',
+      agent: '/pathways/agent/'
+    };
+
+    if (pathwayRoutes[role]) {
+      window.location.href = pathwayRoutes[role];
+      return;
+    }
+
+    if (role === 'employee') {
+      window.location.href = '/admin/';
+      return;
+    }
+
     var titles = {
       buyer: 'Sign in as a Buyer',
       seller: 'Sign in as a Seller',

@@ -12,41 +12,74 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     body { background:#111; color:#F0EBE3; font-family:'Outfit',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
 
-    .login-card { width:100%; max-width:420px; padding:48px 40px; background:#0D0D0D; border:1px solid rgba(255,255,255,.04); }
+    .login-container {
+      max-width:420px; width:100%; margin:0 auto; padding:48px 32px;
+      background:#0D0D0D; border:1px solid rgba(255,255,255,.04); text-align:center;
+    }
 
-    .login-brand { text-align:center; margin-bottom:36px; }
-    .login-brand h1 { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:#F0EBE3; }
-    .login-brand h1 em { color:#C9B99A; }
-    .login-brand p { font-size:11px; font-weight:300; color:#7A6E60; margin-top:6px; letter-spacing:1px; text-transform:uppercase; }
+    .login-logo { font-family:Georgia,serif; font-size:22px; color:#F0EBE3; margin-bottom:32px; }
+    .login-logo em { color:#C9B99A; }
 
-    .login-form { display:flex; flex-direction:column; gap:16px; }
+    .login-accent { border-top:2px solid #3A9464; width:40px; margin:0 auto 24px; }
 
-    .login-input { width:100%; padding:12px 16px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:#F0EBE3; font-family:'Outfit',sans-serif; font-size:14px; font-weight:300; outline:none; transition:border-color .3s; }
-    .login-input:focus { border-color:rgba(58,148,100,.4); }
-    .login-input::placeholder { color:#7A6E60; }
+    .login-title {
+      font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300;
+      color:#F0EBE3; margin-bottom:6px;
+    }
 
-    .login-btn { width:100%; padding:14px; font-family:'Outfit',sans-serif; font-size:12px; font-weight:400; letter-spacing:2px; text-transform:uppercase; border:none; cursor:pointer; transition:all .3s; }
-    .login-btn-primary { background:#3A9464; color:#F0EBE3; }
-    .login-btn-primary:hover { background:#2d7a50; }
-    .login-btn-primary:disabled { opacity:.5; cursor:not-allowed; }
-    .login-btn-outline { background:none; border:1px solid rgba(255,255,255,.08); color:#9A8E80; }
-    .login-btn-outline:hover { color:#F0EBE3; border-color:rgba(255,255,255,.15); }
+    .login-sub { font-size:13px; color:#7A6E60; margin-bottom:32px; }
 
-    .login-divider { display:flex; align-items:center; gap:12px; margin:8px 0; }
-    .login-divider span { font-size:10px; color:#7A6E60; letter-spacing:1.5px; text-transform:uppercase; white-space:nowrap; }
-    .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.06); }
+    .login-error {
+      display:none; padding:12px 16px; margin-bottom:16px;
+      border:1px solid rgba(231,76,60,0.2); background:rgba(231,76,60,0.05);
+      color:#e74c3c; font-size:13px; text-align:center;
+    }
 
-    .login-link { font-size:12px; color:#9A8E80; text-decoration:none; text-align:center; display:block; margin-top:8px; transition:color .3s; }
-    .login-link:hover { color:#C9B99A; }
+    .login-success {
+      display:none; padding:12px 16px; margin-bottom:16px;
+      border:1px solid rgba(58,148,100,0.2); background:rgba(58,148,100,0.05);
+      color:#3A9464; font-size:13px; text-align:center;
+    }
 
-    .login-error { background:rgba(231,76,60,.08); border:1px solid rgba(231,76,60,.2); padding:10px 14px; font-size:12px; color:#e74c3c; display:none; }
-    .login-success { background:rgba(58,148,100,.08); border:1px solid rgba(58,148,100,.2); padding:10px 14px; font-size:12px; color:#3A9464; display:none; }
+    .login-btn {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      width:100%; padding:14px 20px; border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.03); color:#F0EBE3;
+      font-family:'Outfit',sans-serif; font-size:14px; cursor:pointer;
+      transition:all 0.15s; margin-bottom:8px;
+    }
+    .login-btn:hover { background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.12); }
+    .login-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
-    .login-footer { text-align:center; margin-top:32px; font-size:11px; color:#7A6E60; }
-    .login-footer a { color:#C9B99A; text-decoration:none; }
+    .login-btn-send {
+      background:#3A9464; border-color:#3A9464;
+      font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; margin-top:8px;
+    }
+    .login-btn-send:hover { background:#2d7a52; border-color:#2d7a52; }
 
-    .login-loading { display:none; text-align:center; padding:40px; }
-    .login-spinner { width:24px; height:24px; border:2px solid rgba(58,148,100,.2); border-top-color:#3A9464; border-radius:50%; animation:spin .6s linear infinite; display:inline-block; }
+    .login-divider { display:flex; align-items:center; margin:20px 0; }
+    .login-divider::before, .login-divider::after { content:''; flex:1; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .login-divider span { padding:0 16px; font-size:11px; color:#7A6E60; letter-spacing:2px; }
+
+    .login-input {
+      width:100%; padding:12px 16px; background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.08); color:#F0EBE3;
+      font-family:'Outfit',sans-serif; font-size:14px; outline:none; transition:all 0.15s;
+    }
+    .login-input:focus { border-color:rgba(58,148,100,0.4); box-shadow:0 0 0 3px rgba(58,148,100,0.05); }
+    .login-input::placeholder { color:rgba(255,255,255,0.2); }
+
+    .login-hint { font-size:11px; color:#7A6E60; margin-top:8px; font-style:italic; }
+
+    .login-footer { font-size:11px; color:#7A6E60; margin-top:32px; }
+    .login-contact { font-size:11px; color:#7A6E60; margin-top:8px; }
+    .login-contact a { color:#C9B99A; text-decoration:none; }
+
+    .login-loading { text-align:center; padding:40px; }
+    .login-spinner {
+      width:24px; height:24px; border:2px solid rgba(58,148,100,.2);
+      border-top-color:#3A9464; border-radius:50%; animation:spin .6s linear infinite; display:inline-block;
+    }
     @keyframes spin { to { transform:rotate(360deg); } }
 
     .view { display:none; }
@@ -54,11 +87,9 @@
   </style>
 </head>
 <body>
-  <div class="login-card">
-    <div class="login-brand">
-      <h1>Silver Key <em>Realty</em></h1>
-      <p>Employee Portal</p>
-    </div>
+  <div class="login-container">
+    <div class="login-logo">Silver Key <em>Realty</em></div>
+    <div class="login-accent"></div>
 
     <div id="view-loading" class="login-loading" style="display:block">
       <div class="login-spinner"></div>
@@ -66,27 +97,31 @@
     </div>
 
     <div id="view-login" class="view">
+      <h1 class="login-title">Employee Sign In</h1>
+      <p class="login-sub">Authorized team members only</p>
+
       <div id="login-error" class="login-error"></div>
       <div id="login-success" class="login-success"></div>
 
-      <form id="login-form" class="login-form" onsubmit="handleLogin(event)">
-        <input type="email" id="login-email" class="login-input" placeholder="Email address" required autocomplete="email">
-        <input type="password" id="login-password" class="login-input" placeholder="Password" required autocomplete="current-password">
-        <button type="submit" id="login-submit" class="login-btn login-btn-primary">Sign In</button>
-      </form>
+      <button class="login-btn" onclick="signInWithEntra()">
+        <svg width="20" height="20" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+        Sign in with Entra ID (SSO)
+      </button>
 
-      <div class="login-divider"><span>or</span></div>
+      <div class="login-divider"><span>OR</span></div>
 
-      <button onclick="handleMagicLink()" id="magic-btn" class="login-btn login-btn-outline" style="width:100%">Send Magic Link</button>
+      <div id="magic-link-section">
+        <button class="login-btn" id="magic-toggle" onclick="showMagicLink()">&#9993; Sign in with Email</button>
 
-      <div class="login-divider"><span>external providers</span></div>
-
-      <div style="display:flex;gap:8px">
-        <button onclick="handleOAuth('google')" class="login-btn login-btn-outline" style="flex:1">Google</button>
-        <button onclick="handleOAuth('azure')" class="login-btn login-btn-outline" style="flex:1">Microsoft</button>
+        <div id="magic-form" style="display:none;margin-top:12px;">
+          <input type="email" id="magic-email" class="login-input" placeholder="Enter your work email" autocomplete="email">
+          <button class="login-btn login-btn-send" id="magic-send" onclick="sendMagicLink()">SEND MAGIC LINK</button>
+          <p class="login-hint">We'll email you a secure link to sign in — no password needed.</p>
+        </div>
       </div>
 
-      <a href="#" onclick="showView('view-reset');return false" class="login-link">Forgot password?</a>
+      <p class="login-footer">By continuing, you agree to Silver Key Realty's terms of service.</p>
+      <p class="login-contact">Not an employee? <a href="/">Visit our website</a></p>
     </div>
 
     <div id="view-magic-sent" class="view">
@@ -94,21 +129,8 @@
         <div style="font-size:36px;margin-bottom:12px">&#9993;</div>
         <h2 style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:8px">Check Your Email</h2>
         <p style="color:#9A8E80;font-size:13px;margin-bottom:20px">We sent a magic link to <strong id="magic-email-display" style="color:#C9B99A"></strong></p>
-        <button onclick="showView('view-login')" class="login-btn login-btn-outline" style="width:100%">Back to Login</button>
+        <button onclick="showView('view-login')" class="login-btn" style="width:100%">Back to Login</button>
       </div>
-    </div>
-
-    <div id="view-reset" class="view">
-      <form class="login-form" onsubmit="handleReset(event)">
-        <p style="color:#9A8E80;font-size:13px;margin-bottom:8px">Enter your email and we'll send a reset link.</p>
-        <input type="email" id="reset-email" class="login-input" placeholder="Email address" required>
-        <button type="submit" id="reset-btn" class="login-btn login-btn-primary">Send Reset Link</button>
-        <button type="button" onclick="showView('view-login')" class="login-btn login-btn-outline">Back to Login</button>
-      </form>
-    </div>
-
-    <div class="login-footer">
-      <a href="/">&#8592; Back to Silver Key Realty</a>
     </div>
   </div>
 
@@ -117,74 +139,10 @@
   <script>
     var sb;
 
-    // Handle errors from callback redirects
-    (function() {
-      var params = new URLSearchParams(window.location.search);
-      var error = params.get('error');
-      if (error) {
-        var messages = {
-          callback_failed: 'Sign-in failed. Please try again.',
-          no_user: 'Could not verify your identity. Please try again.',
-          session_expired: 'Your session has expired. Please sign in again.'
-        };
-        var msg = messages[error] || 'An error occurred. Please try again.';
-
-        var errDiv = document.createElement('div');
-        errDiv.style.cssText = 'padding:12px 16px;margin-bottom:16px;border:1px solid rgba(231,76,60,0.2);background:rgba(231,76,60,0.05);color:#e74c3c;font-size:13px;text-align:center;font-family:Outfit,sans-serif;';
-        errDiv.textContent = msg;
-
-        var target = document.querySelector('.login-form')
-          || document.querySelector('.skr-card')
-          || document.querySelector('form')
-          || document.querySelector('main');
-        if (target) target.prepend(errDiv);
-
-        window.history.replaceState({}, '', '/admin/');
-      }
-    })();
-
-    // Brute force protection — client-side rate limiting
-    var loginAttempts = {
-      count: 0,
-      lastAttempt: 0,
-      locked: false,
-      lockUntil: 0
-    };
-
-    function canAttemptLogin() {
-      var now = Date.now();
-
-      if (loginAttempts.locked) {
-        if (now < loginAttempts.lockUntil) {
-          var secondsLeft = Math.ceil((loginAttempts.lockUntil - now) / 1000);
-          return { allowed: false, message: 'Too many failed attempts. Try again in ' + secondsLeft + ' seconds.' };
-        }
-        loginAttempts.locked = false;
-        loginAttempts.count = 0;
-      }
-
-      if (now - loginAttempts.lastAttempt > 300000) {
-        loginAttempts.count = 0;
-      }
-
-      return { allowed: true };
-    }
-
-    function recordFailedLogin() {
-      loginAttempts.count++;
-      loginAttempts.lastAttempt = Date.now();
-
-      if (loginAttempts.count >= 5) {
-        loginAttempts.locked = true;
-        var lockSeconds = 30 * Math.pow(2, Math.floor(loginAttempts.count / 5) - 1);
-        loginAttempts.lockUntil = Date.now() + (lockSeconds * 1000);
-      }
-    }
-
     (async function init() {
       var cfg = window.SKR_CONFIG;
       if (!cfg || !cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) {
-        showError('Configuration error. Please contact your administrator.');
+        showLoginError('Configuration error. Please contact your administrator.');
         showView('view-login');
         return;
       }
@@ -192,8 +150,16 @@
       sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
       var params = new URLSearchParams(window.location.search);
-      if (params.get('error') === 'not_authorized') {
-        showError('Your account is not authorized. Contact your broker for access.');
+      var error = params.get('error');
+      if (error) {
+        var messages = {
+          callback_failed: 'Sign-in failed. Please try again.',
+          no_user: 'Could not verify your identity. Please try again.',
+          session_expired: 'Your session has expired. Please sign in again.',
+          not_authorized: 'Your account is not authorized. Contact your broker for access.'
+        };
+        showLoginError(messages[error] || 'An error occurred. Please try again.');
+        window.history.replaceState({}, '', '/admin/');
       }
 
       var sessionResult = await sb.auth.getSession();
@@ -204,141 +170,117 @@
           return;
         }
         await sb.auth.signOut();
-        showError('Your account is not authorized as a team member.');
+        showLoginError('Your account is not authorized as a team member.');
       }
 
       showView('view-login');
     })();
 
     async function checkTeamMember(session) {
-      var { data: member } = await sb
+      var result = await sb
         .from('skr_team_members')
         .select('id')
         .eq('auth_user_id', session.user.id)
         .eq('is_active', true)
         .single();
 
-      if (member) return true;
+      if (result.data) return true;
 
       if (session.user.email) {
-        var { data: emailMember } = await sb
+        var emailResult = await sb
           .from('skr_team_members')
           .select('id')
           .eq('email', session.user.email)
           .eq('is_active', true)
           .single();
 
-        if (emailMember) {
-          await sb.from('skr_team_members').update({ auth_user_id: session.user.id }).eq('id', emailMember.id);
+        if (emailResult.data) {
+          await sb.from('skr_team_members').update({ auth_user_id: session.user.id }).eq('id', emailResult.data.id);
           return true;
         }
       }
       return false;
     }
 
-    async function handleLogin(e) {
-      e.preventDefault();
-      var email = document.getElementById('login-email').value.trim();
-      var password = document.getElementById('login-password').value;
-      var btn = document.getElementById('login-submit');
-
-      var loginCheck = canAttemptLogin();
-      if (!loginCheck.allowed) {
-        showError(loginCheck.message);
-        return;
-      }
-
-      btn.textContent = 'Signing in...'; btn.disabled = true;
-      hideMessages();
-
-      var result = await sb.auth.signInWithPassword({ email: email, password: password });
-
-      if (result.error) {
-        recordFailedLogin();
-        showError(result.error.message === 'Invalid login credentials' ? 'Invalid email or password.' : result.error.message);
-        btn.textContent = 'Sign In'; btn.disabled = false;
-        return;
-      }
-
-      var teamOk = await checkTeamMember(result.data.session);
-      if (!teamOk) {
-        await sb.auth.signOut();
-        showError('Your account is not authorized as a team member. Contact your broker.');
-        btn.textContent = 'Sign In'; btn.disabled = false;
-        return;
-      }
-
-      window.location.href = '/admin/dashboard/';
+    function showMagicLink() {
+      document.getElementById('magic-form').style.display = 'block';
+      document.getElementById('magic-toggle').style.display = 'none';
+      document.getElementById('magic-email').focus();
     }
 
-    async function handleMagicLink() {
-      var email = document.getElementById('login-email').value.trim();
-      if (!email) { showError('Enter your email address first.'); return; }
+    async function signInWithEntra() {
+      var result = await sb.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          scopes: 'email openid profile',
+          redirectTo: window.location.origin + '/admin/auth/callback/'
+        }
+      });
 
-      var btn = document.getElementById('magic-btn');
-      btn.textContent = 'Sending...'; btn.disabled = true;
+      if (result.error) {
+        showLoginError('SSO sign-in failed. Please try again.');
+      }
+    }
+
+    async function sendMagicLink() {
+      var email = document.getElementById('magic-email').value.trim();
+      if (!email) {
+        showLoginError('Please enter your email address.');
+        return;
+      }
+
+      var btn = document.getElementById('magic-send');
+      btn.textContent = 'SENDING...';
+      btn.disabled = true;
 
       var result = await sb.auth.signInWithOtp({
         email: email,
-        options: { emailRedirectTo: window.location.origin + '/admin/auth/callback/' }
+        options: {
+          emailRedirectTo: window.location.origin + '/admin/auth/callback/'
+        }
       });
 
       if (result.error) {
-        showError(result.error.message);
-        btn.textContent = 'Send Magic Link'; btn.disabled = false;
+        showLoginError('Could not send magic link. Check your email address.');
+        btn.textContent = 'SEND MAGIC LINK';
+        btn.disabled = false;
         return;
       }
 
+      document.getElementById('login-error').style.display = 'none';
       document.getElementById('magic-email-display').textContent = email;
       showView('view-magic-sent');
-      btn.textContent = 'Send Magic Link'; btn.disabled = false;
-    }
-
-    async function handleOAuth(provider) {
-      var result = await sb.auth.signInWithOAuth({
-        provider: provider,
-        options: { redirectTo: window.location.origin + '/admin/auth/callback/' }
-      });
-      if (result.error) showError(result.error.message);
-    }
-
-    async function handleReset(e) {
-      e.preventDefault();
-      var email = document.getElementById('reset-email').value.trim();
-      var btn = document.getElementById('reset-btn');
-      btn.textContent = 'Sending...'; btn.disabled = true;
-
-      await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/admin/reset-password/'
-      });
-
-      showView('view-login');
-      showSuccess('If that email is registered, you\'ll receive a reset link shortly.');
-      btn.textContent = 'Send Reset Link'; btn.disabled = false;
+      btn.textContent = 'SEND MAGIC LINK';
+      btn.disabled = false;
     }
 
     function showView(id) {
-      document.querySelectorAll('.view, .login-loading').forEach(function(el) { el.style.display = 'none'; el.classList.remove('active'); });
+      document.querySelectorAll('.view, .login-loading').forEach(function(el) {
+        el.style.display = 'none';
+        el.classList.remove('active');
+      });
       var el = document.getElementById(id);
       if (el) { el.style.display = 'block'; el.classList.add('active'); }
     }
 
-    function showError(msg) {
+    function showLoginError(msg) {
       var el = document.getElementById('login-error');
-      if (el) { el.textContent = msg; el.style.display = 'block'; }
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('login-success').style.display = 'none';
     }
 
-    function showSuccess(msg) {
-      var el = document.getElementById('login-success');
-      if (el) { el.textContent = msg; el.style.display = 'block'; }
-    }
-
-    function hideMessages() {
-      var err = document.getElementById('login-error');
-      var suc = document.getElementById('login-success');
-      if (err) err.style.display = 'none';
-      if (suc) suc.style.display = 'none';
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var emailInput = document.getElementById('magic-email');
+      if (emailInput) {
+        emailInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMagicLink();
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>

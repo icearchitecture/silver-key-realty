@@ -23,10 +23,16 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { firstName, lastName, email, phone, pathway, message, source } = req.body;
+  const {
+    firstName, lastName,
+    first_name, last_name,
+    email, phone, pathway, message, source, details
+  } = req.body;
 
-  // Validation
-  if (!firstName || !email) {
+  const resolvedFirstName = first_name || firstName;
+  const resolvedLastName = last_name || lastName;
+
+  if (!resolvedFirstName || !email) {
     return res.status(400).json({ error: "First name and email are required" });
   }
 
@@ -65,31 +71,47 @@ export default async function handler(req, res) {
     // Map pathway to lead type
     const pathwayMap = {
       buying: "buyer",
+      buyer: "buyer",
       selling: "seller",
+      seller: "seller",
       investing: "investor",
+      investor: "investor",
       renting: "rental",
+      renter: "rental",
+      agent: "agent",
       general: "general",
     };
+
+    // Build lead insert data
+    const leadInsertData = {
+      tenant_id: tenant.id,
+      first_name: resolvedFirstName.trim(),
+      last_name: (resolvedLastName || "").trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone || null,
+      lead_type: pathwayMap[pathway] || "general",
+      source: source || "website_form",
+      status: "new",
+      notes: message || null,
+      metadata: {
+        pathway: pathway,
+        submitted_at: new Date().toISOString(),
+        user_agent: req.headers["user-agent"] || null,
+      },
+    };
+
+    // Add pathway and intake_data if provided (new pathway intake forms)
+    if (pathway) {
+      leadInsertData.pathway = pathway;
+    }
+    if (details && typeof details === "object") {
+      leadInsertData.intake_data = details;
+    }
 
     // Create lead
     const { data: lead, error: leadError } = await supabase
       .from("skr_leads")
-      .insert({
-        tenant_id: tenant.id,
-        first_name: firstName.trim(),
-        last_name: (lastName || "").trim(),
-        email: email.toLowerCase().trim(),
-        phone: phone || null,
-        lead_type: pathwayMap[pathway] || "general",
-        source: source || "website_form",
-        status: "new",
-        notes: message || null,
-        metadata: {
-          pathway: pathway,
-          submitted_at: new Date().toISOString(),
-          user_agent: req.headers["user-agent"] || null,
-        },
-      })
+      .insert(leadInsertData)
       .select()
       .single();
 
@@ -116,11 +138,18 @@ export default async function handler(req, res) {
         hour: "numeric", minute: "2-digit",
       });
 
+      const pathwayLabels = {
+        buyer: "Buying a Home",
+        seller: "Selling a Property",
+        investor: "Investing",
+        renter: "Renting a Space",
+        agent: "Joining Our Team",
+      };
       const vars = {
-        "{{FIRST_NAME}}": firstName.trim(),
-        "{{FULL_NAME}}": `${firstName.trim()} ${(lastName || "").trim()}`.trim(),
+        "{{FIRST_NAME}}": resolvedFirstName.trim(),
+        "{{FULL_NAME}}": `${resolvedFirstName.trim()} ${(resolvedLastName || "").trim()}`.trim(),
         "{{EMAIL}}": email.toLowerCase(),
-        "{{PATHWAY}}": pathway ? pathway.charAt(0).toUpperCase() + pathway.slice(1) + " a Home" : "General Inquiry",
+        "{{PATHWAY}}": pathwayLabels[pathway] || (pathway ? pathway.charAt(0).toUpperCase() + pathway.slice(1) : "General Inquiry"),
         "{{DATE}}": dateFormatted,
         "{{PORTAL_URL}}": "https://silverkeyrealty.llc/consultation",
         "{{LOGO_URL}}": "https://silverkeyrealty.llc/assets/images/logo.png",
@@ -143,7 +172,7 @@ export default async function handler(req, res) {
           senderAddress: process.env.AZURE_EMAIL_SENDER,
           content: { subject, html, plainText: text },
           recipients: {
-            to: [{ address: email.toLowerCase(), displayName: firstName.trim() }],
+            to: [{ address: email.toLowerCase(), displayName: resolvedFirstName.trim() }],
           },
         });
         await poller.pollUntilDone();
@@ -164,7 +193,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: "Thank you! We'll be in touch within 24 hours.",
-      leadId: lead.id,
+      id: lead.id,
+      lead_id: lead.id,
     });
   } catch (error) {
     console.error("Lead submit error:", error);
