@@ -134,6 +134,18 @@ nav.scrolled .nav-logo img {
   border: none;
 }
 
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: rgba(58,148,100,0.15);
+  }
+  .nav-links, .desktop-only {
+    display: none !important;
+  }
+}
+
 .nav-toggle span {
   width: 24px;
   height: 1.5px;
@@ -154,12 +166,8 @@ nav.scrolled .nav-logo img {
 }
 
 /* ── MOBILE MENU OVERLAY ── */
-/* ALWAYS hidden by default. JS sets display via style.cssText. */
-.mobile-menu,
-.mobile-menu.open,
-#mobileMenu {
-  display: none !important;
-  visibility: hidden !important;
+.mobile-menu {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -168,8 +176,25 @@ nav.scrolled .nav-logo img {
   background: #111;
   z-index: 1000;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 80px 32px 32px;
+  box-sizing: border-box;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.mobile-menu.open {
+  display: flex;
+}
+
+/* Desktop: NEVER show mobile menu */
+@media (min-width: 769px) {
+  .mobile-menu,
+  .mobile-menu.open {
+    display: none !important;
+  }
 }
 
 /* ALL mobile menu child styles — ONLY apply on mobile */
