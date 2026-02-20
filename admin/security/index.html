@@ -3,198 +3,434 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Security</title>
+  <title>Security — Silver Key Realty</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+/* ═══════════════════════════════════════════
+   SKR CRITICAL CSS — Inlined in every page
+   If this renders, the page looks right.
+   ═══════════════════════════════════════════ */
 
-    .skr-content .page{padding:80px 40px 60px;max-width:1000px;margin:0 auto}
-    .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
-    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
-    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-    .btn-primary{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--charcoal);background:var(--cream);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
-    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
-    .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
-    .btn-secondary{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);background:transparent;border:1px solid rgba(255,255,255,.06);padding:10px 22px;cursor:pointer;transition:all .4s}
-    .btn-secondary:hover{color:var(--cream);border-color:rgba(255,255,255,.12)}
-    .btn-danger{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#fff;background:rgba(192,57,43,.8);padding:10px 22px;border:none;cursor:pointer;transition:all .4s}
-    .btn-danger:hover{background:rgba(192,57,43,1)}
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
 
-    /* Security score */
-    .sec-score{display:flex;align-items:center;gap:24px;padding:28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:24px}
-    .sec-score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
-    .sec-score-ring svg{width:80px;height:80px;transform:rotate(-90deg)}
-    .sec-score-ring circle{fill:none;stroke-width:4}
-    .sec-score-ring .bg{stroke:rgba(255,255,255,.04)}
-    .sec-score-ring .fg{stroke:var(--skr-green-light);stroke-linecap:round;transition:stroke-dashoffset .8s ease}
-    .sec-score-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;font-weight:300;color:var(--cream)}
-    .sec-score-info h3{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:4px}
-    .sec-score-info p{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--silver);line-height:1.6}
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
 
-    /* Cards */
-    .sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
-    .sec-card{padding:28px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);transition:all .4s}
-    .sec-card:hover{border-color:rgba(255,255,255,.08)}
-    .sec-card-icon{font-size:24px;margin-bottom:12px}
-    .sec-card h3{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream);margin-bottom:6px}
-    .sec-card p{font-family:var(--sans);font-weight:300;font-size:12px;color:var(--silver);line-height:1.6;margin-bottom:16px}
-    .sec-card-status{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;display:inline-block;margin-bottom:16px}
-    .sec-card-status.active{background:rgba(46,125,82,.12);color:var(--skr-green-light);border:1px solid rgba(46,125,82,.25)}
-    .sec-card-status.inactive{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.06)}
-    .sec-card-status.warning{background:rgba(212,160,23,.1);color:#d4a017;border:1px solid rgba(212,160,23,.2)}
+/* Loading Screen — visible by default, hidden when page is ready */
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
 
-    /* MFA Section */
-    .mfa-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:28px;margin-bottom:24px}
-    .mfa-title{font-family:var(--serif);font-size:20px;font-weight:400;color:var(--cream);margin-bottom:8px}
-    .mfa-desc{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-bottom:20px;line-height:1.6}
-    .mfa-step{font-family:var(--sans);font-size:12px;color:var(--silver);margin-bottom:12px}
-    .mfa-step strong{color:var(--cream);font-weight:400}
-    .mfa-code-input{font-family:var(--sans);font-size:18px;letter-spacing:8px;text-align:center;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:14px;width:200px;outline:none;transition:border-color .3s}
-    .mfa-code-input:focus{border-color:var(--skr-green-line)}
-    .mfa-feedback{font-family:var(--sans);font-weight:300;font-size:13px;margin-top:12px;min-height:20px}
-    .mfa-feedback.success{color:var(--skr-green-light)}
-    .mfa-feedback.error{color:#c0392b}
-    .mfa-actions{display:flex;gap:12px;margin-top:20px;align-items:center}
+/* Shell Layout */
+.skr-shell{display:flex;min-height:100vh}
 
-    /* Login history */
-    .login-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:24px}
-    .login-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.04)}
-    .login-title{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cream)}
-    .login-row{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.015);display:flex;justify-content:space-between;align-items:center}
-    .login-row:last-child{border-bottom:none}
-    .login-event{font-family:var(--sans);font-size:12px;color:var(--silver)}
-    .login-event strong{color:var(--cream);font-weight:400}
-    .login-risk{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:1px;padding:2px 8px}
-    .login-risk.low{color:var(--skr-green-light);background:rgba(46,125,82,.1);border:1px solid rgba(46,125,82,.2)}
-    .login-risk.high{color:#e74c3c;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.15)}
+/* Sidebar */
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
 
-    .sec-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--skr-green-light);opacity:.6;margin-bottom:16px;padding-top:16px}
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
 
-    @media(max-width:768px){
-      .page{padding:80px 20px 40px}
-      .sec-grid{grid-template-columns:1fr}
-      .sec-score{flex-direction:column;text-align:center}
-    }
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
+
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);
+  font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
+
+/* Main Content */
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
+
+/* Page Header */
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+/* Cards */
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+/* Stats Row */
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+
+/* Two Column Layout */
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Buttons */
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+/* Tables */
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+/* Status Pills */
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+/* Notification badge */
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+/* Error state */
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+/* Responsive */
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* Hide content until ready — CRITICAL */
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+
+/* ═══════════════════════════════════════════
+   PAGE-SPECIFIC STYLES: Security
+   ═══════════════════════════════════════════ */
+
+/* Security score */
+.sec-score{display:flex;align-items:center;gap:24px;padding:28px;background:var(--skr-surface);border:1px solid var(--skr-border);margin-bottom:24px}
+.sec-score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+.sec-score-ring svg{width:80px;height:80px;transform:rotate(-90deg)}
+.sec-score-ring circle{fill:none;stroke-width:4}
+.sec-score-ring .bg{stroke:rgba(255,255,255,.04)}
+.sec-score-ring .fg{stroke:var(--skr-green);stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.sec-score-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--skr-font-heading);font-size:22px;font-weight:300;color:var(--skr-text)}
+.sec-score-info h3{font-family:var(--skr-font-heading);font-size:20px;font-weight:400;color:var(--skr-text);margin-bottom:4px}
+.sec-score-info p{font-family:var(--skr-font-body);font-weight:300;font-size:12px;color:var(--skr-text-muted);line-height:1.6}
+
+/* Security cards grid */
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.sec-card{padding:28px;background:var(--skr-surface);border:1px solid var(--skr-border);transition:all .4s}
+.sec-card:hover{border-color:var(--skr-border-hover)}
+.sec-card-icon{font-size:24px;margin-bottom:12px}
+.sec-card h3{font-family:var(--skr-font-heading);font-size:18px;font-weight:400;color:var(--skr-text);margin-bottom:6px}
+.sec-card p{font-family:var(--skr-font-body);font-weight:300;font-size:12px;color:var(--skr-text-muted);line-height:1.6;margin-bottom:16px}
+.sec-card-status{font-family:var(--skr-font-body);font-size:10px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;display:inline-block;margin-bottom:16px}
+.sec-card-status.active{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
+.sec-card-status.inactive{background:rgba(255,255,255,.04);color:var(--skr-text-muted);border:1px solid var(--skr-border)}
+.sec-card-status.warning{background:rgba(212,160,23,.1);color:#d4a017;border:1px solid rgba(212,160,23,.2)}
+
+/* MFA Section */
+.mfa-section{background:var(--skr-surface);border:1px solid var(--skr-border);padding:28px;margin-bottom:24px}
+.mfa-title{font-family:var(--skr-font-heading);font-size:20px;font-weight:400;color:var(--skr-text);margin-bottom:8px}
+.mfa-desc{font-family:var(--skr-font-body);font-weight:300;font-size:13px;color:var(--skr-text-muted);margin-bottom:20px;line-height:1.6}
+.mfa-step{font-family:var(--skr-font-body);font-size:12px;color:var(--skr-text-muted);margin-bottom:12px}
+.mfa-step strong{color:var(--skr-text);font-weight:400}
+.mfa-code-input{font-family:var(--skr-font-body);font-size:18px;letter-spacing:8px;text-align:center;color:var(--skr-text);background:rgba(255,255,255,.03);border:1px solid var(--skr-border);padding:14px;width:200px;outline:none;transition:border-color .3s}
+.mfa-code-input:focus{border-color:var(--skr-green)}
+.mfa-feedback{font-family:var(--skr-font-body);font-weight:300;font-size:13px;margin-top:12px;min-height:20px}
+.mfa-feedback.success{color:var(--skr-green)}
+.mfa-feedback.error{color:var(--skr-red)}
+.mfa-actions{display:flex;gap:12px;margin-top:20px;align-items:center}
+
+/* Login history */
+.login-section{background:var(--skr-surface);border:1px solid var(--skr-border);margin-bottom:24px}
+.login-header{padding:16px 20px;border-bottom:1px solid var(--skr-border)}
+.login-title{font-family:var(--skr-font-heading);font-size:18px;font-weight:400;color:var(--skr-text)}
+.login-row{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.015);display:flex;justify-content:space-between;align-items:center}
+.login-row:last-child{border-bottom:none}
+.login-event{font-family:var(--skr-font-body);font-size:12px;color:var(--skr-text-muted)}
+.login-event strong{color:var(--skr-text);font-weight:400}
+.login-risk{font-family:var(--skr-font-body);font-size:10px;font-weight:400;letter-spacing:1px;padding:2px 8px}
+.login-risk.low{color:var(--skr-green);background:rgba(58,148,100,.1);border:1px solid rgba(58,148,100,.2)}
+.login-risk.high{color:var(--skr-red);background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.15)}
+
+.sec-label{font-family:var(--skr-font-body);font-size:10px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:var(--skr-green);opacity:.6;margin-bottom:16px;padding-top:16px}
+
+/* Button overrides for this page */
+.btn-danger{
+  font-family:var(--skr-font-body);font-size:10px;font-weight:400;
+  letter-spacing:2px;text-transform:uppercase;color:#fff;
+  background:rgba(192,57,43,.8);padding:10px 22px;border:none;cursor:pointer;transition:all .4s
+}
+.btn-danger:hover{background:rgba(192,57,43,1)}
+.btn-danger:disabled{opacity:.4;cursor:not-allowed}
+
+@media(max-width:768px){
+  .sec-grid{grid-template-columns:1fr}
+  .sec-score{flex-direction:column;text-align:center}
+}
   </style>
 </head>
 <body>
 
-  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
+  <!-- Loading Screen -->
+  <div class="skr-loader" id="skr-loader">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading...</div>
+  </div>
 
-  <div id="skr-main" class="skr-shell" style="display:none"><aside id="skr-sidebar" class="skr-sidebar"></aside><main class="skr-content"><div class="page">
-    <div class="page-hero">
-      <a href="../dashboard/" class="back-link">← Back to Dashboard</a>
-      <h1>Security <em style="color:var(--champagne)">Center</em></h1>
-      <p>Manage your security settings, MFA enrollment, and review login activity.</p>
-    </div>
+  <!-- Error Fallback -->
+  <div class="skr-error-state" id="skr-error-state">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <h2>Something went wrong</h2>
+    <p>The page didn't load correctly. This usually fixes itself — try refreshing.</p>
+    <button class="skr-btn skr-btn-primary" onclick="window.location.reload()">Refresh Page</button>
+    <button class="skr-btn skr-btn-ghost" onclick="window.location.href='/admin/'" style="margin-top:8px">Back to Login</button>
+  </div>
 
-    <!-- Security Score -->
-    <div class="sec-score">
-      <div class="sec-score-ring">
-        <svg viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="34"/><circle class="fg" id="scoreCircle" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
-        <div class="sec-score-val" id="scoreVal">—</div>
-      </div>
-      <div class="sec-score-info">
-        <h3>Security Score</h3>
-        <p id="scoreDesc">Calculating your security posture based on active protections…</p>
-      </div>
-    </div>
+  <!-- Shell -->
+  <div class="skr-shell">
+    <!-- Sidebar injected by SKR_SHELL -->
 
-    <!-- Security Features Grid -->
-    <div class="sec-label">Active Protections</div>
-    <div class="sec-grid">
-      <div class="sec-card">
-        <div class="sec-card-icon">🔐</div>
-        <h3>Two-Layer Auth Guard</h3>
-        <span class="sec-card-status active">Active</span>
-        <p>Supabase verifies identity, then skr_team_members verifies authorization. No bypass possible.</p>
+    <main class="skr-main">
+      <div class="skr-page-header">
+        <h1 class="skr-page-title">Secu<em>rity</em></h1>
+        <p class="skr-page-sub">Manage your security settings, MFA enrollment, and review login activity.</p>
       </div>
-      <div class="sec-card">
-        <div class="sec-card-icon">🔒</div>
-        <h3>Field-Level Encryption</h3>
-        <span class="sec-card-status active">Active</span>
-        <p>PII fields (email, phone, name) encrypted via pgcrypto with SHA-256 hashing.</p>
-      </div>
-      <div class="sec-card">
-        <div class="sec-card-icon">⛓️</div>
-        <h3>Blockchain Audit Chain</h3>
-        <span class="sec-card-status active">Active</span>
-        <p>Every action hash-chained with SHA-256. Immutable — no update or delete allowed.</p>
-      </div>
-      <div class="sec-card">
-        <div class="sec-card-icon">🛡️</div>
-        <h3>Wire Fraud Protection</h3>
-        <span class="sec-card-status active">Active</span>
-        <p>Shield system verifies wire instructions. Hash-chained audit trail on all verification events.</p>
-      </div>
-    </div>
 
-    <!-- MFA Section -->
-    <div class="sec-label">Multi-Factor Authentication</div>
-    <div class="mfa-section" id="mfaSection">
-      <div class="mfa-title">Two-Factor Authentication</div>
-      <div class="mfa-desc" id="mfaDesc">Loading MFA status…</div>
-      <div id="mfaContent"></div>
-    </div>
-
-    <!-- Login History -->
-    <div class="sec-label">Recent Login Activity</div>
-    <div class="login-section">
-      <div class="login-header"><span class="login-title">Login Forensics</span></div>
-      <div id="loginList">
-        <div style="padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178">Loading…</div>
+      <!-- Security Score -->
+      <div class="sec-score">
+        <div class="sec-score-ring">
+          <svg viewBox="0 0 80 80">
+            <circle class="bg" cx="40" cy="40" r="34"/>
+            <circle class="fg" id="scoreCircle" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+          </svg>
+          <div class="sec-score-val" id="scoreVal">—</div>
+        </div>
+        <div class="sec-score-info">
+          <h3>Security Score</h3>
+          <p id="scoreDesc">Calculating your security posture based on active protections…</p>
+        </div>
       </div>
-    </div>
 
-    <!-- SSO Link (broker+ only) -->
-    <div id="ssoLink" style="display:none;margin-top:24px">
-      <a href="../sso/" style="font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:1px;color:var(--champagne);text-decoration:none;transition:color .3s">Configure Single Sign-On (SSO) →</a>
-    </div>
-  </div></main></div>
+      <!-- Security Features Grid -->
+      <div class="sec-label">Active Protections</div>
+      <div class="sec-grid">
+        <div class="sec-card">
+          <div class="sec-card-icon">🔐</div>
+          <h3>Two-Layer Auth Guard</h3>
+          <span class="sec-card-status active">Active</span>
+          <p>Supabase verifies identity, then skr_team_members verifies authorization. No bypass possible.</p>
+        </div>
+        <div class="sec-card">
+          <div class="sec-card-icon">🔒</div>
+          <h3>Field-Level Encryption</h3>
+          <span class="sec-card-status active">Active</span>
+          <p>PII fields (email, phone, name) encrypted via pgcrypto with SHA-256 hashing.</p>
+        </div>
+        <div class="sec-card">
+          <div class="sec-card-icon">⛓️</div>
+          <h3>Blockchain Audit Chain</h3>
+          <span class="sec-card-status active">Active</span>
+          <p>Every action hash-chained with SHA-256. Immutable — no update or delete allowed.</p>
+        </div>
+        <div class="sec-card">
+          <div class="sec-card-icon">🛡️</div>
+          <h3>Wire Fraud Protection</h3>
+          <span class="sec-card-status active">Active</span>
+          <p>Shield system verifies wire instructions. Hash-chained audit trail on all verification events.</p>
+        </div>
+      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+      <!-- MFA Section -->
+      <div class="sec-label">Multi-Factor Authentication</div>
+      <div class="mfa-section" id="mfaSection">
+        <div class="mfa-title">Two-Factor Authentication</div>
+        <div class="mfa-desc" id="mfaDesc">Loading MFA status…</div>
+        <div id="mfaContent"></div>
+      </div>
+
+      <!-- Login History -->
+      <div class="sec-label">Recent Login Activity</div>
+      <div class="login-section">
+        <div class="login-header"><span class="login-title">Login Forensics</span></div>
+        <div id="loginList">
+          <div style="padding:20px;text-align:center;font-size:12px;color:var(--skr-text-dim)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- SSO Link (broker+ only) -->
+      <div id="ssoLink" style="display:none;margin-top:24px">
+        <a href="../sso/" style="font-size:11px;font-weight:300;letter-spacing:1px;color:var(--skr-champagne);text-decoration:none;transition:color .3s">Configure Single Sign-On (SSO) →</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/skr-auth.js"></script>
-  <script src="../../assets/js/admin-permissions.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
   <script>
-  window.addEventListener('skr-ready', async function () {
-    var u = window.SKR_USER;
-    var member = u.member;
-    var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+  var shell = SKR_SHELL.init({ activePage: 'security' });
 
-    if (['admin', 'broker'].indexOf(roleSlug) !== -1) {
+  SKR_AUTH.guard(function(member, sb) {
+    shell.render(member);
+    loadPageData(member, sb);
+  });
+
+  async function loadPageData(member, sb) {
+    var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+    var permLevel = member.permission_level || member.permissionLevel || 0;
+
+    if (['admin', 'broker'].indexOf(roleSlug) !== -1 || permLevel >= 70) {
       document.getElementById('ssoLink').style.display = 'block';
     }
 
     var SA = window.SKR_AUTH;
 
     // ── SECURITY SCORE ──
-    var score = 60; // Base: auth guard + encryption + audit chain + RLS
+    var score = 60;
     var scoreItems = ['Two-layer auth guard', 'Field-level PII encryption', 'Blockchain audit chain', 'Wire fraud protection'];
 
-    // Check MFA
     var mfaStatus = null;
     try { mfaStatus = await SA.getMfaStatus(); } catch (e) {}
     var mfaEnabled = mfaStatus && mfaStatus.is_enrolled;
     if (mfaEnabled) { score += 20; scoreItems.push('MFA enabled'); }
 
-    // Check SSO
     var ssoConfigs = [];
     try { ssoConfigs = await SA.getSsoConfig(); } catch (e) {}
     var ssoActive = ssoConfigs.some(function (c) { return c.is_active; });
     if (ssoActive) { score += 10; scoreItems.push('SSO configured'); }
 
-    // Cap at 100
     score = Math.min(score, 100);
 
-    // Render score
     var circumference = 213.6;
     var offset = circumference - (score / 100 * circumference);
     document.getElementById('scoreCircle').style.strokeDashoffset = offset;
@@ -234,11 +470,11 @@
         '<div class="mfa-step"><strong>Step 1:</strong> Click "Enable MFA" to generate a setup code.</div>' +
         '<div class="mfa-step"><strong>Step 2:</strong> Scan the QR code with an authenticator app (Google Authenticator, Authy, etc.).</div>' +
         '<div class="mfa-step"><strong>Step 3:</strong> Enter the 6-digit verification code to confirm enrollment.</div>' +
-        '<div class="mfa-actions"><button class="btn-primary" id="enrollMfa">Enable MFA</button></div>' +
+        '<div class="mfa-actions"><button class="skr-btn skr-btn-primary" id="enrollMfa">Enable MFA</button></div>' +
         '<div id="mfaEnrollArea" style="display:none;margin-top:20px">' +
           '<div class="mfa-step" id="mfaEnrollInfo"></div>' +
           '<div style="margin-top:12px"><input class="mfa-code-input" type="text" id="mfaCode" maxlength="6" placeholder="000000"></div>' +
-          '<div class="mfa-actions"><button class="btn-primary" id="verifyMfa">Verify Code</button><button class="btn-secondary" id="cancelMfa">Cancel</button></div>' +
+          '<div class="mfa-actions"><button class="skr-btn skr-btn-primary" id="verifyMfa">Verify Code</button><button class="skr-btn skr-btn-ghost" id="cancelMfa">Cancel</button></div>' +
         '</div>' +
         '<div class="mfa-feedback" id="mfaFeedback"></div>';
 
@@ -261,12 +497,16 @@
       document.addEventListener('click', function (e) {
         if (e.target.id === 'verifyMfa') {
           var code = document.getElementById('mfaCode').value.trim();
-          if (code.length !== 6) { document.getElementById('mfaFeedback').textContent = 'Enter a 6-digit code.'; document.getElementById('mfaFeedback').className = 'mfa-feedback error'; return; }
+          if (code.length !== 6) {
+            document.getElementById('mfaFeedback').textContent = 'Enter a 6-digit code.';
+            document.getElementById('mfaFeedback').className = 'mfa-feedback error';
+            return;
+          }
           e.target.disabled = true;
           e.target.textContent = 'Verifying…';
           SA.verifyMfa(code).then(function (r) {
             if (r.success) {
-              document.getElementById('mfaFeedback').textContent = 'MFA enabled successfully!';
+              document.getElementById('mfaFeedback').textContent = 'MFA enabled successfully.';
               document.getElementById('mfaFeedback').className = 'mfa-feedback success';
               setTimeout(function () { location.reload(); }, 1000);
             } else {
@@ -280,14 +520,18 @@
         if (e.target.id === 'cancelMfa') {
           document.getElementById('mfaEnrollArea').style.display = 'none';
           var enrollBtn = document.getElementById('enrollMfa');
-          if (enrollBtn) { enrollBtn.style.display = 'inline-block'; enrollBtn.disabled = false; enrollBtn.textContent = 'Enable MFA'; }
+          if (enrollBtn) {
+            enrollBtn.style.display = 'inline-flex';
+            enrollBtn.disabled = false;
+            enrollBtn.textContent = 'Enable MFA';
+          }
         }
       });
     }
 
     // ── LOGIN FORENSICS ──
     try {
-      var r = await window.SKR_SUPA.from('skr_login_forensics').select('*').order('created_at', { ascending: false }).limit(10);
+      var r = await sb.from('skr_login_forensics').select('*').order('created_at', { ascending: false }).limit(10);
       if (r.data && r.data.length > 0) {
         var h = '';
         r.data.forEach(function (l) {
@@ -299,12 +543,12 @@
         });
         document.getElementById('loginList').innerHTML = h;
       } else {
-        document.getElementById('loginList').innerHTML = '<div style="padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178">No login events recorded yet.</div>';
+        document.getElementById('loginList').innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--skr-text-dim)">No login events recorded yet.</div>';
       }
     } catch (e) {
-      document.getElementById('loginList').innerHTML = '<div style="padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178">Login forensics table not available.</div>';
+      document.getElementById('loginList').innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--skr-text-dim)">Login forensics table not available.</div>';
     }
-  });
+  }
   </script>
 </body>
 </html>

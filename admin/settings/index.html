@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Silver Key Realty</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- CRITICAL CSS — INLINED so it ALWAYS loads -->
+  <style>
+/* ═══════════════════════════════════════════
+   SKR CRITICAL CSS — Inlined in every page
+   If this renders, the page looks right.
+   ═══════════════════════════════════════════ */
+
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
+
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Loading Screen — visible by default, hidden when page is ready */
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
+
+/* Shell Layout */
+.skr-shell{display:flex;min-height:100vh}
+
+/* Sidebar */
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
+
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
+
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
+
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);
+  font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
+
+/* Main Content */
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
+
+/* Page Header */
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+/* Cards */
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+/* Stats Row */
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+
+/* Two Column Layout */
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Buttons */
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+/* Tables */
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+/* Status Pills */
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+/* Notification badge */
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+/* Error state */
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+/* Responsive */
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* Hide content until ready — CRITICAL */
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+
+/* ═══════════════════════════════════════════
+   SETTINGS PAGE SPECIFIC STYLES
+   ═══════════════════════════════════════════ */
+
+.settings-section{margin-bottom:32px}
+.settings-section-title{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;
+  border-bottom:1px solid var(--skr-border);
+}
+
+.settings-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 0;border-bottom:1px solid var(--skr-border);
+}
+.settings-row:last-child{border-bottom:none}
+
+.settings-label{flex:1}
+.settings-label h4{font-size:14px;font-weight:400;color:var(--skr-text);margin-bottom:2px}
+.settings-label p{font-size:12px;color:var(--skr-text-dim);line-height:1.5}
+
+.settings-control{flex-shrink:0;margin-left:24px}
+
+/* Toggle Switch */
+.toggle{
+  position:relative;width:44px;height:24px;
+  background:rgba(255,255,255,0.06);border-radius:12px;
+  cursor:pointer;transition:background 0.2s;
+}
+.toggle.active{background:var(--skr-green)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;background:#fff;border-radius:50%;
+  transition:transform 0.2s;
+}
+.toggle.active::after{transform:translateX(20px)}
+
+/* Form Inputs */
+.settings-input{
+  font-family:var(--skr-font-body);font-size:13px;
+  color:var(--skr-text);background:rgba(255,255,255,0.03);
+  border:1px solid var(--skr-border);padding:10px 14px;
+  width:100%;outline:none;transition:border-color 0.2s;
+}
+.settings-input:focus{border-color:rgba(58,148,100,0.4)}
+.settings-input::placeholder{color:var(--skr-text-dim)}
+
+.settings-select{
+  font-family:var(--skr-font-body);font-size:13px;
+  color:var(--skr-text);background:rgba(255,255,255,0.03);
+  border:1px solid var(--skr-border);padding:10px 14px;
+  outline:none;cursor:pointer;min-width:180px;
+}
+.settings-select:focus{border-color:rgba(58,148,100,0.4)}
+
+.form-row{margin-bottom:16px}
+.form-row label{
+  display:block;font-size:11px;color:var(--skr-text-muted);
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;
+}
+
+.form-actions{
+  display:flex;gap:12px;margin-top:24px;padding-top:16px;
+  border-top:1px solid var(--skr-border);
+}
+
+/* Feedback messages */
+.settings-feedback{
+  font-size:12px;margin-top:12px;padding:10px 14px;
+  border-radius:2px;
+}
+.settings-feedback.success{
+  background:rgba(58,148,100,0.1);color:var(--skr-green);
+  border:1px solid rgba(58,148,100,0.2);
+}
+.settings-feedback.error{
+  background:rgba(231,76,60,0.1);color:var(--skr-red);
+  border:1px solid rgba(231,76,60,0.2);
+}
+
+/* Profile avatar placeholder */
+.profile-avatar{
+  width:64px;height:64px;background:var(--skr-surface-2);
+  border:1px solid var(--skr-border);display:flex;
+  align-items:center;justify-content:center;
+  font-family:var(--skr-font-heading);font-size:24px;
+  color:var(--skr-champagne);margin-bottom:16px;
+}
+
+/* Danger zone */
+.danger-zone{
+  background:rgba(231,76,60,0.04);border:1px solid rgba(231,76,60,0.15);
+  padding:24px;margin-top:32px;
+}
+.danger-zone h3{
+  font-family:var(--skr-font-heading);font-size:18px;font-weight:400;
+  color:var(--skr-red);margin-bottom:8px;
+}
+.danger-zone p{font-size:12px;color:var(--skr-text-muted);margin-bottom:16px;line-height:1.6}
+.skr-btn-danger{
+  background:rgba(231,76,60,0.8);color:#fff;
+}
+.skr-btn-danger:hover{background:var(--skr-red)}
+  </style>
+</head>
+<body>
+  <!-- Loading screen — visible immediately -->
+  <div class="skr-loader" id="skr-loader">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading...</div>
+  </div>
+
+  <!-- Error state — hidden by default -->
+  <div class="skr-error-state" id="skr-error-state">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <h2>Something went wrong</h2>
+    <p>The page didn't load correctly. This usually fixes itself — try refreshing.</p>
+    <button class="skr-btn skr-btn-primary" onclick="window.location.reload()">Refresh Page</button>
+    <button class="skr-btn skr-btn-ghost" onclick="window.location.href='/admin/'" style="margin-top:8px">Back to Login</button>
+  </div>
+
+  <!-- Shell wrapper -->
+  <div class="skr-shell">
+    <!-- Sidebar gets injected here by SKR_SHELL -->
+    
+    <main class="skr-main">
+      <div class="skr-page-header">
+        <h1 class="skr-page-title">Sett<em>ings</em></h1>
+        <p class="skr-page-sub">Manage your account preferences and system configuration</p>
+      </div>
+
+      <div class="skr-grid-2">
+        <!-- Profile Settings -->
+        <div class="skr-card">
+          <div class="skr-card-title">Profile</div>
+          <div class="profile-avatar" id="profile-avatar">—</div>
+          <div class="form-row">
+            <label>First Name</label>
+            <input type="text" class="settings-input" id="profile-first-name" placeholder="First name">
+          </div>
+          <div class="form-row">
+            <label>Last Name</label>
+            <input type="text" class="settings-input" id="profile-last-name" placeholder="Last name">
+          </div>
+          <div class="form-row">
+            <label>Email</label>
+            <input type="email" class="settings-input" id="profile-email" placeholder="Email address" disabled>
+          </div>
+          <div class="form-row">
+            <label>Phone</label>
+            <input type="tel" class="settings-input" id="profile-phone" placeholder="Phone number">
+          </div>
+          <div class="form-actions">
+            <button class="skr-btn skr-btn-primary" id="save-profile">Save Changes</button>
+          </div>
+          <div class="settings-feedback" id="profile-feedback" style="display:none"></div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="skr-card">
+          <div class="skr-card-title">Notifications</div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Email Notifications</h4>
+              <p>Receive email alerts for new leads and updates</p>
+            </div>
+            <div class="settings-control">
+              <div class="toggle active" id="toggle-email" data-setting="email_notifications"></div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Lead Alerts</h4>
+              <p>Instant notification when a new lead is assigned</p>
+            </div>
+            <div class="settings-control">
+              <div class="toggle active" id="toggle-leads" data-setting="lead_alerts"></div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Deal Updates</h4>
+              <p>Notifications for deal status changes</p>
+            </div>
+            <div class="settings-control">
+              <div class="toggle active" id="toggle-deals" data-setting="deal_updates"></div>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Weekly Summary</h4>
+              <p>Receive a weekly digest of activity</p>
+            </div>
+            <div class="settings-control">
+              <div class="toggle" id="toggle-weekly" data-setting="weekly_summary"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Preferences -->
+      <div class="skr-card">
+        <div class="skr-card-title">Preferences</div>
+        <div class="skr-grid-2">
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Timezone</h4>
+              <p>Your local timezone for scheduling</p>
+            </div>
+            <div class="settings-control">
+              <select class="settings-select" id="pref-timezone">
+                <option value="America/New_York">Eastern Time (ET)</option>
+                <option value="America/Chicago">Central Time (CT)</option>
+                <option value="America/Denver">Mountain Time (MT)</option>
+                <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                <option value="America/Phoenix">Arizona (MST)</option>
+                <option value="Pacific/Honolulu">Hawaii (HST)</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Date Format</h4>
+              <p>How dates are displayed</p>
+            </div>
+            <div class="settings-control">
+              <select class="settings-select" id="pref-date-format">
+                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Default Lead View</h4>
+              <p>Starting view when opening leads</p>
+            </div>
+            <div class="settings-control">
+              <select class="settings-select" id="pref-lead-view">
+                <option value="list">List View</option>
+                <option value="board">Board View</option>
+                <option value="table">Table View</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">
+              <h4>Items Per Page</h4>
+              <p>Number of records shown in lists</p>
+            </div>
+            <div class="settings-control">
+              <select class="settings-select" id="pref-page-size">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="skr-btn skr-btn-primary" id="save-preferences">Save Preferences</button>
+          <button class="skr-btn skr-btn-ghost" id="reset-preferences">Reset to Defaults</button>
+        </div>
+        <div class="settings-feedback" id="preferences-feedback" style="display:none"></div>
+      </div>
+
+      <!-- Security Quick Links -->
+      <div class="skr-card">
+        <div class="skr-card-title">Security</div>
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Password</h4>
+            <p>Update your account password</p>
+          </div>
+          <div class="settings-control">
+            <a href="../update-password/" class="skr-btn skr-btn-ghost">Change Password</a>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Two-Factor Authentication</h4>
+            <p>Add an extra layer of security to your account</p>
+          </div>
+          <div class="settings-control">
+            <a href="../security/" class="skr-btn skr-btn-ghost">Manage MFA</a>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">
+            <h4>Active Sessions</h4>
+            <p>View and manage your login sessions</p>
+          </div>
+          <div class="settings-control">
+            <a href="../security/" class="skr-btn skr-btn-ghost">View Sessions</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danger Zone (Admin only) -->
+      <div class="danger-zone" id="danger-zone" style="display:none">
+        <h3>Danger Zone</h3>
+        <p>These actions are irreversible. Proceed with caution.</p>
+        <div class="settings-row" style="border:none;padding-top:0">
+          <div class="settings-label">
+            <h4>Export Account Data</h4>
+            <p>Download all your data in a portable format</p>
+          </div>
+          <div class="settings-control">
+            <button class="skr-btn skr-btn-ghost" id="export-data">Export Data</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts — loaded at the bottom so HTML renders first -->
+  <script src="../../assets/js/admin-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
+  <script>
+    var shell = SKR_SHELL.init({ activePage: 'settings' });
+
+    SKR_AUTH.guard(function(member, sb) {
+      shell.render(member);
+      loadPageData(member, sb);
+    });
+
+    function loadPageData(member, sb) {
+      var tenantId = member.tenantId || member.tenant_id;
+      var memberId = member.id;
+      var permLevel = member.permissionLevel || member.permission_level || 0;
+
+      // Populate profile fields
+      document.getElementById('profile-first-name').value = member.first_name || member.firstName || '';
+      document.getElementById('profile-last-name').value = member.last_name || member.lastName || '';
+      document.getElementById('profile-email').value = member.email || '';
+      document.getElementById('profile-phone').value = member.phone || '';
+
+      // Set avatar initials
+      var initials = ((member.first_name || member.firstName || '')[0] || '') + 
+                     ((member.last_name || member.lastName || '')[0] || '');
+      document.getElementById('profile-avatar').textContent = initials.toUpperCase() || '—';
+
+      // Load user preferences from localStorage (or could be from DB)
+      loadPreferences();
+
+      // Show danger zone for admins
+      if (permLevel >= 50) {
+        document.getElementById('danger-zone').style.display = 'block';
+      }
+
+      // Toggle switches
+      document.querySelectorAll('.toggle').forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+          this.classList.toggle('active');
+          var setting = this.dataset.setting;
+          var value = this.classList.contains('active');
+          saveNotificationSetting(setting, value);
+        });
+      });
+
+      // Save profile
+      document.getElementById('save-profile').addEventListener('click', function() {
+        saveProfile(member, sb);
+      });
+
+      // Save preferences
+      document.getElementById('save-preferences').addEventListener('click', function() {
+        savePreferences();
+      });
+
+      // Reset preferences
+      document.getElementById('reset-preferences').addEventListener('click', function() {
+        resetPreferences();
+      });
+
+      // Export data
+      var exportBtn = document.getElementById('export-data');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+          exportAccountData(member, sb);
+        });
+      }
+    }
+
+    function loadPreferences() {
+      var prefs = JSON.parse(localStorage.getItem('skr_preferences') || '{}');
+      
+      if (prefs.timezone) {
+        document.getElementById('pref-timezone').value = prefs.timezone;
+      }
+      if (prefs.dateFormat) {
+        document.getElementById('pref-date-format').value = prefs.dateFormat;
+      }
+      if (prefs.leadView) {
+        document.getElementById('pref-lead-view').value = prefs.leadView;
+      }
+      if (prefs.pageSize) {
+        document.getElementById('pref-page-size').value = prefs.pageSize;
+      }
+
+      // Load notification toggles
+      var notifs = prefs.notifications || {};
+      if (notifs.email_notifications === false) {
+        document.getElementById('toggle-email').classList.remove('active');
+      }
+      if (notifs.lead_alerts === false) {
+        document.getElementById('toggle-leads').classList.remove('active');
+      }
+      if (notifs.deal_updates === false) {
+        document.getElementById('toggle-deals').classList.remove('active');
+      }
+      if (notifs.weekly_summary === true) {
+        document.getElementById('toggle-weekly').classList.add('active');
+      }
+    }
+
+    function saveNotificationSetting(setting, value) {
+      var prefs = JSON.parse(localStorage.getItem('skr_preferences') || '{}');
+      prefs.notifications = prefs.notifications || {};
+      prefs.notifications[setting] = value;
+      localStorage.setItem('skr_preferences', JSON.stringify(prefs));
+    }
+
+    async function saveProfile(member, sb) {
+      var btn = document.getElementById('save-profile');
+      var feedback = document.getElementById('profile-feedback');
+      
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      var firstName = document.getElementById('profile-first-name').value.trim();
+      var lastName = document.getElementById('profile-last-name').value.trim();
+      var phone = document.getElementById('profile-phone').value.trim();
+
+      try {
+        var { error } = await sb
+          .from('skr_team_members')
+          .update({
+            first_name: firstName,
+            last_name: lastName,
+            phone: phone,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', member.id);
+
+        if (error) throw error;
+
+        feedback.textContent = 'Profile updated successfully.';
+        feedback.className = 'settings-feedback success';
+        feedback.style.display = 'block';
+
+        // Update avatar
+        var initials = (firstName[0] || '') + (lastName[0] || '');
+        document.getElementById('profile-avatar').textContent = initials.toUpperCase() || '—';
+
+        setTimeout(function() {
+          feedback.style.display = 'none';
+        }, 3000);
+      } catch (e) {
+        console.error('Profile save error:', e);
+        feedback.textContent = 'Failed to save profile. Please try again.';
+        feedback.className = 'settings-feedback error';
+        feedback.style.display = 'block';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }
+
+    function savePreferences() {
+      var btn = document.getElementById('save-preferences');
+      var feedback = document.getElementById('preferences-feedback');
+
+      var prefs = JSON.parse(localStorage.getItem('skr_preferences') || '{}');
+      prefs.timezone = document.getElementById('pref-timezone').value;
+      prefs.dateFormat = document.getElementById('pref-date-format').value;
+      prefs.leadView = document.getElementById('pref-lead-view').value;
+      prefs.pageSize = document.getElementById('pref-page-size').value;
+
+      localStorage.setItem('skr_preferences', JSON.stringify(prefs));
+
+      feedback.textContent = 'Preferences saved successfully.';
+      feedback.className = 'settings-feedback success';
+      feedback.style.display = 'block';
+
+      setTimeout(function() {
+        feedback.style.display = 'none';
+      }, 3000);
+    }
+
+    function resetPreferences() {
+      var feedback = document.getElementById('preferences-feedback');
+
+      localStorage.removeItem('skr_preferences');
+      
+      document.getElementById('pref-timezone').value = 'America/New_York';
+      document.getElementById('pref-date-format').value = 'MM/DD/YYYY';
+      document.getElementById('pref-lead-view').value = 'list';
+      document.getElementById('pref-page-size').value = '25';
+
+      // Reset toggles to defaults
+      document.getElementById('toggle-email').classList.add('active');
+      document.getElementById('toggle-leads').classList.add('active');
+      document.getElementById('toggle-deals').classList.add('active');
+      document.getElementById('toggle-weekly').classList.remove('active');
+
+      feedback.textContent = 'Preferences reset to defaults.';
+      feedback.className = 'settings-feedback success';
+      feedback.style.display = 'block';
+
+      setTimeout(function() {
+        feedback.style.display = 'none';
+      }, 3000);
+    }
+
+    async function exportAccountData(member, sb) {
+      var btn = document.getElementById('export-data');
+      btn.disabled = true;
+      btn.textContent = 'Exporting...';
+
+      try {
+        var tenantId = member.tenantId || member.tenant_id;
+        
+        // Gather exportable data
+        var exportData = {
+          profile: {
+            first_name: member.first_name || member.firstName,
+            last_name: member.last_name || member.lastName,
+            email: member.email,
+            role: member.role || member.role_name
+          },
+          preferences: JSON.parse(localStorage.getItem('skr_preferences') || '{}'),
+          exported_at: new Date().toISOString()
+        };
+
+        // Create and download file
+        var blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'skr-account-export-' + new Date().toISOString().split('T')[0] + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        console.error('Export error:', e);
+        alert('Failed to export data. Please try again.');
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Export Data';
+    }
+  </script>
+</body>
+</html>

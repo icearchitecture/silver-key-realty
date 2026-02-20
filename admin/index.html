@@ -213,7 +213,10 @@
         provider: 'azure',
         options: {
           scopes: 'email openid profile',
-          redirectTo: window.location.origin + '/admin/auth/callback/'
+          redirectTo: window.location.origin + '/admin/auth/callback/',
+          queryParams: {
+            prompt: 'select_account'
+          }
         }
       });
 

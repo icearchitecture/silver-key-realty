@@ -3,193 +3,376 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Command Center</title>
+  <title>Command Center — Silver Key Realty</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/admin.css">
+  
+  <!-- CRITICAL CSS — INLINED so it ALWAYS loads -->
+  <style>
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
+
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
+
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
+
+.skr-shell{display:flex;min-height:100vh}
+
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
+
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
+
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+  </style>
 </head>
 <body>
-  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
+  <!-- Loading screen — visible immediately -->
+  <div class="skr-loader" id="skr-loader">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading...</div>
+  </div>
 
-  <div id="skr-main" class="skr-shell" style="display:none">
-    <aside id="skr-sidebar" class="skr-sidebar"></aside>
+  <!-- Error state — hidden by default -->
+  <div class="skr-error-state" id="skr-error-state">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <h2>Something went wrong</h2>
+    <p>The page didn't load correctly. This usually fixes itself — try refreshing.</p>
+    <button class="skr-btn skr-btn-primary" onclick="window.location.reload()">Refresh Page</button>
+    <button class="skr-btn skr-btn-ghost" onclick="window.location.href='/admin/'" style="margin-top:8px">Back to Login</button>
+  </div>
 
-    <main class="skr-content">
-      <div class="skr-page-header" style="display:flex;justify-content:space-between;align-items:flex-end">
-        <div>
-          <h1 class="skr-page-title">Command <em>Center</em></h1>
-          <p class="skr-page-sub" id="dash-greeting">Welcome back</p>
+  <!-- Shell wrapper -->
+  <div class="skr-shell">
+    <!-- Sidebar gets injected here by SKR_SHELL -->
+    
+    <main class="skr-main">
+      <div class="skr-page-header">
+        <div class="skr-page-meta">
+          <div id="current-date"></div>
+          <div class="system-status">● SYSTEM ONLINE</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:12px;color:#9A8E80" id="dash-date"></div>
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:4px">&#9679; System Online</div>
-        </div>
+        <h1 class="skr-page-title">Command <em>Center</em></h1>
+        <p class="skr-page-sub" id="greeting"></p>
       </div>
 
-      <div id="dash-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px">
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Leads</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#3A9464;margin-top:4px">&mdash;</div></div>
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Active Deals</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#C9B99A;margin-top:4px">&mdash;</div></div>
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Properties</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#a78bfa;margin-top:4px">&mdash;</div></div>
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Team</div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#F0EBE3;margin-top:4px">&mdash;</div></div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="skr-stats" id="stats-row">
         <div class="skr-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-            <div class="skr-card-title">Recent Leads</div>
-            <a href="/admin/leads/" style="font-size:11px;color:#C9B99A;text-decoration:none;text-transform:uppercase;letter-spacing:1px">View All &#8594;</a>
+          <div class="skr-card-title">Leads</div>
+          <div class="skr-card-value" id="stat-leads" style="color:var(--skr-green)">—</div>
+        </div>
+        <div class="skr-card">
+          <div class="skr-card-title">Active Deals</div>
+          <div class="skr-card-value" id="stat-deals" style="color:var(--skr-champagne)">—</div>
+        </div>
+        <div class="skr-card">
+          <div class="skr-card-title">Properties</div>
+          <div class="skr-card-value" id="stat-properties" style="color:#a78bfa">—</div>
+        </div>
+        <div class="skr-card">
+          <div class="skr-card-title">Team</div>
+          <div class="skr-card-value" id="stat-team">—</div>
+        </div>
+      </div>
+
+      <div class="skr-grid-2">
+        <div class="skr-card">
+          <div class="skr-card-title">Recent Leads</div>
+          <div id="recent-leads">
+            <p style="font-size:13px;color:var(--skr-text-dim)">Loading...</p>
           </div>
-          <div id="dash-leads"><p class="skr-empty">Loading...</p></div>
         </div>
-
         <div class="skr-card">
-          <div class="skr-card-title" style="margin-bottom:16px">Recent Activity</div>
-          <div id="dash-activity"><p class="skr-empty">Loading...</p></div>
+          <div class="skr-card-title">Recent Activity</div>
+          <div id="recent-activity">
+            <p style="font-size:13px;color:var(--skr-text-dim)">Loading...</p>
+          </div>
         </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px">
-        <a href="/admin/leads/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
-          <div style="font-size:20px;margin-bottom:6px">&#9678;</div>
-          <div style="color:#F0EBE3;font-size:13px">Leads</div>
-        </a>
-        <a href="/admin/deals/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
-          <div style="font-size:20px;margin-bottom:6px">&#11041;</div>
-          <div style="color:#F0EBE3;font-size:13px">Deals</div>
-        </a>
-        <a href="/admin/properties/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
-          <div style="font-size:20px;margin-bottom:6px">&#8962;</div>
-          <div style="color:#F0EBE3;font-size:13px">Properties</div>
-        </a>
-        <a href="/admin/source-drive/" class="skr-card" style="text-decoration:none;text-align:center;padding:20px;cursor:pointer">
-          <div style="font-size:20px;margin-bottom:6px">&#9672;</div>
-          <div style="color:#F0EBE3;font-size:13px">Search</div>
-        </a>
       </div>
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Scripts — loaded at the bottom so HTML renders first -->
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/skr-auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
   <script>
-    window.addEventListener('skr-ready', async function() {
-      var u = window.SKR_USER;
+    var shell = SKR_SHELL.init({ activePage: 'dashboard' });
 
-      var hour = new Date().getHours();
-      var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-      document.getElementById('dash-greeting').textContent = greeting + ', ' + (u.member.first_name || u.displayName);
-      document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    SKR_AUTH.guard(function(member, sb) {
+      shell.render(member);
+
+      document.getElementById('greeting').textContent = 'Good ' + getTimeOfDay() + ', ' + member.first_name;
+      document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+
+      loadPageData(member, sb);
+    });
+
+    function getTimeOfDay() {
+      var h = new Date().getHours();
+      if (h < 12) return 'morning';
+      if (h < 17) return 'afternoon';
+      return 'evening';
+    }
+
+    async function loadPageData(member, sb) {
+      var tenantId = member.tenantId || member.tenant_id;
 
       try {
-        var stats = await skrAPI('/api/dashboard/stats');
+        var [leads, deals, props, team] = await Promise.all([
+          sb.from('skr_leads').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId),
+          sb.from('skr_deals').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId).in('status', ['active','under_contract','pending']),
+          sb.from('skr_properties').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId),
+          sb.from('skr_team_members').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId).eq('is_active', true)
+        ]);
 
-        var cards = document.getElementById('dash-stats').children;
-        var colors = ['#3A9464', '#C9B99A', '#a78bfa', '#F0EBE3'];
-        var keys = ['leads', 'activeDeals', 'properties', 'team'];
-        keys.forEach(function(k, i) {
-          cards[i].querySelector('div:last-child').textContent = (stats.counts && stats.counts[k]) || 0;
-          cards[i].querySelector('div:last-child').style.color = colors[i];
-        });
+        document.getElementById('stat-leads').textContent = leads.count || 0;
+        document.getElementById('stat-deals').textContent = deals.count || 0;
+        document.getElementById('stat-properties').textContent = props.count || 0;
+        document.getElementById('stat-team').textContent = team.count || 0;
+      } catch (e) {
+        console.error('Stats load failed:', e);
+      }
 
-        var leadsContainer = document.getElementById('dash-leads');
-        if (!stats.recentLeads || stats.recentLeads.length === 0) {
-          leadsContainer.innerHTML = '<p class="skr-empty">No leads yet. Share your website to start receiving inquiries.</p>';
+      try {
+        var { data: recentLeads } = await sb
+          .from('skr_leads')
+          .select('id, first_name, last_name, email, pathway, status, created_at')
+          .eq('tenant_id', tenantId)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        var leadsEl = document.getElementById('recent-leads');
+        if (!recentLeads || recentLeads.length === 0) {
+          leadsEl.innerHTML = '<p style="font-size:13px;color:var(--skr-text-dim)">No leads yet.</p>';
         } else {
-          leadsContainer.innerHTML = stats.recentLeads.slice(0, 8).map(function(l) {
-            return '<a href="/admin/leads/" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);text-decoration:none">'
-              + '<div>'
-              + '<div style="color:#F0EBE3;font-size:13px;font-weight:400">' + (l.first_name || '') + ' ' + (l.last_name || '') + '</div>'
-              + '<div style="font-size:11px;color:#7A6E60;margin-top:2px">' + timeAgo(l.created_at) + '</div>'
-              + '</div>'
-              + '<span class="skr-badge badge-' + (l.pathway || 'general') + '">' + (l.pathway || 'general') + '</span>'
-              + '</a>';
-          }).join('');
+          leadsEl.innerHTML = '<table class="skr-table"><thead><tr><th>Name</th><th>Pathway</th><th>Status</th><th>Date</th></tr></thead><tbody>'
+            + recentLeads.map(function(l) {
+              return '<tr><td style="color:var(--skr-text)">' + (l.first_name || '') + ' ' + (l.last_name || '') + '</td>'
+                + '<td><span class="skr-pill skr-pill-gold">' + (l.pathway || 'general') + '</span></td>'
+                + '<td>' + (l.status || 'new') + '</td>'
+                + '<td>' + new Date(l.created_at).toLocaleDateString() + '</td></tr>';
+            }).join('')
+            + '</tbody></table>';
         }
+      } catch (e) {
+        document.getElementById('recent-leads').innerHTML = '<p style="font-size:13px;color:var(--skr-text-dim)">Could not load leads.</p>';
+      }
 
-        var actContainer = document.getElementById('dash-activity');
-        if (!stats.activity || stats.activity.length === 0) {
-          actContainer.innerHTML = '<p class="skr-empty">No activity recorded yet.</p>';
+      try {
+        var { data: recentActivity } = await sb
+          .from('skr_audit_log')
+          .select('id, action, created_at')
+          .eq('tenant_id', tenantId)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        var actEl = document.getElementById('recent-activity');
+        if (!recentActivity || recentActivity.length === 0) {
+          actEl.innerHTML = '<p style="font-size:13px;color:var(--skr-text-dim)">No activity recorded yet.</p>';
         } else {
-          actContainer.innerHTML = stats.activity.slice(0, 10).map(function(a) {
-            return '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:12px">'
-              + '<span style="color:#C9B99A">' + formatAction(a.action) + '</span>'
-              + '<span style="color:#7A6E60;margin-left:8px">' + timeAgo(a.created_at) + '</span>'
+          actEl.innerHTML = recentActivity.map(function(a) {
+            return '<div style="padding:10px 0;border-bottom:1px solid var(--skr-border)">'
+              + '<div style="font-size:13px;color:var(--skr-text)">' + formatAction(a.action) + '</div>'
+              + '<div style="font-size:11px;color:var(--skr-text-dim);margin-top:2px">' + new Date(a.created_at).toLocaleDateString() + '</div>'
               + '</div>';
           }).join('');
         }
-      } catch (err) {
-        console.warn('[SKR Dashboard] Stats load failed, falling back to direct queries:', err.message);
-        loadStatsDirect();
+      } catch (e) {
+        document.getElementById('recent-activity').innerHTML = '<p style="font-size:13px;color:var(--skr-text-dim)">Could not load activity.</p>';
       }
-    });
-
-    async function loadStatsDirect() {
-      var sb = window.SKR_SUPA;
-      var cards = document.getElementById('dash-stats').children;
-
-      try {
-        var results = await Promise.all([
-          sb.from('skr_leads').select('id', { count: 'exact', head: true }),
-          sb.from('skr_deals').select('id', { count: 'exact', head: true }).in('status', ['active','under_contract','pending']),
-          sb.from('skr_properties').select('id', { count: 'exact', head: true }),
-          sb.from('skr_team_members').select('id', { count: 'exact', head: true }).eq('is_active', true),
-        ]);
-
-        var colors = ['#3A9464', '#C9B99A', '#a78bfa', '#F0EBE3'];
-        results.forEach(function(r, i) {
-          cards[i].querySelector('div:last-child').textContent = r.count || 0;
-          cards[i].querySelector('div:last-child').style.color = colors[i];
-        });
-      } catch (e) { console.warn('[SKR] Direct stats failed:', e); }
-
-      try {
-        var leadResult = await sb.from('skr_leads').select('id, first_name, last_name, pathway, created_at').order('created_at', { ascending: false }).limit(8);
-        var leadsContainer = document.getElementById('dash-leads');
-        if (leadResult.data && leadResult.data.length > 0) {
-          leadsContainer.innerHTML = leadResult.data.map(function(l) {
-            return '<a href="/admin/leads/" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03);text-decoration:none">'
-              + '<div><div style="color:#F0EBE3;font-size:13px;font-weight:400">' + (l.first_name || '') + ' ' + (l.last_name || '') + '</div>'
-              + '<div style="font-size:11px;color:#7A6E60;margin-top:2px">' + timeAgo(l.created_at) + '</div></div>'
-              + '<span class="skr-badge badge-' + (l.pathway || 'general') + '">' + (l.pathway || 'general') + '</span></a>';
-          }).join('');
-        } else {
-          leadsContainer.innerHTML = '<p class="skr-empty">No leads yet.</p>';
-        }
-      } catch (e) { console.warn('[SKR] Leads fallback failed:', e); }
-
-      try {
-        var actResult = await sb.from('skr_audit_log').select('action, created_at').order('created_at', { ascending: false }).limit(10);
-        var actContainer = document.getElementById('dash-activity');
-        if (actResult.data && actResult.data.length > 0) {
-          actContainer.innerHTML = actResult.data.map(function(a) {
-            return '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.02);font-size:12px">'
-              + '<span style="color:#C9B99A">' + formatAction(a.action) + '</span>'
-              + '<span style="color:#7A6E60;margin-left:8px">' + timeAgo(a.created_at) + '</span></div>';
-          }).join('');
-        } else {
-          actContainer.innerHTML = '<p class="skr-empty">No activity recorded yet.</p>';
-        }
-      } catch (e) { console.warn('[SKR] Activity fallback failed:', e); }
     }
 
     function formatAction(a) {
-      var map = { lead_created:'New lead received', deal_created:'Deal created', team_member_added:'Team member added', login_success:'Successful login', permission_changed:'Permission updated', mailbox_provisioned:'Mailbox provisioned' };
+      var map = {
+        lead_created: 'New lead received',
+        deal_created: 'Deal created',
+        team_member_added: 'Team member added',
+        login_success: 'Successful login',
+        permission_changed: 'Permission updated'
+      };
       return map[a] || (a || '').replace(/_/g, ' ');
-    }
-
-    function timeAgo(ts) {
-      var d = Date.now() - new Date(ts).getTime();
-      var m = Math.floor(d / 60000);
-      if (m < 1) return 'just now';
-      if (m < 60) return m + 'm ago';
-      var h = Math.floor(m / 60);
-      if (h < 24) return h + 'h ago';
-      return Math.floor(h / 24) + 'd ago';
     }
   </script>
 </body>

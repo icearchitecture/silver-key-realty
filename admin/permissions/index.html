@@ -3,204 +3,455 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Permissions</title>
+  <title>Permissions — Silver Key Realty</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    .page{padding:0;max-width:1200px;margin:0 auto}
-    .page-hero{padding:32px 0 40px;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:32px}
-    .page-hero h1{font-family:var(--serif);font-size:clamp(28px,3.5vw,40px);font-weight:300;color:var(--cream);line-height:1.15}
-    .page-hero p{font-family:var(--sans);font-weight:300;font-size:13px;color:var(--silver);margin-top:6px}
+/* ═══════════════════════════════════════════
+   SKR CRITICAL CSS — Inlined in every page
+   If this renders, the page looks right.
+   ═══════════════════════════════════════════ */
 
-    /* Tabs */
-    .tabs{display:flex;gap:4px;margin-bottom:28px;flex-wrap:wrap}
-    .tab{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.2);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:8px 18px;cursor:pointer;transition:all .3s}
-    .tab.active{color:var(--charcoal);background:var(--cream);border-color:transparent;font-weight:400}
-    .tab:hover:not(.active){color:var(--silver);border-color:rgba(255,255,255,.08)}
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-    /* Role selector */
-    .role-selector{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
-    .role-chip{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1px;text-transform:uppercase;padding:6px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .3s}
-    .role-chip.active{background:rgba(46,125,82,.12);color:var(--skr-green-light);border-color:rgba(46,125,82,.25)}
-    .role-chip:hover:not(.active){border-color:rgba(255,255,255,.1)}
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
 
-    /* Permissions grid */
-    .perm-category{margin-bottom:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
-    .perm-category-header{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.02)}
-    .perm-category-header:hover{background:rgba(255,255,255,.01)}
-    .perm-category-title{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--cream)}
-    .perm-category-count{font-family:var(--sans);font-size:10px;color:var(--silver)}
-    .perm-category-body{display:none}
-    .perm-category-body.open{display:block}
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
 
-    .perm-row{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.015)}
-    .perm-row:last-child{border-bottom:none}
-    .perm-row:hover{background:rgba(255,255,255,.01)}
-    .perm-key{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
-    .perm-key code{font-size:10px;color:rgba(255,255,255,.15);margin-left:8px}
-    .perm-right{display:flex;align-items:center;gap:12px}
+/* Loading Screen — visible by default, hidden when page is ready */
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
 
-    /* Toggle switch */
-    .toggle{position:relative;width:36px;height:20px;cursor:pointer}
-    .toggle input{opacity:0;width:0;height:0}
-    .toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.08);border-radius:10px;transition:background .3s}
-    .toggle-thumb{position:absolute;left:2px;top:2px;width:16px;height:16px;background:var(--silver);border-radius:50%;transition:all .3s}
-    .toggle input:checked+.toggle-track{background:rgba(46,125,82,.5)}
-    .toggle input:checked+.toggle-track+.toggle-thumb{left:18px;background:var(--skr-green-light)}
+/* Shell Layout */
+.skr-shell{display:flex;min-height:100vh}
 
-    /* Override badge */
-    .override-badge{font-family:var(--sans);font-size:8px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px}
-    .override-badge.role{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
-    .override-badge.user{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
-    .override-badge.base{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.06)}
+/* Sidebar */
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
 
-    /* Override panel */
-    .override-section{margin-bottom:24px}
-    .override-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:20px;margin-bottom:12px}
-    .override-card-title{font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--champagne);margin-bottom:12px}
-    .override-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.015)}
-    .override-row:last-child{border-bottom:none}
-    .override-key{font-family:var(--sans);font-size:12px;color:var(--silver)}
-    .override-val{font-family:var(--sans);font-size:11px}
-    .override-val.granted{color:var(--skr-green-light)}
-    .override-val.denied{color:#e74c3c}
-    .remove-override{font-family:var(--sans);font-size:9px;color:rgba(255,255,255,.15);background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:12px}
-    .remove-override:hover{color:#e74c3c}
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
 
-    .empty-sm{padding:20px;text-align:center;font-family:var(--sans);font-size:12px;color:#8A8178}
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
 
-    @media(max-width:768px){
-      .page{padding:0}
-      .perm-row{flex-wrap:wrap;gap:8px}
-    }
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);
+  font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
+
+/* Main Content */
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
+
+/* Page Header */
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+/* Cards */
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+/* Stats Row */
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+
+/* Two Column Layout */
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Buttons */
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+/* Tables */
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+/* Status Pills */
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+/* Notification badge */
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+/* Error state */
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+/* Responsive */
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* Hide content until ready — CRITICAL */
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+
+/* ═══════════════════════════════════════════
+   PAGE-SPECIFIC: Permissions
+   ═══════════════════════════════════════════ */
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:28px;flex-wrap:wrap}
+.tab{font-family:var(--skr-font-body);font-size:10px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.2);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:8px 18px;cursor:pointer;transition:all .3s}
+.tab.active{color:var(--skr-bg);background:var(--skr-text);border-color:transparent;font-weight:400}
+.tab:hover:not(.active){color:var(--skr-text-muted);border-color:rgba(255,255,255,.08)}
+
+/* Role selector */
+.role-selector{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.role-chip{font-family:var(--skr-font-body);font-size:10px;font-weight:300;letter-spacing:1px;text-transform:uppercase;padding:6px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .3s}
+.role-chip.active{background:rgba(58,148,100,.12);color:var(--skr-green);border-color:rgba(58,148,100,.25)}
+.role-chip:hover:not(.active){border-color:rgba(255,255,255,.1)}
+
+/* Permissions grid */
+.perm-category{margin-bottom:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+.perm-category-header{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.02)}
+.perm-category-header:hover{background:rgba(255,255,255,.01)}
+.perm-category-title{font-family:var(--skr-font-heading);font-size:16px;font-weight:400;color:var(--skr-text)}
+.perm-category-count{font-family:var(--skr-font-body);font-size:10px;color:var(--skr-text-muted)}
+.perm-category-body{display:none}
+.perm-category-body.open{display:block}
+
+.perm-row{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.015)}
+.perm-row:last-child{border-bottom:none}
+.perm-row:hover{background:rgba(255,255,255,.01)}
+.perm-key{font-family:var(--skr-font-body);font-size:12px;font-weight:300;color:var(--skr-text-muted)}
+.perm-key code{font-size:10px;color:rgba(255,255,255,.15);margin-left:8px}
+.perm-right{display:flex;align-items:center;gap:12px}
+
+/* Toggle switch */
+.toggle{position:relative;width:36px;height:20px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:rgba(255,255,255,.08);border-radius:10px;transition:background .3s}
+.toggle-thumb{position:absolute;left:2px;top:2px;width:16px;height:16px;background:var(--skr-text-muted);border-radius:50%;transition:all .3s}
+.toggle input:checked+.toggle-track{background:rgba(58,148,100,.5)}
+.toggle input:checked+.toggle-track+.toggle-thumb{left:18px;background:var(--skr-green)}
+
+/* Override badge */
+.override-badge{font-family:var(--skr-font-body);font-size:8px;font-weight:400;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+.override-badge.role{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
+.override-badge.user{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+.override-badge.base{background:rgba(255,255,255,.04);color:var(--skr-text-muted);border:1px solid rgba(255,255,255,.06)}
+
+/* Override panel */
+.override-section{margin-bottom:24px}
+.override-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:20px;margin-bottom:12px}
+.override-card-title{font-family:var(--skr-font-body);font-size:11px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;color:var(--skr-champagne);margin-bottom:12px}
+.override-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.015)}
+.override-row:last-child{border-bottom:none}
+.override-key{font-family:var(--skr-font-body);font-size:12px;color:var(--skr-text-muted)}
+.override-val{font-family:var(--skr-font-body);font-size:11px}
+.override-val.granted{color:var(--skr-green)}
+.override-val.denied{color:var(--skr-red)}
+.remove-override{font-family:var(--skr-font-body);font-size:9px;color:rgba(255,255,255,.15);background:none;border:none;cursor:pointer;text-decoration:underline;margin-left:12px}
+.remove-override:hover{color:var(--skr-red)}
+
+.empty-sm{padding:20px;text-align:center;font-family:var(--skr-font-body);font-size:12px;color:var(--skr-text-dim)}
+
+/* Access denied state */
+.access-denied{padding:100px 20px;text-align:center}
+.access-denied p{font-family:var(--skr-font-body);font-size:14px;color:var(--skr-text-muted);line-height:1.8}
+.access-denied a{color:var(--skr-green)}
+
+@media(max-width:768px){
+  .perm-row{flex-wrap:wrap;gap:8px}
+}
   </style>
 </head>
 <body>
 
-  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
+  <!-- Loading Screen -->
+  <div class="skr-loader" id="skr-loader">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading...</div>
+  </div>
 
-  <div id="skr-main" class="skr-shell" style="display:none"><aside id="skr-sidebar" class="skr-sidebar"></aside><main class="skr-content">
-    <div class="page-hero">
-      <a href="../dashboard/" class="back-link">← Back to Dashboard</a>
-      <h1>Permission <em style="color:var(--champagne)">Manager</em></h1>
-      <p>View and override permissions per role. Three-layer system: base role → role override → user override (most specific wins).</p>
-    </div>
+  <!-- Error Fallback -->
+  <div class="skr-error-state" id="skr-error-state">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <h2>Something went wrong</h2>
+    <p>The page didn't load correctly. This usually fixes itself — try refreshing.</p>
+    <button class="skr-btn skr-btn-primary" onclick="window.location.reload()">Refresh Page</button>
+    <button class="skr-btn skr-btn-ghost" onclick="window.location.href='/admin/'" style="margin-top:8px">Back to Login</button>
+  </div>
 
-    <div class="tabs">
-      <div class="tab active" data-tab="role-perms">Role Permissions</div>
-      <div class="tab" data-tab="overrides">Active Overrides</div>
-    </div>
+  <!-- Shell -->
+  <div class="skr-shell">
+    <!-- Sidebar injected by SKR_SHELL -->
 
-    <!-- Tab: Role Permissions -->
-    <div id="tab-role-perms">
-      <div class="role-selector" id="roleSelector"></div>
-      <div id="permGrid"></div>
-    </div>
+    <main class="skr-main">
+      <header class="skr-page-header">
+        <h1 class="skr-page-title">Permis<em>sions</em></h1>
+        <p class="skr-page-sub">View and override permissions per role. Three-layer system: base role → role override → user override (most specific wins).</p>
+      </header>
 
-    <!-- Tab: Overrides -->
-    <div id="tab-overrides" style="display:none">
-      <div class="role-selector" id="overrideRoleSelector"></div>
-      <div id="overrideList"></div>
-    </div>
-  </main></div>
+      <div class="tabs">
+        <div class="tab active" data-tab="role-perms">Role Permissions</div>
+        <div class="tab" data-tab="overrides">Active Overrides</div>
+      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+      <!-- Tab: Role Permissions -->
+      <div id="tab-role-perms">
+        <div class="role-selector" id="roleSelector"></div>
+        <div id="permGrid"></div>
+      </div>
+
+      <!-- Tab: Overrides -->
+      <div id="tab-overrides" style="display:none">
+        <div class="role-selector" id="overrideRoleSelector"></div>
+        <div id="overrideList"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/skr-auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
   <script src="../../assets/js/admin-permissions.js"></script>
   <script>
-  window.addEventListener('skr-ready', async function () {
-    // Ensure admin-permissions SA methods have access to Supabase
-    window.SKR_AUTH = window.SKR_AUTH || {};
-    window.SKR_AUTH.supabase = window.SKR_SUPA;
+  var shell = SKR_SHELL.init({ activePage: 'permissions' });
 
-    var member = window.SKR_USER.member;
-    var roleSlug = ((member.role_name || member.role || 'agent') + '').toLowerCase().replace(/[^a-z]/g, '') || 'agent';
+  SKR_AUTH.guard(function(member, sb) {
+    shell.render(member);
+    loadPageData(member, sb);
+  });
 
-    // Only broker+ can access
-    if (['admin','broker'].indexOf(roleSlug) === -1) {
-      var main = document.querySelector('.skr-content');
-      if (main) main.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px;text-align:center;padding:100px 20px">Permission management requires Broker or Admin role.<br><a href="../dashboard/" style="color:var(--skr-green-light)">← Back to Dashboard</a></p>';
+  function loadPageData(member, sb) {
+    var permLevel = member.permissionLevel || member.permission_level || 0;
+
+    if (permLevel < 70) {
+      var main = document.querySelector('.skr-main');
+      if (main) {
+        main.innerHTML = '<div class="access-denied"><p>Permission management requires Broker or Admin role.<br><a href="../dashboard/">← Back to Dashboard</a></p></div>';
+      }
       return;
     }
 
     var SA = window.SKR_AUTH;
-    var roles = await SA.getRoles();
+    SA.supabase = sb;
+
+    var roles = [];
     var selectedRoleId = null;
     var selectedRoleSlug = null;
 
-    // Permission categories (maps to the 15 JSONB key prefixes)
     var CATEGORIES = [
-      { key: 'leads', label: 'Leads', icon: '📋' },
-      { key: 'deals', label: 'Deals', icon: '🤝' },
-      { key: 'properties', label: 'Properties', icon: '🏠' },
-      { key: 'documents', label: 'Documents', icon: '📄' },
-      { key: 'contacts', label: 'Contacts', icon: '👤' },
-      { key: 'team', label: 'Team', icon: '👥' },
-      { key: 'comms', label: 'Communications', icon: '💬' },
-      { key: 'reports', label: 'Reports', icon: '📊' },
-      { key: 'finance', label: 'Finance', icon: '💰' },
-      { key: 'settings', label: 'Settings', icon: '⚙️' },
-      { key: 'security', label: 'Security', icon: '🛡️' },
-      { key: 'intelligence', label: 'Intelligence', icon: '🧠' },
-      { key: 'admin', label: 'Admin', icon: '👑' },
-      { key: 'workspace', label: 'Workspace', icon: '📝' },
+      { key: 'leads', label: 'Leads', icon: '◎' },
+      { key: 'deals', label: 'Deals', icon: '◇' },
+      { key: 'properties', label: 'Properties', icon: '△' },
+      { key: 'documents', label: 'Documents', icon: '▤' },
+      { key: 'contacts', label: 'Contacts', icon: '●' },
+      { key: 'team', label: 'Team', icon: '◆' },
+      { key: 'comms', label: 'Communications', icon: '▷' },
+      { key: 'reports', label: 'Reports', icon: '▦' },
+      { key: 'finance', label: 'Finance', icon: '◈' },
+      { key: 'settings', label: 'Settings', icon: '✦' },
+      { key: 'security', label: 'Security', icon: '⊕' },
+      { key: 'intelligence', label: 'Intelligence', icon: '◑' },
+      { key: 'admin', label: 'Admin', icon: '◉' },
+      { key: 'workspace', label: 'Workspace', icon: '▣' },
     ];
 
-    // ── TABS ──
-    document.querySelectorAll('.tab').forEach(function (t) {
-      t.addEventListener('click', function () {
-        document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('active'); });
-        this.classList.add('active');
-        var tabId = this.dataset.tab;
-        document.getElementById('tab-role-perms').style.display = tabId === 'role-perms' ? 'block' : 'none';
-        document.getElementById('tab-overrides').style.display = tabId === 'overrides' ? 'block' : 'none';
-        if (tabId === 'overrides' && selectedRoleId) loadOverrides(selectedRoleId);
-      });
-    });
+    initTabs();
+    loadRoles();
 
-    // ── ROLE SELECTORS ──
+    function initTabs() {
+      document.querySelectorAll('.tab').forEach(function(t) {
+        t.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('active'); });
+          this.classList.add('active');
+          var tabId = this.dataset.tab;
+          document.getElementById('tab-role-perms').style.display = tabId === 'role-perms' ? 'block' : 'none';
+          document.getElementById('tab-overrides').style.display = tabId === 'overrides' ? 'block' : 'none';
+          if (tabId === 'overrides' && selectedRoleId) loadOverrides(selectedRoleId);
+        });
+      });
+    }
+
+    async function loadRoles() {
+      try {
+        roles = await SA.getRoles();
+      } catch (e) {
+        roles = [];
+      }
+
+      renderRoleChips('roleSelector', loadRolePermissions);
+      renderRoleChips('overrideRoleSelector', loadOverrides);
+
+      if (roles.length > 0) {
+        var first = roles.find(function(r) { return r.hierarchy_level > 0; });
+        if (first) {
+          selectedRoleId = first.id;
+          selectedRoleSlug = first.slug;
+          document.querySelectorAll('.role-chip[data-id="' + first.id + '"]').forEach(function(c) { c.classList.add('active'); });
+          loadRolePermissions(first.id, first.slug);
+        }
+      }
+    }
+
     function renderRoleChips(containerId, cb) {
       var el = document.getElementById(containerId);
       el.innerHTML = '';
-      roles.forEach(function (r) {
+      roles.forEach(function(r) {
         if (r.hierarchy_level <= 0) return;
         var chip = document.createElement('div');
         chip.className = 'role-chip' + (r.id === selectedRoleId ? ' active' : '');
         chip.textContent = r.name;
         chip.dataset.id = r.id;
         chip.dataset.slug = r.slug;
-        chip.addEventListener('click', function () {
+        chip.addEventListener('click', function() {
           selectedRoleId = this.dataset.id;
           selectedRoleSlug = this.dataset.slug;
-          document.querySelectorAll('.role-chip').forEach(function (c) { c.classList.remove('active'); });
-          document.querySelectorAll('.role-chip[data-id="' + selectedRoleId + '"]').forEach(function (c) { c.classList.add('active'); });
+          document.querySelectorAll('.role-chip').forEach(function(c) { c.classList.remove('active'); });
+          document.querySelectorAll('.role-chip[data-id="' + selectedRoleId + '"]').forEach(function(c) { c.classList.add('active'); });
           cb(selectedRoleId, selectedRoleSlug);
         });
         el.appendChild(chip);
       });
     }
 
-    renderRoleChips('roleSelector', loadRolePermissions);
-    renderRoleChips('overrideRoleSelector', loadOverrides);
-
-    // Auto-select first role
-    if (roles.length > 1) {
-      var first = roles.find(function (r) { return r.hierarchy_level > 0; });
-      if (first) {
-        selectedRoleId = first.id;
-        selectedRoleSlug = first.slug;
-        document.querySelectorAll('.role-chip[data-id="' + first.id + '"]').forEach(function (c) { c.classList.add('active'); });
-        loadRolePermissions(first.id, first.slug);
-      }
-    }
-
-    // ── LOAD ROLE PERMISSIONS ──
     async function loadRolePermissions(roleId, roleSlug) {
       var grid = document.getElementById('permGrid');
       grid.innerHTML = '<div class="empty-sm">Loading permissions…</div>';
@@ -214,14 +465,14 @@
       var overrides = [];
       try { overrides = await SA.listRoleOverrides(roleId); } catch (e) {}
       var overrideMap = {};
-      if (Array.isArray(overrides)) overrides.forEach(function (o) { overrideMap[o.permission_key] = o.override_value; });
+      if (Array.isArray(overrides)) overrides.forEach(function(o) { overrideMap[o.permission_key] = o.override_value; });
 
       var h = '';
-      CATEGORIES.forEach(function (cat) {
-        var keys = Object.keys(perms).filter(function (k) { return k.indexOf(cat.key + '.') === 0 || k.indexOf(cat.key + '_') === 0; });
+      CATEGORIES.forEach(function(cat) {
+        var keys = Object.keys(perms).filter(function(k) { return k.indexOf(cat.key + '.') === 0 || k.indexOf(cat.key + '_') === 0; });
         if (keys.length === 0) return;
 
-        var enabled = keys.filter(function (k) {
+        var enabled = keys.filter(function(k) {
           return overrideMap[k] !== undefined ? overrideMap[k] : perms[k];
         }).length;
 
@@ -230,7 +481,7 @@
           '<span class="perm-category-count">' + enabled + '/' + keys.length + ' enabled</span></div>' +
           '<div class="perm-category-body" id="cat-' + cat.key + '">';
 
-        keys.sort().forEach(function (key) {
+        keys.sort().forEach(function(key) {
           var baseVal = perms[key];
           var hasOverride = overrideMap[key] !== undefined;
           var effectiveVal = hasOverride ? overrideMap[key] : baseVal;
@@ -249,26 +500,23 @@
 
       grid.innerHTML = h;
 
-      // Toggle category bodies
-      grid.querySelectorAll('.perm-category-header').forEach(function (hdr) {
-        hdr.addEventListener('click', function () {
+      grid.querySelectorAll('.perm-category-header').forEach(function(hdr) {
+        hdr.addEventListener('click', function() {
           var body = document.getElementById('cat-' + this.dataset.cat);
           body.classList.toggle('open');
         });
       });
 
-      // Toggle permission overrides
-      grid.querySelectorAll('.toggle input').forEach(function (inp) {
-        inp.addEventListener('change', async function () {
+      grid.querySelectorAll('.toggle input').forEach(function(inp) {
+        inp.addEventListener('change', async function() {
           var key = this.dataset.key;
-          var roleId = this.dataset.roleId;
+          var rId = this.dataset.roleId;
           var val = this.checked;
-          await SA.setRoleOverride(roleId, key, val);
+          await SA.setRoleOverride(rId, key, val);
         });
       });
     }
 
-    // ── LOAD OVERRIDES ──
     async function loadOverrides(roleId) {
       var el = document.getElementById('overrideList');
       el.innerHTML = '<div class="empty-sm">Loading overrides…</div>';
@@ -282,7 +530,7 @@
       }
 
       var h = '<div class="override-card"><div class="override-card-title">Role-Level Overrides (' + overrides.length + ')</div>';
-      overrides.forEach(function (o) {
+      overrides.forEach(function(o) {
         h += '<div class="override-row">' +
           '<span class="override-key">' + o.permission_key + '</span>' +
           '<div><span class="override-val ' + (o.override_value ? 'granted' : 'denied') + '">' + (o.override_value ? 'Granted' : 'Denied') + '</span>' +
@@ -291,15 +539,15 @@
       h += '</div>';
       el.innerHTML = h;
 
-      el.querySelectorAll('.remove-override').forEach(function (btn) {
-        btn.addEventListener('click', async function () {
+      el.querySelectorAll('.remove-override').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
           await SA.removeRoleOverride(this.dataset.roleId, this.dataset.key);
           loadOverrides(this.dataset.roleId);
           loadRolePermissions(selectedRoleId, selectedRoleSlug);
         });
       });
     }
-  })();
+  }
   </script>
 </body>
 </html>

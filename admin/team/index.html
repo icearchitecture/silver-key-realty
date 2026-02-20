@@ -1,117 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Team Management</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team — Silver Key Realty</title>
   <meta name="robots" content="noindex, nofollow">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css"><link rel="stylesheet" href="../../assets/css/base.css"><link rel="stylesheet" href="../../assets/css/admin.css">
   <style>
-    .stat-card { text-align:center; position:relative; overflow:hidden; }
-    .stat-card::before {
-      content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
-      background:radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
-      opacity:0.08; pointer-events:none;
-    }
-    .stat-card:hover::before { opacity:0.14; }
-    .stat-card .stat-num { font-family:'Cormorant Garamond',serif; font-size:36px; margin-top:8px; transition:transform .2s; }
-    .stat-card:hover .stat-num { transform:scale(1.05); }
-    .stat-label { font-size:10px; color:#9A8E80; text-transform:uppercase; letter-spacing:1.5px; font-weight:400; }
+/* ═══════════════════════════════════════════
+   SKR CRITICAL CSS — Inlined in every page
+   If this renders, the page looks right.
+   ═══════════════════════════════════════════ */
 
-    .member-row { display:grid; grid-template-columns:2fr 1fr 80px 1fr 100px; align-items:center; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.03); transition:background .15s; }
-    .member-row:hover { background:rgba(58,148,100,.03); }
-    .member-name { font-weight:400; color:#F0EBE3; font-size:14px; }
-    .member-email { font-size:11px; color:#7A6E60; margin-top:2px; }
-    .member-role { font-size:12px; color:#C9B99A; }
-    .member-status { font-size:11px; }
-    .member-title { font-size:12px; color:#9A8E80; }
-    .status-active { color:#3A9464; } .status-inactive { color:#e74c3c; }
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-    .add-modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:1000; }
-    .add-modal.open { display:flex; }
-    .add-form { background:#1A1A1A; border:1px solid rgba(255,255,255,.04); padding:32px; width:100%; max-width:480px; }
-    .add-form h2 { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:#F0EBE3; margin-bottom:24px; }
-    .add-form h2 em { color:#C9B99A; }
-    .form-row { margin-bottom:16px; }
-    .form-row label { display:block; font-size:10px; color:#9A8E80; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px; }
-    .form-row input, .form-row select { width:100%; padding:10px 14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:#F0EBE3; font-family:'Outfit',sans-serif; font-size:13px; outline:none; }
-    .form-row input:focus, .form-row select:focus { border-color:rgba(58,148,100,.4); }
-    .form-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:24px; }
-    .btn-cancel { padding:10px 20px; background:none; border:1px solid rgba(255,255,255,.08); color:#9A8E80; font-family:'Outfit',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
-    .btn-save { padding:10px 20px; background:#3A9464; border:none; color:#F0EBE3; font-family:'Outfit',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
-    .btn-save:disabled { opacity:.5; }
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
 
-    @media(max-width:900px) {
-      .member-row { grid-template-columns:1fr 1fr; gap:8px; }
-    }
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Loading Screen — visible by default, hidden when page is ready */
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
+
+/* Shell Layout */
+.skr-shell{display:flex;min-height:100vh}
+
+/* Sidebar */
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
+
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
+
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
+
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);
+  font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
+
+/* Main Content */
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
+
+/* Page Header */
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+/* Cards */
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+/* Stats Row */
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+
+/* Two Column Layout */
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Buttons */
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+/* Tables */
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+/* Status Pills */
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+/* Notification badge */
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+/* Error state */
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+/* Responsive */
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* Hide content until ready — CRITICAL */
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+
+/* ═══════════════════════════════════════════
+   Page-specific styles
+   ═══════════════════════════════════════════ */
+
+.stat-card{text-align:center;position:relative;overflow:hidden}
+.stat-card::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
+  opacity:0.08;pointer-events:none;
+}
+.stat-card:hover::before{opacity:0.14}
+.stat-card .stat-num{font-family:var(--skr-font-heading);font-size:36px;margin-top:8px;transition:transform .2s}
+.stat-card:hover .stat-num{transform:scale(1.05)}
+.stat-label{font-size:10px;color:var(--skr-text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:400}
+
+.member-row{display:grid;grid-template-columns:2fr 1fr 80px 1fr 100px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--skr-border);transition:background .15s}
+.member-row:hover{background:rgba(58,148,100,.03)}
+.member-name{font-weight:400;color:var(--skr-text);font-size:14px}
+.member-email{font-size:11px;color:var(--skr-text-dim);margin-top:2px}
+.member-role{font-size:12px;color:var(--skr-champagne)}
+.member-status{font-size:11px}
+.member-title{font-size:12px;color:var(--skr-text-muted)}
+.status-active{color:var(--skr-green)}
+.status-inactive{color:var(--skr-red)}
+
+.add-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:1000}
+.add-modal.open{display:flex}
+.add-form{background:var(--skr-surface);border:1px solid var(--skr-border);padding:32px;width:100%;max-width:480px}
+.add-form h2{font-family:var(--skr-font-heading);font-size:22px;font-weight:300;color:var(--skr-text);margin-bottom:24px}
+.add-form h2 em{color:var(--skr-champagne)}
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-size:10px;color:var(--skr-text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.form-row input,.form-row select{width:100%;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--skr-border-hover);color:var(--skr-text);font-family:var(--skr-font-body);font-size:13px;outline:none}
+.form-row input:focus,.form-row select:focus{border-color:rgba(58,148,100,.4)}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:24px}
+.btn-cancel{padding:10px 20px;background:none;border:1px solid var(--skr-border-hover);color:var(--skr-text-muted);font-family:var(--skr-font-body);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer}
+.btn-save{padding:10px 20px;background:var(--skr-green);border:none;color:var(--skr-text);font-family:var(--skr-font-body);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer}
+.btn-save:hover{background:var(--skr-green-hover)}
+.btn-save:disabled{opacity:.5}
+
+.table-header{border-bottom:1px solid rgba(255,255,255,.06);padding:10px 16px}
+.table-header-label{font-size:10px;color:var(--skr-text-muted);text-transform:uppercase;letter-spacing:1.5px}
+.action-btn{padding:4px 10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--skr-border-hover);background:none;color:var(--skr-text-muted);cursor:pointer;font-family:var(--skr-font-body);transition:all .12s}
+.action-btn:hover{border-color:var(--skr-champagne);color:var(--skr-champagne)}
+
+@media(max-width:900px){
+  .member-row{grid-template-columns:1fr 1fr;gap:8px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
   </style>
 </head>
 <body>
-  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
-  <div id="skr-main" class="skr-shell" style="display:none">
-    <aside id="skr-sidebar" class="skr-sidebar"></aside>
-    <main class="skr-content">
+  <!-- Loading Screen -->
+  <div class="skr-loader">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading...</div>
+  </div>
+
+  <!-- Error Fallback -->
+  <div class="skr-error-state">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <h2>Something went wrong</h2>
+    <p>The page didn't load correctly. This usually fixes itself — try refreshing.</p>
+    <button class="skr-btn skr-btn-primary" onclick="window.location.reload()">Refresh Page</button>
+    <button class="skr-btn skr-btn-ghost" onclick="window.location.href='/admin/'" style="margin-top:8px">Back to Login</button>
+  </div>
+
+  <!-- Shell Wrapper -->
+  <div class="skr-shell">
+    <!-- Sidebar injected by SKR_SHELL -->
+    <main class="skr-main">
       <div class="skr-page-header" style="display:flex;justify-content:space-between;align-items:center">
         <div>
           <h1 class="skr-page-title">Team <em>Management</em></h1>
           <p class="skr-page-sub">Add, edit, and manage your team members</p>
         </div>
-        <button class="skr-btn skr-btn-primary" onclick="document.getElementById('add-modal').classList.add('open')">+ Add Employee</button>
+        <button class="skr-btn skr-btn-primary" onclick="openAddModal()">+ Add Employee</button>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">
-        <div class="skr-card stat-card" style="--glow:#a78bfa"><div class="stat-label">Total Members</div><div class="stat-num" id="stat-total" style="color:#a78bfa">&mdash;</div></div>
-        <div class="skr-card stat-card" style="--glow:#E8854A"><div class="stat-label">Active</div><div class="stat-num" id="stat-active" style="color:#E8854A">&mdash;</div></div>
-        <div class="skr-card stat-card" style="--glow:#e74c3c"><div class="stat-label">Inactive</div><div class="stat-num" id="stat-inactive" style="color:#e74c3c">&mdash;</div></div>
-        <div class="skr-card stat-card" style="--glow:#3b82f6"><div class="stat-label">Pending Invites</div><div class="stat-num" id="stat-pending" style="color:#3b82f6">&mdash;</div></div>
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">
+        <div class="skr-card stat-card" style="--glow:#a78bfa">
+          <div class="stat-label">Total Members</div>
+          <div class="stat-num" id="stat-total" style="color:#a78bfa">&mdash;</div>
+        </div>
+        <div class="skr-card stat-card" style="--glow:#E8854A">
+          <div class="stat-label">Active</div>
+          <div class="stat-num" id="stat-active" style="color:#E8854A">&mdash;</div>
+        </div>
+        <div class="skr-card stat-card" style="--glow:#e74c3c">
+          <div class="stat-label">Inactive</div>
+          <div class="stat-num" id="stat-inactive" style="color:#e74c3c">&mdash;</div>
+        </div>
+        <div class="skr-card stat-card" style="--glow:#3b82f6">
+          <div class="stat-label">Pending Invites</div>
+          <div class="stat-num" id="stat-pending" style="color:#3b82f6">&mdash;</div>
+        </div>
       </div>
 
       <div class="skr-card" style="padding:0;overflow-x:auto">
-        <div class="member-row" style="border-bottom:1px solid rgba(255,255,255,.06);padding:10px 16px">
-          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Name</div>
-          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Role</div>
-          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Status</div>
-          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Title</div>
-          <div style="font-size:10px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Actions</div>
+        <div class="member-row table-header">
+          <div class="table-header-label">Name</div>
+          <div class="table-header-label">Role</div>
+          <div class="table-header-label">Status</div>
+          <div class="table-header-label">Title</div>
+          <div class="table-header-label">Actions</div>
         </div>
-        <div id="team-list"><div style="padding:40px;text-align:center;color:#7A6E60;font-size:13px">Loading team members...</div></div>
+        <div id="team-list">
+          <div style="padding:40px;text-align:center;color:var(--skr-text-dim);font-size:13px">Loading team members...</div>
+        </div>
       </div>
     </main>
   </div>
 
+  <!-- Add Employee Modal -->
   <div id="add-modal" class="add-modal">
     <div class="add-form">
       <h2>Add <em>Employee</em></h2>
-      <div class="form-row"><label>First Name</label><input id="af-first" placeholder="Dana"></div>
-      <div class="form-row"><label>Last Name</label><input id="af-last" placeholder="Williams"></div>
-      <div class="form-row"><label>Email</label><input id="af-email" type="email" placeholder="dana@silverkeyrealty.llc"></div>
-      <div class="form-row"><label>Title</label><input id="af-title" placeholder="Managing Broker"></div>
-      <div class="form-row"><label>Role</label>
+      <div class="form-row">
+        <label>First Name</label>
+        <input id="af-first" placeholder="Dana">
+      </div>
+      <div class="form-row">
+        <label>Last Name</label>
+        <input id="af-last" placeholder="Williams">
+      </div>
+      <div class="form-row">
+        <label>Email</label>
+        <input id="af-email" type="email" placeholder="dana@silverkeyrealty.llc">
+      </div>
+      <div class="form-row">
+        <label>Title</label>
+        <input id="af-title" placeholder="Managing Broker">
+      </div>
+      <div class="form-row">
+        <label>Role</label>
         <select id="af-role">
           <option value="">&#8212; Select Role &#8212;</option>
         </select>
       </div>
       <div class="form-actions">
-        <button class="btn-cancel" onclick="document.getElementById('add-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
         <button class="btn-save" id="af-btn" onclick="addEmployee()">Add Employee</button>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Scripts -->
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/skr-auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
   <script>
-    window.addEventListener('skr-ready', async function() {
-      await loadRoles();
-      await loadTeam();
-    });
-
     var roles = [];
 
-    async function loadRoles() {
-      var sb = window.SKR_SUPA;
+    var shell = SKR_SHELL.init({ activePage: 'team' });
+
+    SKR_AUTH.guard(function(member, sb) {
+      shell.render(member);
+      loadPageData(member, sb);
+    });
+
+    function loadPageData(member, sb) {
+      loadRoles(sb);
+      loadTeam(member, sb);
+    }
+
+    async function loadRoles(sb) {
       var result = await sb.from('skr_roles').select('id, role_name, permission_level').order('permission_level', { ascending: false });
       roles = result.data || [];
       var sel = document.getElementById('af-role');
@@ -120,9 +403,8 @@
       }).join('');
     }
 
-    async function loadTeam() {
-      var sb = window.SKR_SUPA;
-      var u = window.SKR_USER;
+    async function loadTeam(member, sb) {
+      var u = member || window.SKR_USER;
 
       var result = await sb
         .from('skr_team_members')
@@ -131,7 +413,7 @@
         .order('last_name');
 
       if (result.error) {
-        document.getElementById('team-list').innerHTML = '<div style="padding:20px;color:#e74c3c;font-size:13px">Error loading team: ' + result.error.message + '</div>';
+        document.getElementById('team-list').innerHTML = '<div style="padding:20px;color:var(--skr-red);font-size:13px">Error loading team: ' + result.error.message + '</div>';
         return;
       }
 
@@ -152,7 +434,7 @@
       }
 
       if (members.length === 0) {
-        document.getElementById('team-list').innerHTML = '<div style="padding:40px;text-align:center;color:#7A6E60;font-size:13px">No team members found. Add your first employee.</div>';
+        document.getElementById('team-list').innerHTML = '<div style="padding:40px;text-align:center;color:var(--skr-text-dim);font-size:13px">No team members found. Add your first employee.</div>';
         return;
       }
 
@@ -164,10 +446,18 @@
           + '<div class="member-role">' + roleName + '</div>'
           + '<div class="member-status ' + (m.is_active ? 'status-active' : 'status-inactive') + '">' + (m.is_active ? '&#9679; Active' : '&#9675; Inactive') + '</div>'
           + '<div class="member-title">' + (m.title || '&#8212;') + '</div>'
-          + '<div><button onclick="toggleActive(\'' + m.id + '\',' + (!m.is_active) + ')" style="padding:4px 10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(255,255,255,.08);background:none;color:#9A8E80;cursor:pointer;font-family:\'Outfit\',sans-serif">'
+          + '<div><button class="action-btn" onclick="toggleActive(\'' + m.id + '\',' + (!m.is_active) + ')">'
           + (m.is_active ? 'Deactivate' : 'Activate') + '</button></div>'
           + '</div>';
       }).join('');
+    }
+
+    function openAddModal() {
+      document.getElementById('add-modal').classList.add('open');
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.remove('open');
     }
 
     async function addEmployee() {
@@ -177,10 +467,14 @@
       var title = document.getElementById('af-title').value.trim();
       var roleId = document.getElementById('af-role').value;
 
-      if (!first || !email || !roleId) { alert('First name, email, and role are required.'); return; }
+      if (!first || !email || !roleId) {
+        alert('First name, email, and role are required.');
+        return;
+      }
 
       var btn = document.getElementById('af-btn');
-      btn.textContent = 'Adding...'; btn.disabled = true;
+      btn.textContent = 'Adding...';
+      btn.disabled = true;
 
       var sb = window.SKR_SUPA;
       var u = window.SKR_USER;
@@ -197,24 +491,27 @@
 
       if (result.error) {
         alert('Error: ' + result.error.message);
-        btn.textContent = 'Add Employee'; btn.disabled = false;
+        btn.textContent = 'Add Employee';
+        btn.disabled = false;
         return;
       }
 
-      document.getElementById('add-modal').classList.remove('open');
-      btn.textContent = 'Add Employee'; btn.disabled = false;
+      closeAddModal();
+      btn.textContent = 'Add Employee';
+      btn.disabled = false;
       document.getElementById('af-first').value = '';
       document.getElementById('af-last').value = '';
       document.getElementById('af-email').value = '';
       document.getElementById('af-title').value = '';
       document.getElementById('af-role').value = '';
-      await loadTeam();
+      await loadTeam(u, sb);
     }
 
     async function toggleActive(id, newState) {
       var sb = window.SKR_SUPA;
+      var u = window.SKR_USER;
       await sb.from('skr_team_members').update({ is_active: newState }).eq('id', id);
-      await loadTeam();
+      await loadTeam(u, sb);
     }
   </script>
 </body>

@@ -1,53 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Silver Key Realty — Quam Drive</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents — Silver Key Realty</title>
   <meta name="robots" content="noindex, nofollow">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css"><link rel="stylesheet" href="../../assets/css/base.css"><link rel="stylesheet" href="../../assets/css/admin.css">
+  <style>
+/* ═══════════════════════════════════════════
+   SKR CRITICAL CSS — Inlined in every page
+   If this renders, the page looks right.
+   ═══════════════════════════════════════════ */
+
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
+
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Loading Screen — visible by default, hidden when page is ready */
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
+
+/* Shell Layout */
+.skr-shell{display:flex;min-height:100vh}
+
+/* Sidebar */
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
+
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
+
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
+
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);
+  font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
+
+/* Main Content */
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
+
+/* Page Header */
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+/* Cards */
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+/* Stats Row */
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+
+/* Two Column Layout */
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Buttons */
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+/* Tables */
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+/* Status Pills */
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+/* Notification badge */
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+/* Error state */
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+/* Responsive */
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* Hide content until ready — CRITICAL */
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+
+/* Page-specific styles */
+.skr-input{
+  width:100%;padding:10px 12px;
+  background:var(--skr-surface);border:1px solid var(--skr-border);
+  color:var(--skr-text);font-family:var(--skr-font-body);font-size:13px;
+  transition:border-color 0.12s;
+}
+.skr-input:focus{outline:none;border-color:var(--skr-border-hover)}
+.skr-input::placeholder{color:var(--skr-text-dim)}
+
+.skr-select{
+  padding:10px 12px;
+  background:var(--skr-surface);border:1px solid var(--skr-border);
+  color:var(--skr-text);font-family:var(--skr-font-body);font-size:13px;
+  cursor:pointer;
+}
+.skr-select:focus{outline:none;border-color:var(--skr-border-hover)}
+
+.skr-label{
+  display:block;font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;
+}
+
+.skr-form-row{margin-bottom:16px}
+.skr-form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+.skr-modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,0.7);
+  display:none;align-items:center;justify-content:center;
+}
+.skr-modal-overlay.open{display:flex}
+.skr-modal{
+  background:var(--skr-surface);border:1px solid var(--skr-border);
+  padding:32px;width:100%;max-width:480px;
+}
+.skr-modal-title{
+  font-family:var(--skr-font-heading);font-size:24px;font-weight:300;
+  margin-bottom:24px;
+}
+.skr-modal-title em{color:var(--skr-champagne)}
+
+.skr-empty{text-align:center;color:var(--skr-text-dim);padding:32px}
+
+.badge-new{
+  background:rgba(58,148,100,0.1);color:#3A9464;
+  padding:2px 8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;
+}
+  </style>
 </head>
 <body>
-  <div id="skr-loader" class="skr-loader"><div class="skr-spinner"></div></div>
-  <div id="skr-main" class="skr-shell" style="display:none">
-    <aside id="skr-sidebar" class="skr-sidebar"></aside>
-    <main class="skr-content">
+  <!-- Loading Screen -->
+  <div class="skr-loader">
+    <div class="skr-loader-logo">Silver <em>Key</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading</div>
+  </div>
+
+  <!-- Error Fallback -->
+  <div class="skr-error-state">
+    <h2>Something went wrong</h2>
+    <p>Unable to load the admin panel. Please check your connection and try again.</p>
+    <button class="skr-btn skr-btn-ghost" onclick="location.reload()">Retry</button>
+  </div>
+
+  <!-- Shell Wrapper -->
+  <div class="skr-shell">
+    <!-- Sidebar injected by SKR_SHELL -->
+    
+    <main class="skr-main">
       <div class="skr-page-header" style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <h1 class="skr-page-title">Quam <em>Drive</em></h1>
+          <h1 class="skr-page-title">Docu<em>ments</em></h1>
           <p class="skr-page-sub" id="qd-count">Loading files...</p>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="skr-btn skr-btn-outline" onclick="showUploadRequest()">Request Docs</button>
+          <button class="skr-btn skr-btn-ghost" onclick="showUploadRequest()">Request Docs</button>
           <button class="skr-btn skr-btn-primary" onclick="document.getElementById('upload-modal').classList.add('open')">+ Upload File</button>
         </div>
       </div>
 
-      <div id="qd-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Files</div><div id="stat-files" style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#3A9464;margin-top:4px">&mdash;</div></div>
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Classified</div><div id="stat-classified" style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#C9B99A;margin-top:4px">&mdash;</div></div>
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Deal Rooms</div><div id="stat-rooms" style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#a78bfa;margin-top:4px">&mdash;</div></div>
-        <div class="skr-card" style="text-align:center"><div style="font-size:11px;color:#9A8E80;text-transform:uppercase;letter-spacing:1.5px">Urgency Flags</div><div id="stat-urgency" style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#e74c3c;margin-top:4px">&mdash;</div></div>
+      <div id="qd-stats" class="skr-stats">
+        <div class="skr-card" style="text-align:center">
+          <div class="skr-card-title">Files</div>
+          <div id="stat-files" class="skr-card-value" style="color:var(--skr-green)">&mdash;</div>
+        </div>
+        <div class="skr-card" style="text-align:center">
+          <div class="skr-card-title">Classified</div>
+          <div id="stat-classified" class="skr-card-value" style="color:var(--skr-champagne)">&mdash;</div>
+        </div>
+        <div class="skr-card" style="text-align:center">
+          <div class="skr-card-title">Deal Rooms</div>
+          <div id="stat-rooms" class="skr-card-value" style="color:#a78bfa">&mdash;</div>
+        </div>
+        <div class="skr-card" style="text-align:center">
+          <div class="skr-card-title">Urgency Flags</div>
+          <div id="stat-urgency" class="skr-card-value" style="color:var(--skr-red)">&mdash;</div>
+        </div>
       </div>
 
-      <div style="margin-bottom:20px"><input type="text" id="qd-search" class="skr-input" placeholder="Search files by name..." style="max-width:400px"></div>
+      <div style="margin-bottom:20px">
+        <input type="text" id="qd-search" class="skr-input" placeholder="Search files by name..." style="max-width:400px">
+      </div>
 
       <div class="skr-card" style="padding:0;overflow-x:auto">
         <table class="skr-table">
-          <thead><tr><th>File</th><th>Type</th><th>Classification</th><th>Source</th><th>Size</th><th>Uploaded</th></tr></thead>
-          <tbody id="qd-tbody"><tr><td colspan="6" class="skr-empty">Loading...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Type</th>
+              <th>Classification</th>
+              <th>Source</th>
+              <th>Size</th>
+              <th>Uploaded</th>
+            </tr>
+          </thead>
+          <tbody id="qd-tbody">
+            <tr><td colspan="6" class="skr-empty">Loading...</td></tr>
+          </tbody>
         </table>
       </div>
     </main>
   </div>
 
+  <!-- Upload Modal -->
   <div id="upload-modal" class="skr-modal-overlay">
     <div class="skr-modal">
-      <h2 class="skr-modal-title">Upload to <em style="color:#C9B99A">Quam Drive</em></h2>
-      <div class="skr-form-row"><label class="skr-label">File Name</label><input id="uf-name" class="skr-input" placeholder="contract_smith_123maple.pdf"></div>
+      <h2 class="skr-modal-title">Upload to <em>Quam Drive</em></h2>
+      <div class="skr-form-row">
+        <label class="skr-label">File Name</label>
+        <input id="uf-name" class="skr-input" placeholder="contract_smith_123maple.pdf">
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="skr-form-row"><label class="skr-label">Document Type</label>
+        <div class="skr-form-row">
+          <label class="skr-label">Document Type</label>
           <select id="uf-type" class="skr-select" style="width:100%">
             <option value="">&#8212; Select &#8212;</option>
             <option value="purchase_agreement">Purchase Agreement</option>
@@ -72,7 +386,8 @@
             <option value="id_verification">ID Verification</option>
           </select>
         </div>
-        <div class="skr-form-row"><label class="skr-label">Source</label>
+        <div class="skr-form-row">
+          <label class="skr-label">Source</label>
           <select id="uf-source" class="skr-select" style="width:100%">
             <option value="direct_upload">Direct Upload</option>
             <option value="email_attachment">Email Attachment</option>
@@ -82,35 +397,63 @@
           </select>
         </div>
       </div>
-      <div class="skr-form-row"><label class="skr-label">Confidential?</label>
-        <label style="color:#9A8E80;font-size:13px;cursor:pointer"><input type="checkbox" id="uf-confidential"> Mark as confidential (restricted access)</label>
+      <div class="skr-form-row">
+        <label style="color:var(--skr-text-muted);font-size:13px;cursor:pointer">
+          <input type="checkbox" id="uf-confidential"> Mark as confidential (restricted access)
+        </label>
       </div>
       <div class="skr-form-actions">
-        <button class="skr-btn skr-btn-outline" onclick="document.getElementById('upload-modal').classList.remove('open')">Cancel</button>
+        <button class="skr-btn skr-btn-ghost" onclick="document.getElementById('upload-modal').classList.remove('open')">Cancel</button>
         <button class="skr-btn skr-btn-primary" onclick="uploadFile()">Upload &amp; Classify</button>
       </div>
     </div>
   </div>
 
+  <!-- Request Documents Modal -->
   <div id="request-modal" class="skr-modal-overlay">
     <div class="skr-modal">
-      <h2 class="skr-modal-title">Request <em style="color:#C9B99A">Documents</em></h2>
-      <div class="skr-form-row"><label class="skr-label">Client Email</label><input id="req-email" class="skr-input" placeholder="client@email.com"></div>
-      <div class="skr-form-row"><label class="skr-label">Client Name</label><input id="req-name" class="skr-input" placeholder="John Smith"></div>
-      <div class="skr-form-row"><label class="skr-label">Documents Needed (comma-separated types)</label><input id="req-docs" class="skr-input" placeholder="pre_approval, id_verification, insurance_certificate"></div>
-      <div class="skr-form-row"><label class="skr-label">Message (optional)</label><input id="req-message" class="skr-input" placeholder="Please upload these documents for your transaction."></div>
+      <h2 class="skr-modal-title">Request <em>Documents</em></h2>
+      <div class="skr-form-row">
+        <label class="skr-label">Client Email</label>
+        <input id="req-email" class="skr-input" placeholder="client@email.com">
+      </div>
+      <div class="skr-form-row">
+        <label class="skr-label">Client Name</label>
+        <input id="req-name" class="skr-input" placeholder="John Smith">
+      </div>
+      <div class="skr-form-row">
+        <label class="skr-label">Documents Needed (comma-separated types)</label>
+        <input id="req-docs" class="skr-input" placeholder="pre_approval, id_verification, insurance_certificate">
+      </div>
+      <div class="skr-form-row">
+        <label class="skr-label">Message (optional)</label>
+        <input id="req-message" class="skr-input" placeholder="Please upload these documents for your transaction.">
+      </div>
       <div class="skr-form-actions">
-        <button class="skr-btn skr-btn-outline" onclick="document.getElementById('request-modal').classList.remove('open')">Cancel</button>
+        <button class="skr-btn skr-btn-ghost" onclick="document.getElementById('request-modal').classList.remove('open')">Cancel</button>
         <button class="skr-btn skr-btn-primary" onclick="sendUploadRequest()">Send Request</button>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Scripts -->
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/skr-auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
   <script>
-    window.addEventListener('skr-ready', function() { loadStats(); loadFiles(); setupSearch(); });
+    var shell = SKR_SHELL.init({ activePage: 'documents' });
+
+    SKR_AUTH.guard(function(member, sb) {
+      shell.render(member);
+      loadPageData(member, sb);
+    });
+
+    function loadPageData(member, sb) {
+      loadStats();
+      loadFiles();
+      setupSearch();
+    }
 
     function setupSearch() {
       var t;
@@ -128,7 +471,7 @@
         document.getElementById('stat-rooms').textContent = data.counts.dealRooms;
         document.getElementById('stat-urgency').textContent = data.counts.openUrgency;
       } catch (e) {
-        console.warn('[QD] Stats load failed:', e);
+        console.warn('[Documents] Stats load failed:', e);
       }
     }
 
@@ -148,15 +491,15 @@
           var cls = f.classifications && f.classifications[0];
           return '<tr style="cursor:pointer" onclick="location.href=\'?file=' + f.id + '\'">'
             + '<td style="font-weight:400">' + f.file_name + '</td>'
-            + '<td style="color:#9A8E80;font-size:12px">.' + (f.file_extension || '?') + '</td>'
-            + '<td>' + (cls ? '<span class="skr-badge badge-new">' + cls.document_type.replace(/_/g, ' ') + '</span>' : '<span style="color:#7A6E60;font-size:11px">unclassified</span>') + '</td>'
-            + '<td style="color:#C9B99A;font-size:12px">' + (f.source_platform || '').replace(/_/g, ' ') + '</td>'
-            + '<td style="color:#9A8E80;font-size:12px">' + (f.file_size_bytes ? formatBytes(f.file_size_bytes) : '&#8212;') + '</td>'
-            + '<td style="color:#7A6E60;font-size:12px">' + timeAgo(f.created_at) + '</td>'
+            + '<td style="color:var(--skr-text-muted);font-size:12px">.' + (f.file_extension || '?') + '</td>'
+            + '<td>' + (cls ? '<span class="badge-new">' + cls.document_type.replace(/_/g, ' ') + '</span>' : '<span style="color:var(--skr-text-dim);font-size:11px">unclassified</span>') + '</td>'
+            + '<td style="color:var(--skr-champagne);font-size:12px">' + (f.source_platform || '').replace(/_/g, ' ') + '</td>'
+            + '<td style="color:var(--skr-text-muted);font-size:12px">' + (f.file_size_bytes ? formatBytes(f.file_size_bytes) : '&#8212;') + '</td>'
+            + '<td style="color:var(--skr-text-dim);font-size:12px">' + timeAgo(f.created_at) + '</td>'
             + '</tr>';
         }).join('');
       } catch (e) {
-        console.warn('[QD] Files load failed:', e);
+        console.warn('[Documents] Files load failed:', e);
         document.getElementById('qd-tbody').innerHTML = '<tr><td colspan="6" class="skr-empty">Failed to load files.</td></tr>';
       }
     }

@@ -3,148 +3,399 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lead Pipeline — Silver Key Realty</title>
+  <title>Leads — Silver Key Realty</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/tokens.css?v=2">
-  <link rel="stylesheet" href="../../assets/css/base.css?v=2">
-  <link rel="stylesheet" href="../../assets/css/nav.css?v=2">
-  <link rel="stylesheet" href="../../assets/css/responsive.css?v=2">
-  <link rel="stylesheet" href="../../assets/css/admin.css?v=2">
+  
+  <!-- CRITICAL CSS — INLINED so it ALWAYS loads -->
   <style>
-    :root{--bg:#111;--card-bg:rgba(255,255,255,0.015);--card-border:rgba(255,255,255,0.04);--row-hover:rgba(58,148,100,0.04);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',Arial,sans-serif;--cream:#F0EBE3;--champagne:#C9B99A;--silver:#8A8178;--skr-green:#3A9464;--skr-green-light:#3A9464}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{background:var(--bg);font-family:var(--sans);color:var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+/* ═══════════════════════════════════════════
+   SKR CRITICAL CSS — Inlined in every page
+   If this renders, the page looks right.
+   ═══════════════════════════════════════════ */
 
-    .admin-layout{display:flex;min-height:100vh}
-    .sidebar{width:220px;background:#0D0D0D;position:fixed;top:0;left:0;bottom:0;padding:80px 0 24px;z-index:100;border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
-    .sidebar-nav{flex:1;padding:16px 0}
-    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;font-family:var(--sans);font-size:13px;font-weight:300;color:#8A8178;text-decoration:none;transition:all 0.2s;border-left:2px solid transparent}
-    .sidebar-item:hover{color:var(--cream);background:rgba(255,255,255,0.02)}
-    .sidebar-item.active{color:var(--cream);border-left-color:#3A9464;background:rgba(58,148,100,0.04)}
-    .sidebar-icon{font-size:14px;width:20px;text-align:center}
-    .sidebar-user{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.04)}
-    .sidebar-user-name{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--cream)}
-    .sidebar-user-role{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:#3A9464;margin-top:2px}
-    .main-content{margin-left:220px;flex:1;padding:32px;padding-top:96px}
+/* Reset */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-    .loading-state{min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+/* Base */
+:root{
+  --skr-bg:#111111;
+  --skr-surface:#1A1A1A;
+  --skr-surface-2:#1E1E1E;
+  --skr-border:rgba(255,255,255,0.04);
+  --skr-border-hover:rgba(255,255,255,0.08);
+  --skr-text:#F0EBE3;
+  --skr-text-muted:#9A8E80;
+  --skr-text-dim:#7A6E60;
+  --skr-champagne:#C9B99A;
+  --skr-green:#3A9464;
+  --skr-green-hover:#2d7a52;
+  --skr-red:#e74c3c;
+  --skr-sidebar-w:220px;
+  --skr-font-body:'Outfit',system-ui,-apple-system,sans-serif;
+  --skr-font-heading:'Cormorant Garamond',Georgia,serif;
+  --skr-font-logo:Georgia,serif;
+}
 
-    .breadcrumb{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:#A89888;margin-bottom:8px}
-    .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.04)}
-    .page-title{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--cream);line-height:1.2;margin-top:4px}
-    .page-title em{color:var(--champagne);font-style:italic}
-    .page-sub{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver);margin-top:4px}
+html{height:100%}
+body{
+  min-height:100vh;background:var(--skr-bg);
+  font-family:var(--skr-font-body);color:var(--skr-text);
+  -webkit-font-smoothing:antialiased;
+}
 
-    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-    .stat-card{padding:22px 20px;background:var(--card-bg);border:1px solid var(--card-border);transition:all .5s}
-    .stat-card:hover{border-color:rgba(58,148,100,.12);background:rgba(58,148,100,.03)}
-    .stat-number{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--cream);margin-bottom:2px}
-    .stat-label{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--silver);display:flex;align-items:center;gap:8px}
-    .stat-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
-    .dot-green{background:var(--skr-green);animation:pulse 2s ease-in-out infinite}
-    .dot-champagne{background:var(--champagne)}
-    .dot-purple{background:#a78bfa}
-    .dot-blue{background:#3b82f6}
+/* Loading Screen — visible by default, hidden when page is ready */
+.skr-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--skr-bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+}
+.skr-loader.hidden{opacity:0;pointer-events:none}
+.skr-loader-logo{font-family:var(--skr-font-logo);font-size:22px;color:var(--skr-text);margin-bottom:24px}
+.skr-loader-logo em{color:var(--skr-champagne)}
+.skr-loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);overflow:hidden;border-radius:1px}
+.skr-loader-fill{width:30%;height:100%;background:var(--skr-green);animation:skr-load 1.2s ease-in-out infinite}
+@keyframes skr-load{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+.skr-loader-text{font-size:11px;color:var(--skr-text-dim);margin-top:12px;letter-spacing:1px}
 
-    .filter-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-    .search-bar{flex:1;min-width:200px;max-width:340px;padding:12px 16px;font-family:var(--sans);font-size:14px;font-weight:300;color:var(--cream);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);outline:none;transition:border-color .3s}
-    .search-bar::placeholder{color:rgba(255,255,255,.15);font-weight:200}
-    .search-bar:focus{border-color:rgba(58,148,100,.3)}
-    .filter-select{appearance:none;font-family:var(--sans);font-size:12px;font-weight:300;color:var(--cream);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:10px 16px;outline:none;cursor:pointer;min-width:140px}
-    .filter-select option{background:#1A1A1A;color:var(--cream)}
+/* Shell Layout */
+.skr-shell{display:flex;min-height:100vh}
 
-    .leads-table{width:100%;border-collapse:collapse;background:var(--card-bg);border:1px solid var(--card-border)}
-    .leads-table thead th{font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--champagne);padding:14px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
-    .leads-table tbody tr{border-bottom:1px solid rgba(255,255,255,.02);transition:background .2s;cursor:pointer}
-    .leads-table tbody tr:hover{background:var(--row-hover)}
-    .leads-table td{font-family:var(--sans);font-size:14px;font-weight:300;color:var(--cream);padding:14px 16px;vertical-align:middle}
+/* Sidebar */
+.skr-sidebar{
+  width:var(--skr-sidebar-w);min-height:100vh;
+  background:var(--skr-surface);
+  border-right:1px solid var(--skr-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+  overflow-y:auto;
+}
+.skr-sidebar-logo{
+  padding:24px 20px 20px;
+  font-family:var(--skr-font-logo);font-size:16px;
+  color:var(--skr-text);border-bottom:1px solid var(--skr-border);
+}
+.skr-sidebar-logo em{color:var(--skr-champagne)}
 
-    .badge{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;display:inline-block;white-space:nowrap}
-    .badge-green{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
-    .badge-champagne{background:rgba(201,185,154,.12);color:var(--champagne);border:1px solid rgba(201,185,154,.2)}
-    .badge-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
-    .badge-blue{background:rgba(59,130,246,.08);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
-    .badge-silver{background:rgba(255,255,255,.04);color:var(--silver);border:1px solid rgba(255,255,255,.08)}
-    .badge-gold{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
-    .badge-red{background:rgba(192,57,43,.08);color:#e74c3c;border:1px solid rgba(192,57,43,.2)}
+.skr-sidebar-nav{padding:12px 0;flex:1}
+.skr-sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;font-size:13px;color:var(--skr-text-muted);
+  text-decoration:none;transition:all 0.12s;
+  border-left:2px solid transparent;
+}
+.skr-sidebar-link:hover{color:var(--skr-text);background:rgba(255,255,255,0.02)}
+.skr-sidebar-link.active{
+  color:var(--skr-champagne);
+  border-left-color:var(--skr-green);
+  background:rgba(58,148,100,0.04);
+}
+.skr-sidebar-link .icon{width:16px;text-align:center;font-size:12px;opacity:0.6}
 
-    .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:16px 0}
-    .pagination-info{font-family:var(--sans);font-size:12px;font-weight:300;color:var(--silver)}
-    .pagination-btns{display:flex;gap:8px}
-    .pagination-btn{font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--silver);background:none;border:1px solid rgba(255,255,255,.06);padding:8px 16px;cursor:pointer;transition:all .3s}
-    .pagination-btn:hover:not(:disabled){color:var(--cream);border-color:rgba(255,255,255,.12)}
-    .pagination-btn:disabled{opacity:.3;cursor:not-allowed}
+.skr-sidebar-section{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:16px 20px 6px;
+}
 
-    .empty-state{padding:60px 24px;text-align:center;background:var(--card-bg);border:1px solid var(--card-border)}
-    .empty-icon{font-size:36px;margin-bottom:14px;opacity:.3}
-    .empty-msg{font-family:var(--sans);font-weight:300;font-size:14px;color:#8A8178;line-height:1.7}
+.skr-sidebar-user{
+  padding:16px 20px;border-top:1px solid var(--skr-border);
+  font-size:12px;
+}
+.skr-sidebar-user-name{color:var(--skr-text);font-weight:400}
+.skr-sidebar-user-role{color:var(--skr-text-dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.skr-sidebar-signout{
+  display:inline-block;margin-top:8px;font-size:10px;
+  color:var(--skr-text-dim);cursor:pointer;background:none;
+  border:none;font-family:var(--skr-font-body);letter-spacing:1px;
+  text-transform:uppercase;
+}
+.skr-sidebar-signout:hover{color:var(--skr-red)}
 
-    .drawer{position:fixed;top:0;right:-520px;width:500px;height:100vh;background:#1A1A1A;border-left:1px solid rgba(255,255,255,.06);z-index:200;transition:right .35s cubic-bezier(0.22,1,0.36,1);overflow-y:auto;padding:32px}
-    .drawer.open{right:0}
-    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;display:none}
-    .drawer-overlay.open{display:block}
-    .drawer-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
-    .drawer-name{font-family:var(--serif);font-size:24px;font-weight:300;color:var(--cream)}
-    .drawer-email{color:var(--champagne);font-size:13px;margin-top:4px}
-    .drawer-phone{color:var(--silver);font-size:13px}
-    .drawer-close{background:none;border:none;color:var(--silver);font-size:20px;cursor:pointer;transition:color .2s;padding:4px}
-    .drawer-close:hover{color:var(--cream)}
-    .drawer-badges{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
-    .drawer-section{background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);padding:20px;margin-bottom:16px}
-    .drawer-section-title{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--cream);margin-bottom:12px}
-    .drawer-note{color:var(--silver);font-size:13px;line-height:1.6}
-    .drawer-activity-item{padding:6px 0;font-size:12px;color:var(--silver);border-bottom:1px solid rgba(255,255,255,.02)}
-    .drawer-status-select{appearance:none;width:100%;font-family:var(--sans);font-size:13px;font-weight:300;color:var(--cream);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);padding:10px 14px;outline:none;cursor:pointer}
-    .drawer-status-select option{background:#1A1A1A;color:var(--cream)}
+/* Main Content */
+.skr-main{
+  flex:1;margin-left:var(--skr-sidebar-w);
+  padding:32px;min-height:100vh;
+}
 
-    @media(max-width:1100px){.stats-row{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:900px){
-      .sidebar{display:none}
-      .main-content{margin-left:0;padding:20px;padding-top:80px}
-      .stats-row{grid-template-columns:repeat(2,1fr)}
-      .page-header{flex-direction:column;gap:16px}
-      .leads-table{display:block;overflow-x:auto}
-      .drawer{width:100%;right:-100%}
-    }
-    @media(max-width:480px){.stats-row{grid-template-columns:1fr}}
+/* Page Header */
+.skr-page-header{margin-bottom:32px}
+.skr-page-title{
+  font-family:var(--skr-font-heading);font-size:32px;font-weight:300;
+  color:var(--skr-text);
+}
+.skr-page-title em{color:var(--skr-champagne)}
+.skr-page-sub{font-size:13px;color:var(--skr-text-muted);margin-top:4px}
+.skr-page-meta{
+  float:right;text-align:right;font-size:11px;color:var(--skr-text-dim);
+}
+.skr-page-meta .system-status{color:var(--skr-green);font-size:10px;letter-spacing:1px}
+
+/* Cards */
+.skr-card{
+  background:var(--skr-surface);
+  border:1px solid var(--skr-border);
+  padding:24px;margin-bottom:16px;
+}
+.skr-card-title{
+  font-size:10px;color:var(--skr-text-dim);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.skr-card-value{
+  font-family:var(--skr-font-heading);font-size:36px;
+  font-weight:300;color:var(--skr-text);
+}
+
+/* Stats Row */
+.skr-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+
+/* Two Column Layout */
+.skr-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Buttons */
+.skr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;font-family:var(--skr-font-body);
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.12s;border:none;
+}
+.skr-btn-primary{background:var(--skr-green);color:#fff}
+.skr-btn-primary:hover{background:var(--skr-green-hover)}
+.skr-btn-ghost{background:none;border:1px solid var(--skr-border);color:var(--skr-text-muted)}
+.skr-btn-ghost:hover{border-color:var(--skr-border-hover);color:var(--skr-text)}
+
+/* Tables */
+.skr-table{width:100%;border-collapse:collapse}
+.skr-table th{
+  font-size:9px;color:var(--skr-text-dim);letter-spacing:2px;
+  text-transform:uppercase;padding:10px 12px;text-align:left;
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table td{
+  padding:12px;font-size:13px;color:var(--skr-text-muted);
+  border-bottom:1px solid var(--skr-border);
+}
+.skr-table tr:hover td{background:rgba(255,255,255,0.01)}
+
+/* Status Pills */
+.skr-pill{
+  display:inline-block;padding:3px 10px;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.skr-pill-green{background:rgba(58,148,100,0.1);color:#3A9464;border:1px solid rgba(58,148,100,0.2)}
+.skr-pill-red{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2)}
+.skr-pill-gold{background:rgba(201,185,154,0.1);color:#C9B99A;border:1px solid rgba(201,185,154,0.2)}
+
+/* Notification badge */
+.skr-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--skr-red);color:#fff;font-size:10px;
+  font-weight:500;border-radius:9px;
+}
+
+/* Error state */
+.skr-error-state{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:var(--skr-bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.skr-error-state.visible{display:flex}
+.skr-error-state h2{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;margin-bottom:8px}
+.skr-error-state p{font-size:13px;color:var(--skr-text-muted);margin-bottom:24px;max-width:400px;line-height:1.6}
+
+/* Responsive */
+@media(max-width:768px){
+  .skr-sidebar{transform:translateX(-100%);transition:transform 0.2s}
+  .skr-sidebar.open{transform:translateX(0)}
+  .skr-main{margin-left:0;padding:16px}
+  .skr-grid-2{grid-template-columns:1fr}
+  .skr-stats{grid-template-columns:1fr 1fr}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* Hide content until ready — CRITICAL */
+.skr-main{opacity:0;transition:opacity 0.2s ease}
+body.skr-ready .skr-main{opacity:1}
+
+/* ═══════════════════════════════════════════
+   LEADS PAGE SPECIFIC STYLES
+   ═══════════════════════════════════════════ */
+
+/* Stat cards with colored dots */
+.stat-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-green{background:var(--skr-green);animation:pulse 2s ease-in-out infinite}
+.dot-champagne{background:var(--skr-champagne)}
+.dot-purple{background:#a78bfa}
+.dot-blue{background:#3b82f6}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* Filter row */
+.filter-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.search-bar{
+  flex:1;min-width:200px;max-width:340px;
+  padding:12px 16px;font-family:var(--skr-font-body);
+  font-size:14px;font-weight:300;color:var(--skr-text);
+  background:rgba(255,255,255,0.03);border:1px solid var(--skr-border-hover);
+  outline:none;transition:border-color .3s;
+}
+.search-bar::placeholder{color:var(--skr-text-dim);font-weight:200}
+.search-bar:focus{border-color:rgba(58,148,100,.3)}
+.filter-select{
+  appearance:none;font-family:var(--skr-font-body);
+  font-size:12px;font-weight:300;color:var(--skr-text);
+  background:rgba(255,255,255,0.03);border:1px solid var(--skr-border-hover);
+  padding:10px 16px;outline:none;cursor:pointer;min-width:140px;
+}
+.filter-select option{background:var(--skr-surface);color:var(--skr-text)}
+
+/* Leads table */
+.leads-table{width:100%;border-collapse:collapse;background:var(--skr-surface);border:1px solid var(--skr-border)}
+.leads-table thead th{
+  font-family:var(--skr-font-body);font-size:9px;font-weight:400;
+  letter-spacing:2px;text-transform:uppercase;color:var(--skr-champagne);
+  padding:14px 16px;text-align:left;border-bottom:1px solid var(--skr-border);
+}
+.leads-table tbody tr{border-bottom:1px solid var(--skr-border);transition:background .2s;cursor:pointer}
+.leads-table tbody tr:hover{background:rgba(58,148,100,.04)}
+.leads-table td{
+  font-family:var(--skr-font-body);font-size:14px;font-weight:300;
+  color:var(--skr-text);padding:14px 16px;vertical-align:middle;
+}
+
+/* Badges */
+.badge{
+  font-family:var(--skr-font-body);font-size:9px;font-weight:400;
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:3px 10px;display:inline-block;white-space:nowrap;
+}
+.badge-green{background:rgba(58,148,100,.12);color:var(--skr-green);border:1px solid rgba(58,148,100,.25)}
+.badge-champagne{background:rgba(201,185,154,.12);color:var(--skr-champagne);border:1px solid rgba(201,185,154,.2)}
+.badge-purple{background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+.badge-blue{background:rgba(59,130,246,.08);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
+.badge-silver{background:rgba(255,255,255,.04);color:var(--skr-text-muted);border:1px solid var(--skr-border-hover)}
+.badge-gold{background:rgba(212,160,23,.08);color:#d4a017;border:1px solid rgba(212,160,23,.15)}
+.badge-red{background:rgba(192,57,43,.08);color:#e74c3c;border:1px solid rgba(192,57,43,.2)}
+
+/* Pagination */
+.pagination{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:16px 0}
+.pagination-info{font-family:var(--skr-font-body);font-size:12px;font-weight:300;color:var(--skr-text-muted)}
+.pagination-btns{display:flex;gap:8px}
+.pagination-btn{
+  font-family:var(--skr-font-body);font-size:10px;font-weight:300;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--skr-text-muted);
+  background:none;border:1px solid var(--skr-border);padding:8px 16px;
+  cursor:pointer;transition:all .3s;
+}
+.pagination-btn:hover:not(:disabled){color:var(--skr-text);border-color:var(--skr-border-hover)}
+.pagination-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* Empty state */
+.empty-state{padding:60px 24px;text-align:center;background:var(--skr-surface);border:1px solid var(--skr-border)}
+.empty-icon{font-size:36px;margin-bottom:14px;opacity:.3}
+.empty-msg{font-family:var(--skr-font-body);font-weight:300;font-size:14px;color:var(--skr-text-muted);line-height:1.7}
+
+/* Spinner */
+.spinner{width:24px;height:24px;border:2px solid rgba(58,148,100,.2);border-top-color:var(--skr-green);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Drawer */
+.drawer{
+  position:fixed;top:0;right:-520px;width:500px;height:100vh;
+  background:var(--skr-surface);border-left:1px solid var(--skr-border);
+  z-index:200;transition:right .35s cubic-bezier(0.22,1,0.36,1);
+  overflow-y:auto;padding:32px;
+}
+.drawer.open{right:0}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;display:none}
+.drawer-overlay.open{display:block}
+.drawer-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.drawer-name{font-family:var(--skr-font-heading);font-size:24px;font-weight:300;color:var(--skr-text)}
+.drawer-email{color:var(--skr-champagne);font-size:13px;margin-top:4px}
+.drawer-phone{color:var(--skr-text-muted);font-size:13px}
+.drawer-close{background:none;border:none;color:var(--skr-text-muted);font-size:20px;cursor:pointer;transition:color .2s;padding:4px}
+.drawer-close:hover{color:var(--skr-text)}
+.drawer-badges{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.drawer-section{background:rgba(255,255,255,.015);border:1px solid var(--skr-border);padding:20px;margin-bottom:16px}
+.drawer-section-title{font-family:var(--skr-font-heading);font-size:16px;font-weight:400;color:var(--skr-text);margin-bottom:12px}
+.drawer-note{color:var(--skr-text-muted);font-size:13px;line-height:1.6}
+.drawer-activity-item{padding:6px 0;font-size:12px;color:var(--skr-text-muted);border-bottom:1px solid var(--skr-border)}
+.drawer-status-select{
+  appearance:none;width:100%;font-family:var(--skr-font-body);
+  font-size:13px;font-weight:300;color:var(--skr-text);
+  background:rgba(255,255,255,.03);border:1px solid var(--skr-border-hover);
+  padding:10px 14px;outline:none;cursor:pointer;
+}
+.drawer-status-select option{background:var(--skr-surface);color:var(--skr-text)}
+
+/* Responsive overrides */
+@media(max-width:1100px){.skr-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){
+  .skr-stats{grid-template-columns:repeat(2,1fr)}
+  .leads-table{display:block;overflow-x:auto}
+  .drawer{width:100%;right:-100%}
+}
+@media(max-width:480px){.skr-stats{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="admin-layout">
-    <div id="skr-sidebar" class="sidebar"></div>
+  <!-- Loading screen — visible immediately -->
+  <div class="skr-loader" id="skr-loader">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
+    <div class="skr-loader-text">Loading...</div>
+  </div>
 
-    <div class="main-content" id="mainContent" style="display:none">
-      <div class="breadcrumb">Silver Key Realty</div>
+  <!-- Error state — hidden by default -->
+  <div class="skr-error-state" id="skr-error-state">
+    <div class="skr-loader-logo">Silver Key <em>Realty</em></div>
+    <h2>Something went wrong</h2>
+    <p>The page didn't load correctly. This usually fixes itself — try refreshing.</p>
+    <button class="skr-btn skr-btn-primary" onclick="window.location.reload()">Refresh Page</button>
+    <button class="skr-btn skr-btn-ghost" onclick="window.location.href='/admin/'" style="margin-top:8px">Back to Login</button>
+  </div>
 
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Lead <em>Pipeline</em></h1>
-          <p class="page-sub" id="leadCountLabel">Loading leads...</p>
+  <!-- Shell wrapper -->
+  <div class="skr-shell">
+    <!-- Sidebar gets injected here by SKR_SHELL -->
+    
+    <main class="skr-main">
+      <div class="skr-page-header">
+        <div class="skr-page-meta">
+          <div id="current-date"></div>
+          <div class="system-status">● SYSTEM ONLINE</div>
         </div>
+        <h1 class="skr-page-title">Lead <em>Pipeline</em></h1>
+        <p class="skr-page-sub" id="greeting"></p>
       </div>
 
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-number" id="statTotal">&mdash;</div>
-          <div class="stat-label"><span class="stat-dot dot-green"></span> Total Leads</div>
+      <div class="skr-stats">
+        <div class="skr-card">
+          <div class="skr-card-title"><span class="stat-dot dot-green"></span> Total Leads</div>
+          <div class="skr-card-value" id="statTotal" style="color:var(--skr-green)">—</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statNew">&mdash;</div>
-          <div class="stat-label"><span class="stat-dot dot-champagne"></span> New</div>
+        <div class="skr-card">
+          <div class="skr-card-title"><span class="stat-dot dot-champagne"></span> New</div>
+          <div class="skr-card-value" id="statNew" style="color:var(--skr-champagne)">—</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statQualified">&mdash;</div>
-          <div class="stat-label"><span class="stat-dot dot-purple"></span> Qualified</div>
+        <div class="skr-card">
+          <div class="skr-card-title"><span class="stat-dot dot-purple"></span> Qualified</div>
+          <div class="skr-card-value" id="statQualified" style="color:#a78bfa">—</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statConverted">&mdash;</div>
-          <div class="stat-label"><span class="stat-dot dot-blue"></span> Converted</div>
+        <div class="skr-card">
+          <div class="skr-card-title"><span class="stat-dot dot-blue"></span> Converted</div>
+          <div class="skr-card-value" id="statConverted" style="color:#3b82f6">—</div>
         </div>
       </div>
 
@@ -183,14 +434,14 @@
             </tr>
           </thead>
           <tbody id="leadsBody">
-            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--silver)"><div class="spinner" style="margin:0 auto"></div></td></tr>
+            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--skr-text-muted)"><div class="spinner" style="margin:0 auto"></div></td></tr>
           </tbody>
         </table>
       </div>
 
       <div id="emptyState" style="display:none">
         <div class="empty-state">
-          <div class="empty-icon">&#x25CE;</div>
+          <div class="empty-icon">◎</div>
           <div class="empty-msg">No leads found.<br>Adjust your filters or wait for new website inquiries.</div>
         </div>
       </div>
@@ -202,77 +453,43 @@
           <button class="pagination-btn" id="nextBtn">Next</button>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
-  <div class="loading-state" id="loadingState"><div class="spinner"></div></div>
-
+  <!-- Lead detail drawer -->
   <div class="drawer" id="leadDrawer">
     <div id="drawerContent"></div>
   </div>
   <div class="drawer-overlay" id="drawerOverlay"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Scripts — loaded at the bottom so HTML renders first -->
   <script src="../../assets/js/admin-config.js"></script>
-  <script src="../../assets/js/admin-auth.js"></script>
-  <script src="../../assets/js/auth-router.js"></script>
-  <script src="/admin/components/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../assets/includes/skr-shell.js"></script>
+  <script src="../assets/js/skr-auth.js"></script>
   <script>
-  (async function() {
-    var loadingEl = document.getElementById('loadingState');
-    var mainEl = document.getElementById('mainContent');
-    var tableContainer = document.getElementById('tableContainer');
-    var emptyState = document.getElementById('emptyState');
-    var paginationEl = document.getElementById('pagination');
+    var shell = SKR_SHELL.init({ activePage: 'leads' });
 
-    if (!window.SKR_CONFIG || !window.SKR_CONFIG.SUPABASE_URL) {
-      loadingEl.innerHTML = '<p style="color:var(--silver);font-family:var(--sans);font-size:14px">Configuration error.</p>';
-      return;
+    SKR_AUTH.guard(function(member, sb) {
+      shell.render(member);
+
+      document.getElementById('greeting').textContent = 'Good ' + getTimeOfDay() + ', ' + member.first_name;
+      document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+
+      loadPageData(member, sb);
+    });
+
+    function getTimeOfDay() {
+      var h = new Date().getHours();
+      if (h < 12) return 'morning';
+      if (h < 17) return 'afternoon';
+      return 'evening';
     }
-
-    var sb = window.supabase.createClient(window.SKR_CONFIG.SUPABASE_URL, window.SKR_CONFIG.SUPABASE_ANON_KEY);
-    var sessionResult = await sb.auth.getSession();
-    var session = sessionResult.data.session;
-    if (!session) { window.location.href = '/admin/'; return; }
-
-    var memberRaw = await sb.from('skr_team_members')
-      .select('id, tenant_id, first_name, last_name, email, role_id, title, is_active, skr_roles!inner(role_name, permission_level)')
-      .eq('auth_user_id', session.user.id)
-      .eq('is_active', true)
-      .maybeSingle();
-
-    if (!memberRaw.data) { window.location.href = '/admin/portal/'; return; }
-
-    var m = memberRaw.data;
-    window.SKR_USER = {
-      id: m.id,
-      tenantId: m.tenant_id,
-      role: m.skr_roles ? m.skr_roles.role_name : 'agent',
-      permissionLevel: m.skr_roles ? m.skr_roles.permission_level : 0,
-      displayName: ((m.first_name || '') + ' ' + (m.last_name || '')).trim()
-    };
-
-    loadingEl.style.display = 'none';
-    mainEl.style.display = 'block';
-    if (typeof window.initSidebar === 'function') window.initSidebar();
 
     var currentPage = 1;
     var pageSize = 25;
-    var token = session.access_token;
-
-    async function apiFetch(url) {
-      var resp = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-      return resp.json();
-    }
-
-    async function apiPatch(url, body) {
-      var resp = await fetch(url, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify(body)
-      });
-      return resp.json();
-    }
 
     function pathwayBadge(p) {
       var map = { buyer: 'badge-green', seller: 'badge-champagne', investor: 'badge-purple', renter: 'badge-blue', general: 'badge-silver' };
@@ -296,13 +513,22 @@
       return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
+    async function loadPageData(member, sb) {
+      loadLeads();
+      loadStats();
+    }
+
     async function loadLeads() {
+      var tableContainer = document.getElementById('tableContainer');
+      var emptyState = document.getElementById('emptyState');
+      var paginationEl = document.getElementById('pagination');
+
       tableContainer.style.display = 'block';
       emptyState.style.display = 'none';
       paginationEl.style.display = 'none';
 
       var tbody = document.getElementById('leadsBody');
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--silver)"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--skr-text-muted)"><div class="spinner" style="margin:0 auto"></div></td></tr>';
 
       var search = document.getElementById('searchInput').value;
       var pathway = document.getElementById('filterPathway').value;
@@ -314,9 +540,9 @@
       if (status) url += '&status=' + status;
 
       try {
-        var data = await apiFetch(url);
+        var data = await skrAPI(url);
 
-        document.getElementById('leadCountLabel').textContent = (data.total || 0) + ' lead' + (data.total !== 1 ? 's' : '');
+        document.getElementById('greeting').textContent = (data.total || 0) + ' lead' + (data.total !== 1 ? 's' : '') + ' in pipeline';
 
         if (!data.leads || data.leads.length === 0) {
           tableContainer.style.display = 'none';
@@ -327,12 +553,12 @@
         tbody.innerHTML = data.leads.map(function(l) {
           return '<tr onclick="window._openLead(\'' + l.id + '\')">'
             + '<td style="font-weight:400">' + (l.first_name || '') + ' ' + (l.last_name || '') + '</td>'
-            + '<td style="color:var(--champagne)">' + (l.email || '') + '</td>'
+            + '<td style="color:var(--skr-champagne)">' + (l.email || '') + '</td>'
             + '<td>' + pathwayBadge(l.pathway) + '</td>'
             + '<td>' + (l.lead_score || '—') + '</td>'
             + '<td>' + statusBadge(l.status) + '</td>'
-            + '<td style="color:var(--silver);font-size:12px">' + (l.source || 'website') + '</td>'
-            + '<td style="color:var(--silver);font-size:12px">' + timeAgo(l.created_at) + '</td>'
+            + '<td style="color:var(--skr-text-muted);font-size:12px">' + (l.source || 'website') + '</td>'
+            + '<td style="color:var(--skr-text-muted);font-size:12px">' + timeAgo(l.created_at) + '</td>'
             + '</tr>';
         }).join('');
 
@@ -343,22 +569,22 @@
           document.getElementById('nextBtn').disabled = data.page >= data.totalPages;
         }
       } catch(e) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#c0392b">Failed to load leads.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--skr-red)">Failed to load leads.</td></tr>';
       }
     }
 
     async function loadStats() {
       try {
-        var data = await apiFetch('/api/dashboard/stats');
+        var data = await skrAPI('/api/dashboard/stats');
         document.getElementById('statTotal').textContent = data.counts.leads || 0;
 
-        var allLeads = await apiFetch('/api/leads/list?limit=1&status=new');
+        var allLeads = await skrAPI('/api/leads/list?limit=1&status=new');
         document.getElementById('statNew').textContent = allLeads.total || 0;
 
-        var qualified = await apiFetch('/api/leads/list?limit=1&status=qualified');
+        var qualified = await skrAPI('/api/leads/list?limit=1&status=qualified');
         document.getElementById('statQualified').textContent = qualified.total || 0;
 
-        var converted = await apiFetch('/api/leads/list?limit=1&status=converted');
+        var converted = await skrAPI('/api/leads/list?limit=1&status=converted');
         document.getElementById('statConverted').textContent = converted.total || 0;
       } catch(e) {}
     }
@@ -373,7 +599,7 @@
       content.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:200px"><div class="spinner"></div></div>';
 
       try {
-        var data = await apiFetch('/api/leads/detail?id=' + id);
+        var data = await skrAPI('/api/leads/detail?id=' + id);
         var l = data.lead;
 
         var html = '<div class="drawer-header">'
@@ -382,18 +608,18 @@
           + '<div class="drawer-email">' + (l.email || '') + '</div>'
           + (l.phone ? '<div class="drawer-phone">' + l.phone + '</div>' : '')
           + '</div>'
-          + '<button class="drawer-close" onclick="window._closeDrawer()">&#x2715;</button>'
+          + '<button class="drawer-close" onclick="window._closeDrawer()">✕</button>'
           + '</div>';
 
         html += '<div class="drawer-badges">' + pathwayBadge(l.pathway) + statusBadge(l.status)
-          + '<span style="color:var(--silver);font-size:12px;padding:3px 0">Score: ' + (l.lead_score || '—') + '</span></div>';
+          + '<span style="color:var(--skr-text-muted);font-size:12px;padding:3px 0">Score: ' + (l.lead_score || '—') + '</span></div>';
 
         if (l.notes) {
           html += '<div class="drawer-section"><div class="drawer-section-title">Notes</div><p class="drawer-note">' + l.notes + '</p></div>';
         }
 
         html += '<div style="margin-bottom:16px">'
-          + '<label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--silver);margin-bottom:6px">Update Status</label>'
+          + '<label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--skr-text-muted);margin-bottom:6px">Update Status</label>'
           + '<select class="drawer-status-select" onchange="window._updateLead(\'' + l.id + '\',\'status\',this.value)">'
           + ['new','contacted','qualified','nurturing','converted','lost'].map(function(s) {
               return '<option value="' + s + '"' + (s === l.status ? ' selected' : '') + '>' + s + '</option>';
@@ -403,8 +629,8 @@
         if (data.deals && data.deals.length > 0) {
           html += '<div class="drawer-section"><div class="drawer-section-title">Deals (' + data.deals.length + ')</div>';
           data.deals.forEach(function(d) {
-            html += '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
-              + '<span style="color:var(--cream);font-weight:400">' + d.deal_name + '</span> '
+            html += '<div style="padding:8px 0;border-bottom:1px solid var(--skr-border)">'
+              + '<span style="color:var(--skr-text);font-weight:400">' + d.deal_name + '</span> '
               + '<span class="badge badge-green">' + d.status + '</span>'
               + (d.deal_value ? ' <span style="color:var(--skr-green);margin-left:8px">$' + Number(d.deal_value).toLocaleString() + '</span>' : '')
               + '</div>';
@@ -415,9 +641,9 @@
         if (data.showings && data.showings.length > 0) {
           html += '<div class="drawer-section"><div class="drawer-section-title">Showings (' + data.showings.length + ')</div>';
           data.showings.forEach(function(s) {
-            html += '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
-              + '<span style="color:var(--cream)">' + (s.skr_properties ? s.skr_properties.address_line1 : 'Unknown') + ', ' + (s.skr_properties ? s.skr_properties.city : '') + '</span>'
-              + ' <span style="color:var(--silver);font-size:12px">' + new Date(s.scheduled_at).toLocaleDateString() + '</span></div>';
+            html += '<div style="padding:8px 0;border-bottom:1px solid var(--skr-border)">'
+              + '<span style="color:var(--skr-text)">' + (s.skr_properties ? s.skr_properties.address_line1 : 'Unknown') + ', ' + (s.skr_properties ? s.skr_properties.city : '') + '</span>'
+              + ' <span style="color:var(--skr-text-muted);font-size:12px">' + new Date(s.scheduled_at).toLocaleDateString() + '</span></div>';
           });
           html += '</div>';
         }
@@ -425,16 +651,16 @@
         html += '<div class="drawer-section"><div class="drawer-section-title">Activity</div>';
         if (data.activity && data.activity.length > 0) {
           data.activity.forEach(function(a) {
-            html += '<div class="drawer-activity-item">' + a.action + ' &middot; ' + timeAgo(a.created_at) + '</div>';
+            html += '<div class="drawer-activity-item">' + a.action + ' · ' + timeAgo(a.created_at) + '</div>';
           });
         } else {
-          html += '<p style="text-align:center;padding:16px;color:var(--silver);font-size:13px">No activity yet</p>';
+          html += '<p style="text-align:center;padding:16px;color:var(--skr-text-muted);font-size:13px">No activity yet</p>';
         }
         html += '</div>';
 
         content.innerHTML = html;
       } catch(e) {
-        content.innerHTML = '<p style="text-align:center;padding:40px;color:#c0392b">Failed to load lead details.</p>';
+        content.innerHTML = '<p style="text-align:center;padding:40px;color:var(--skr-red)">Failed to load lead details.</p>';
       }
     };
 
@@ -444,7 +670,7 @@
     };
 
     window._updateLead = async function(id, field, value) {
-      await apiPatch('/api/leads/update', { id: id, [field]: value });
+      await skrAPI('/api/leads/update', { method: 'PATCH', body: { id: id, [field]: value } });
       loadLeads();
     };
 
@@ -460,10 +686,6 @@
     document.getElementById('filterStatus').addEventListener('change', function() { currentPage = 1; loadLeads(); });
     document.getElementById('prevBtn').addEventListener('click', function() { if (currentPage > 1) { currentPage--; loadLeads(); } });
     document.getElementById('nextBtn').addEventListener('click', function() { currentPage++; loadLeads(); });
-
-    loadLeads();
-    loadStats();
-  })();
   </script>
 </body>
 </html>
