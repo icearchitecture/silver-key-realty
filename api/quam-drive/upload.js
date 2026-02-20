@@ -1,7 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import crypto from "node:crypto";
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 async function updateDealCompleteness(supabaseClient, dealId, tenantId) {
   const { data: requirements } = await supabaseClient
