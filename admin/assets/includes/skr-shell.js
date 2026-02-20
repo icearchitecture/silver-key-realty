@@ -63,7 +63,9 @@ window.SKR_SHELL = {
       + '<div class="skr-sidebar-user-role">' + (role || 'Team Member') + '</div>'
       + '<button class="skr-sidebar-signout" onclick="SKR_SHELL.signOut()">Sign Out</button>'
       + '</div>'
-      + '</aside>';
+      + '</aside>'
+      + '<button class="skr-mobile-toggle" id="skr-mobile-toggle" onclick="SKR_SHELL.toggleMobile()" aria-label="Menu">&#9776;</button>'
+      + '<div class="skr-mobile-overlay" id="skr-mobile-overlay" onclick="SKR_SHELL.closeMobile()"></div>';
 
     return sidebar;
   },
@@ -80,6 +82,7 @@ window.SKR_SHELL = {
 
     SKR_SHELL.injectLoader();
     SKR_SHELL.injectErrorState();
+    SKR_SHELL.injectMobileCSS();
 
     SKR_SHELL._timeout = setTimeout(function() {
       SKR_SHELL.showError();
@@ -117,6 +120,28 @@ window.SKR_SHELL = {
     if (loader) loader.remove();
     var err = document.getElementById('skr-error-state');
     if (err) err.classList.add('visible');
+  },
+
+  injectMobileCSS: function() {
+    if (document.getElementById('skr-mobile-css')) return;
+    var style = document.createElement('style');
+    style.id = 'skr-mobile-css';
+    style.textContent = '.skr-mobile-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;width:40px;height:40px;background:var(--skr-surface);border:1px solid var(--skr-border-hover);color:var(--skr-text);font-size:20px;cursor:pointer;align-items:center;justify-content:center;border-radius:4px}.skr-mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}@media(max-width:768px){.skr-mobile-toggle{display:flex}.skr-mobile-overlay.open{display:block}.skr-main{padding-top:60px}}';
+    document.head.appendChild(style);
+  },
+
+  toggleMobile: function() {
+    var sidebar = document.getElementById('skr-sidebar');
+    var overlay = document.getElementById('skr-mobile-overlay');
+    if (sidebar) sidebar.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('open');
+  },
+
+  closeMobile: function() {
+    var sidebar = document.getElementById('skr-sidebar');
+    var overlay = document.getElementById('skr-mobile-overlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
   },
 
   signOut: function() {

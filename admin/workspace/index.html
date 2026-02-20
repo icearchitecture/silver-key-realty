@@ -323,9 +323,9 @@ body.skr-ready .skr-main{opacity:1}
           <div class="ws-topbar">
             <span class="ws-topname" id="ws-docname">Untitled</span>
             <div class="ws-tabs">
-              <button class="ws-tab active">Document</button>
-              <button class="ws-tab">Note</button>
-              <button class="ws-tab">Template</button>
+              <button class="ws-tab active" data-type="document" onclick="setDocType(this)">Document</button>
+              <button class="ws-tab" data-type="note" onclick="setDocType(this)">Note</button>
+              <button class="ws-tab" data-type="template" onclick="setDocType(this)">Template</button>
             </div>
             <div class="ws-topbar-spacer"></div>
             <div class="ws-status"><span class="ws-status-dot"></span> Ready</div>
@@ -437,6 +437,33 @@ body.skr-ready .skr-main{opacity:1}
       wsInput.focus();
     }
 
+    function setDocType(btn) {
+      document.querySelectorAll('.ws-tab').forEach(function(t) { t.classList.remove('active'); });
+      btn.classList.add('active');
+    }
+
+    function markdownToHtml(md) {
+      return md
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^/, '<p>')
+        .replace(/$/, '</p>')
+        .replace(/<p><h/g, '<h')
+        .replace(/<\/h(\d)><\/p>/g, '</h$1>')
+        .replace(/<p><ul>/g, '<ul>')
+        .replace(/<\/ul><\/p>/g, '</ul>');
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     async function handleSend() {
       var wsInput = document.getElementById('ws-input');
       var prompt = wsInput.value.trim();
@@ -444,26 +471,43 @@ body.skr-ready .skr-main{opacity:1}
 
       document.getElementById('ws-welcome').style.display = 'none';
       var doc = document.getElementById('ws-doc');
+      doc.style.display = 'block';
       doc.classList.add('visible');
       document.getElementById('ws-docname').textContent = prompt.substring(0, 40) + (prompt.length > 40 ? '...' : '');
       wsInput.value = '';
       wsInput.placeholder = 'Continue editing — add a section, revise, expand...';
 
-      doc.innerHTML = '<div style="text-align:center;padding:60px 0"><div style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(58,148,100,.15);border-top-color:#3A9464;animation:spin .8s linear infinite;margin:0 auto 16px"></div><div style="font-size:14px;color:rgba(255,255,255,.4)">Building your document...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>';
+      doc.innerHTML = '<div style="text-align:center;padding:60px 0">'
+        + '<div style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(58,148,100,.15);border-top-color:#3A9464;animation:spin .8s linear infinite;margin:0 auto 16px"></div>'
+        + '<div style="font-size:14px;color:rgba(255,255,255,.4)">Building your document...</div>'
+        + '<style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>';
 
-      await new Promise(function(r) { setTimeout(r, 2000); });
+      var activeTab = document.querySelector('.ws-tab.active');
+      var docType = activeTab ? activeTab.dataset.type : 'document';
 
-      doc.innerHTML = '<h1>' + prompt + '</h1>'
-        + '<div class="sub">Generated document — Silver Key Realty Workspace</div>'
-        + '<p>This workspace will connect to the Anthropic API to generate real documents, emails, CMA reports, deal memos, and client communications. The AI will use context from your leads, deals, properties, and team data to produce accurate, branded content.</p>'
-        + '<h2>What This Will Do</h2>'
-        + '<p>When the API integration is live, typing a prompt like "' + prompt + '" will generate a complete, professionally formatted document using your actual Silver Key data. Every document is saved to Quam Drive with custody chain tracking.</p>'
-        + '<h2>Next Steps</h2>'
-        + '<p>Connect the Anthropic API key in Vercel environment variables (ANTHROPIC_API_KEY), and this workspace becomes a fully functional AI document generator with real-time data access.</p>';
+      try {
+        var result = await skrAPI('/api/ai/generate', {
+          method: 'POST',
+          body: {
+            prompt: prompt,
+            type: docType,
+          }
+        });
+
+        if (result.content) {
+          var html = markdownToHtml(result.content);
+          doc.innerHTML = '<h1 class="ws-doc-title">' + escapeHtml(prompt.substring(0, 60)) + '</h1>'
+            + '<div class="sub">Generated document — Silver Key Realty Workspace</div>'
+            + '<div class="ws-doc-content">' + html + '</div>';
+        } else {
+          doc.innerHTML = '<div style="padding:40px;color:var(--skr-red)">No content generated. Please try again.</div>';
+        }
+      } catch (err) {
+        doc.innerHTML = '<div style="padding:40px;color:var(--skr-red)">Error: ' + escapeHtml(err.message) + '</div>';
+      }
 
       document.getElementById('ws-scroll').scrollTop = 0;
-
-      setTimeout(function() { document.getElementById('ws-right').classList.add('open'); }, 800);
+      setTimeout(function() { document.getElementById('ws-right').classList.add('open'); }, 400);
     }
   </script>
 </body>

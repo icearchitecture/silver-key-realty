@@ -296,13 +296,213 @@ In Supabase Dashboard > Storage:
 
 ---
 
+## STEP 5: Team Page RLS Policies + Invitations Table
+
+Run in Supabase SQL Editor to fix the Team page "Loading..." issue and enable the invitation system:
+
+```sql
+-- ════════════════════════════════════════════════════════════
+-- FIX: Team page RLS policies
+-- Allow authenticated users to read team members + roles
+-- ════════════════════════════════════════════════════════════
+
+ALTER TABLE skr_team_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE skr_roles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "team_members_select_own_tenant" ON skr_team_members;
+DROP POLICY IF EXISTS "team_members_insert_admin" ON skr_team_members;
+DROP POLICY IF EXISTS "team_members_update_admin" ON skr_team_members;
+DROP POLICY IF EXISTS "roles_select_authenticated" ON skr_roles;
+
+CREATE POLICY "team_members_select_own_tenant" ON skr_team_members
+  FOR SELECT TO authenticated
+  USING (
+    tenant_id IN (
+      SELECT tenant_id FROM skr_team_members
+      WHERE auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "team_members_insert_admin" ON skr_team_members
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    tenant_id IN (
+      SELECT tm.tenant_id FROM skr_team_members tm
+      JOIN skr_roles r ON tm.role_id = r.id
+      WHERE tm.auth_user_id = auth.uid()
+      AND r.permission_level >= 50
+    )
+  );
+
+CREATE POLICY "team_members_update_admin" ON skr_team_members
+  FOR UPDATE TO authenticated
+  USING (
+    tenant_id IN (
+      SELECT tm.tenant_id FROM skr_team_members tm
+      JOIN skr_roles r ON tm.role_id = r.id
+      WHERE tm.auth_user_id = auth.uid()
+      AND r.permission_level >= 50
+    )
+  );
+
+CREATE POLICY "roles_select_authenticated" ON skr_roles
+  FOR SELECT TO authenticated
+  USING (true);
+
+-- ════════════════════════════════════════════════════════════
+-- Invitations table (team invitation flow)
+-- ════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS skr_invitations (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  tenant_id UUID NOT NULL REFERENCES skr_tenants(id),
+  email TEXT NOT NULL,
+  first_name TEXT,
+  last_name TEXT,
+  role_id UUID REFERENCES skr_roles(id),
+  title TEXT,
+  invited_by UUID REFERENCES skr_team_members(id),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'expired', 'revoked')),
+  token TEXT UNIQUE DEFAULT encode(gen_random_bytes(32), 'hex'),
+  expires_at TIMESTAMPTZ DEFAULT (now() + interval '7 days'),
+  accepted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE skr_invitations ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "invitations_select_own_tenant" ON skr_invitations;
+DROP POLICY IF EXISTS "invitations_insert_admin" ON skr_invitations;
+DROP POLICY IF EXISTS "invitations_update_admin" ON skr_invitations;
+
+CREATE POLICY "invitations_select_own_tenant" ON skr_invitations
+  FOR SELECT TO authenticated
+  USING (
+    tenant_id IN (
+      SELECT tenant_id FROM skr_team_members
+      WHERE auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "invitations_insert_admin" ON skr_invitations
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    tenant_id IN (
+      SELECT tm.tenant_id FROM skr_team_members tm
+      JOIN skr_roles r ON tm.role_id = r.id
+      WHERE tm.auth_user_id = auth.uid()
+      AND r.permission_level >= 50
+    )
+  );
+
+CREATE POLICY "invitations_update_admin" ON skr_invitations
+  FOR UPDATE TO authenticated
+  USING (
+    tenant_id IN (
+      SELECT tm.tenant_id FROM skr_team_members tm
+      JOIN skr_roles r ON tm.role_id = r.id
+      WHERE tm.auth_user_id = auth.uid()
+      AND r.permission_level >= 50
+    )
+  );
+
+SELECT 'RLS POLICIES + INVITATIONS TABLE CREATED' AS status;
+```
+
+---
+
+## STEP 6: Workspace Notes Table
+
+Run in Supabase SQL Editor to enable workspace document saving:
+
+```sql
+-- ════════════════════════════════════════════════════════════
+-- Workspace notes table for saved documents
+-- ════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS skr_workspace_notes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  tenant_id UUID NOT NULL REFERENCES skr_tenants(id),
+  created_by UUID REFERENCES skr_team_members(id),
+  title TEXT,
+  content TEXT,
+  note_type TEXT DEFAULT 'document' CHECK (note_type IN ('document', 'note', 'template', 'email_draft')),
+  is_pinned BOOLEAN DEFAULT false,
+  tags TEXT[] DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE skr_workspace_notes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "workspace_notes_select_own_tenant" ON skr_workspace_notes;
+DROP POLICY IF EXISTS "workspace_notes_insert_authenticated" ON skr_workspace_notes;
+DROP POLICY IF EXISTS "workspace_notes_update_own" ON skr_workspace_notes;
+DROP POLICY IF EXISTS "workspace_notes_delete_own" ON skr_workspace_notes;
+
+CREATE POLICY "workspace_notes_select_own_tenant" ON skr_workspace_notes
+  FOR SELECT TO authenticated
+  USING (
+    tenant_id IN (
+      SELECT tenant_id FROM skr_team_members
+      WHERE auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "workspace_notes_insert_authenticated" ON skr_workspace_notes
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    tenant_id IN (
+      SELECT tenant_id FROM skr_team_members
+      WHERE auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "workspace_notes_update_own" ON skr_workspace_notes
+  FOR UPDATE TO authenticated
+  USING (
+    created_by IN (
+      SELECT id FROM skr_team_members
+      WHERE auth_user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "workspace_notes_delete_own" ON skr_workspace_notes
+  FOR DELETE TO authenticated
+  USING (
+    created_by IN (
+      SELECT id FROM skr_team_members
+      WHERE auth_user_id = auth.uid()
+    )
+  );
+
+CREATE INDEX IF NOT EXISTS idx_workspace_notes_tenant ON skr_workspace_notes(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_workspace_notes_created_by ON skr_workspace_notes(created_by);
+CREATE INDEX IF NOT EXISTS idx_workspace_notes_type ON skr_workspace_notes(note_type);
+
+SELECT 'WORKSPACE NOTES TABLE CREATED' AS status;
+```
+
+---
+
 ## DONE CHECKLIST
 
-- [ ] Run notifications SQL in Supabase SQL Editor
-- [ ] Run pathway columns SQL in Supabase SQL Editor
-- [ ] Create documents-incoming storage bucket
-- [ ] Paste Magic Link template
-- [ ] Paste Confirm Sign Up template
-- [ ] Paste Reset Password template
-- [ ] Paste Change Email template
+- [ ] Run notifications SQL in Supabase SQL Editor (Step 1)
+- [ ] Run pathway columns SQL in Supabase SQL Editor (Step 3)
+- [ ] Create documents-incoming storage bucket (Step 4)
+- [ ] Run Team RLS + Invitations SQL in Supabase SQL Editor (Step 5)
+- [ ] Run Workspace Notes SQL in Supabase SQL Editor (Step 6)
+- [ ] Paste Magic Link template (Step 2)
+- [ ] Paste Confirm Sign Up template (Step 2)
+- [ ] Paste Reset Password template (Step 2)
+- [ ] Paste Change Email template (Step 2)
 - [ ] Set up SMTP (so emails come from Silver Key, not Supabase)
+- [ ] Verify Azure OpenAI env vars in Vercel (see below)
+
+### Azure OpenAI Environment Variables (Vercel)
+
+Verify these are set in Vercel Production environment:
+- `Silver_key_realty_AZURE_OPENAI_ENDPOINT` — full URL like `https://silver-key-realty.openai.azure.com`
+- `SKR_AZURE_OPENAI_DEPLOYMENT` — deployment name (e.g., `gpt-4o`)
+- `SKR_AZURE_API_VERSION` — e.g., `2024-08-01-preview`
+- One of: `SKR_AZURE_OPENAI_KEY`, `Silver_key_realty_AZURE_OPENAI_KEY`, or `AZURE_OPENAI_API_KEY`

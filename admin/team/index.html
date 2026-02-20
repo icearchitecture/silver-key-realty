@@ -344,7 +344,7 @@ body.skr-ready .skr-main{opacity:1}
   <!-- Add Employee Modal -->
   <div id="add-modal" class="add-modal">
     <div class="add-form">
-      <h2>Add <em>Employee</em></h2>
+      <h2>Invite <em>Team Member</em></h2>
       <div class="form-row">
         <label>First Name</label>
         <input id="af-first" placeholder="Dana">
@@ -369,7 +369,7 @@ body.skr-ready .skr-main{opacity:1}
       </div>
       <div class="form-actions">
         <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
-        <button class="btn-save" id="af-btn" onclick="addEmployee()">Add Employee</button>
+        <button class="btn-save" id="af-btn" onclick="addEmployee()">Send Invitation</button>
       </div>
     </div>
   </div>
@@ -473,38 +473,37 @@ body.skr-ready .skr-main{opacity:1}
       }
 
       var btn = document.getElementById('af-btn');
-      btn.textContent = 'Adding...';
+      btn.textContent = 'Sending Invite...';
       btn.disabled = true;
 
-      var sb = window.SKR_SUPA;
-      var u = window.SKR_USER;
+      try {
+        var result = await skrAPI('/api/team/invite', {
+          method: 'POST',
+          body: {
+            email: email,
+            first_name: first,
+            last_name: last,
+            title: title || null,
+            role_id: roleId,
+          }
+        });
 
-      var result = await sb.from('skr_team_members').insert({
-        tenant_id: u.tenantId,
-        first_name: first,
-        last_name: last,
-        email: email,
-        title: title || null,
-        role_id: roleId,
-        is_active: true,
-      });
-
-      if (result.error) {
-        alert('Error: ' + result.error.message);
-        btn.textContent = 'Add Employee';
-        btn.disabled = false;
-        return;
+        if (result.success) {
+          alert('Invitation sent to ' + email);
+          closeAddModal();
+          document.getElementById('af-first').value = '';
+          document.getElementById('af-last').value = '';
+          document.getElementById('af-email').value = '';
+          document.getElementById('af-title').value = '';
+          document.getElementById('af-role').value = '';
+          await loadTeam(window.SKR_USER, window.SKR_SUPA);
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
       }
 
-      closeAddModal();
-      btn.textContent = 'Add Employee';
+      btn.textContent = 'Send Invitation';
       btn.disabled = false;
-      document.getElementById('af-first').value = '';
-      document.getElementById('af-last').value = '';
-      document.getElementById('af-email').value = '';
-      document.getElementById('af-title').value = '';
-      document.getElementById('af-role').value = '';
-      await loadTeam(u, sb);
     }
 
     async function toggleActive(id, newState) {
