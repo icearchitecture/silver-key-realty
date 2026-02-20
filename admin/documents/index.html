@@ -279,14 +279,14 @@ body.skr-ready .skr-main{opacity:1}
 </head>
 <body>
   <!-- Loading Screen -->
-  <div class="skr-loader">
+  <div class="skr-loader" id="skr-loader">
     <div class="skr-loader-logo">Silver <em>Key</em></div>
     <div class="skr-loader-bar"><div class="skr-loader-fill"></div></div>
     <div class="skr-loader-text">Loading</div>
   </div>
 
   <!-- Error Fallback -->
-  <div class="skr-error-state">
+  <div class="skr-error-state" id="skr-error-state">
     <h2>Something went wrong</h2>
     <p>Unable to load the admin panel. Please check your connection and try again.</p>
     <button class="skr-btn skr-btn-ghost" onclick="location.reload()">Retry</button>
