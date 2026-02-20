@@ -101,13 +101,36 @@
 
         // Step 3: SECURITY GATE — Check team membership
         statusEl.textContent = 'Verifying team access...';
-        const { data: member, error: memberError } = await supabase
+        let member = null;
+
+        // First try: match by auth_user_id
+        const { data: byAuthId } = await supabase
           .from('skr_team_members')
           .select('id, first_name, last_name, is_active, role_id, tenant_id')
           .eq('auth_user_id', user.id)
           .single();
 
-        if (memberError || !member) {
+        if (byAuthId) {
+          member = byAuthId;
+        } else if (user.email) {
+          // Second try: match by email (first-time SSO where auth_user_id isn't linked yet)
+          const { data: byEmail } = await supabase
+            .from('skr_team_members')
+            .select('id, first_name, last_name, is_active, role_id, tenant_id')
+            .eq('email', user.email)
+            .single();
+
+          if (byEmail) {
+            // Link auth_user_id for future logins
+            await supabase
+              .from('skr_team_members')
+              .update({ auth_user_id: user.id })
+              .eq('id', byEmail.id);
+            member = byEmail;
+          }
+        }
+
+        if (!member) {
           console.warn('Access denied: No team record for', user.email);
           await supabase.auth.signOut();
           window.location.href = '/admin/access-denied/';
