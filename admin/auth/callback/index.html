@@ -88,7 +88,7 @@
           }
         }
 
-        // Step 2: Get the authenticated user
+        // Step 2: Get the authenticated user + session token
         statusEl.textContent = 'Checking credentials...';
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
@@ -99,39 +99,33 @@
           return;
         }
 
-        // Step 3: SECURITY GATE — Check team membership
-        statusEl.textContent = 'Verifying team access...';
-        let member = null;
-
-        // First try: match by auth_user_id
-        const { data: byAuthId } = await supabase
-          .from('skr_team_members')
-          .select('id, first_name, last_name, is_active, role_id, tenant_id')
-          .eq('auth_user_id', user.id)
-          .single();
-
-        if (byAuthId) {
-          member = byAuthId;
-        } else if (user.email) {
-          // Second try: match by email (first-time SSO where auth_user_id isn't linked yet)
-          const { data: byEmail } = await supabase
-            .from('skr_team_members')
-            .select('id, first_name, last_name, is_active, role_id, tenant_id')
-            .eq('email', user.email)
-            .single();
-
-          if (byEmail) {
-            // Link auth_user_id for future logins
-            await supabase
-              .from('skr_team_members')
-              .update({ auth_user_id: user.id })
-              .eq('id', byEmail.id);
-            member = byEmail;
-          }
+        const { data: { session } } = await supabase.auth.getSession();
+        const bearer = session && session.access_token ? session.access_token : null;
+        if (!bearer) {
+          showError('Authentication failed. Please try again.');
+          setTimeout(() => window.location.href = '/admin/?error=no_user', 2000);
+          return;
         }
 
-        if (!member) {
+        // Step 3: SECURITY GATE — Resolve + link team membership (server-side)
+        statusEl.textContent = 'Verifying team access...';
+        let bootstrap = null;
+        try {
+          const resp = await fetch('/api/auth/bootstrap', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + bearer }
+          });
+          bootstrap = await resp.json();
+          if (!resp.ok) throw new Error(bootstrap && bootstrap.error ? bootstrap.error : 'bootstrap_failed');
+        } catch (e) {
           console.warn('Access denied: No team record for', user.email);
+          await supabase.auth.signOut();
+          window.location.href = '/admin/access-denied/';
+          return;
+        }
+
+        const member = bootstrap && bootstrap.member ? bootstrap.member : null;
+        if (!member) {
           await supabase.auth.signOut();
           window.location.href = '/admin/access-denied/';
           return;
@@ -148,19 +142,15 @@
         statusEl.textContent = 'Welcome back, ' + member.first_name + '...';
 
         try {
-          const { data: roleData } = await supabase
-            .from('skr_roles')
-            .select('role_name, permission_level')
-            .eq('id', member.role_id)
-            .single();
+          const roleData = member.skr_roles || null;
 
           sessionStorage.setItem('skr_member', JSON.stringify({
             id: member.id,
             firstName: member.first_name,
             lastName: member.last_name,
             email: user.email,
-            role: roleData?.role_name || 'unknown',
-            permissionLevel: roleData?.permission_level || 0,
+            role: roleData && roleData.role_name ? roleData.role_name : 'unknown',
+            permissionLevel: roleData && typeof roleData.permission_level === 'number' ? roleData.permission_level : 0,
             tenantId: member.tenant_id,
             authUserId: user.id
           }));

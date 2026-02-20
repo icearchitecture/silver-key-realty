@@ -25,3 +25,5 @@ assets/js/admin-config.js
 
 # Admin seed SQL (local only, never deploy)
 admin/seed-admin.sql
+.vercel
+.env*.local
